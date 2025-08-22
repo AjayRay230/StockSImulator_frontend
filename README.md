@@ -1,12 +1,50 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+# 📈 StockSwift – Stock Market Simulator
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+A full-stack **stock trading simulator** where users can trade virtual stocks, track live prices, and analyze performance. Built with **React (Vite, Tailwind, Recharts, ShadCN UI)** on the frontend and **Spring Boot + MySQL (JWT Secured)** on the backend.
 
-## Expanding the ESLint configuration
+🔗 **Live Demo**: [StockSwift](https://stockswift.netlify.app/)
+🔗 **Backend API**: [Render Deployment](https://stocksimulator-backend.onrender.com/)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🚀 Features
+
+### 👤 User Features
+
+* 🔑 **JWT Authentication** – Signup & login with token-based security
+* 📊 **Portfolio Management** – Buy, sell & add stocks to your portfolio
+* ⭐ **Watchlist** – Track favorite stocks with **live updates**
+* 📈 **Real-Time Stock Data** – Powered by **[Twelve Data API](https://twelvedata.com/)**
+* 📊 **Interactive Stock Charts** – Line, Candlestick, Area & Bar charts
+* 📝 **Transaction History** – Search, filter, sort & **export as PDF/Print**
+* 💹 **Real-Time Prices** – Sparkline charts & moving averages
+
+### 🛠️ Admin Features
+
+* 👥 **User Management** – View, delete, or change roles of users
+* 📊 **Trade Analytics Dashboard**
+
+  * **Active Traders Leaderboard** (chart & table view)
+  * **Recent Trades Timeline**
+  * **Top Stocks by Trade Volume**
+  * **Executed Trades Overview**
+
+---
+
+## 🛠️ Tech Stack
+
+* **Frontend**: React (Vite), TailwindCSS, ShadCN UI, Recharts, Axios, Framer Motion
+* **Backend**: Spring Boot, Spring Security (JWT), JPA/Hibernate, MySQL
+* **Database**: MySQL (Dockerized)
+* **External APIs**:
+
+  * 🔗 [Twelve Data API](https://twelvedata.com/) → Live stock prices & time-series data
+* **Other Tools**:
+
+  * `html2canvas` + `jsPDF` → Transaction history PDF export
+  * `Recharts` → Charts & Analytics
+  * `Framer Motion` → Smooth UI animations
+
+
