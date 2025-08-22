@@ -37,7 +37,7 @@ const RegistrationForm = ({OnRegister})=>{
             lastName:form.lastName,
             password:form.password,
             email:form.email,
-            role:form.role,
+            role:"USER",
             username:form.username
 
         }
@@ -74,10 +74,10 @@ const RegistrationForm = ({OnRegister})=>{
             <input type = "email" onChange={handleChange} value = {form.email} name = "email" placeholder="Enter your Email Id"/>
             <input type ="password" onChange={handleChange} value={form.password} name = "password" placeholder="Enter your password"/>
             <input type = "password" onChange={handleChange} value = {form.confirmPassword} name = "confirmPassword" placeholder="Confirm Password"/>
-            <select onChange={handleChange} value = {form.role} name = "role" placeholder="Enter role">
+            {/* <select onChange={handleChange} value = {form.role} name = "role" placeholder="Enter role">
                 <option value = "USER" >USER</option>
                 <option value = "ADMIN">ADMIN</option>
-            </select>
+            </select> */}
             <label className="termsCondition-label">
                 <input type = "checkbox" 
                 name = "acceptTerms"
