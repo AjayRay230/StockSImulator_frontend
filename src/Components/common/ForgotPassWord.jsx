@@ -5,6 +5,17 @@ import { toast } from "react-toastify";
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [emailSent, setEmailSent] = useState(false);
+
+  // Function to mask email
+  const maskEmail = (email) => {
+    const [localPart, domain] = email.split("@");
+    if (localPart.length <= 3) {
+      return `${localPart[0]}****@${domain}`;
+    }
+    const visiblePart = localPart.substring(0, 3);
+    return `${visiblePart}****@${domain}`;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -15,8 +26,8 @@ const ForgotPassword = () => {
         null,
         { params: { email } }
       );
-      toast.success("If the email exists, a reset link has been sent");
-      setEmail("");
+      setEmailSent(true);
+      toast.success("Reset link sent successfully");
     } catch (err) {
       toast.error("Something went wrong");
     } finally {
@@ -24,28 +35,50 @@ const ForgotPassword = () => {
     }
   };
 
+  const handleBack = () => {
+    setEmailSent(false);
+    setEmail("");
+  };
+
   return (
-   <div className="auth-container">
-  <form onSubmit={handleSubmit} className="auth-card">
-    <h2>Forgot Password</h2>
-    <p className="auth-subtitle">
-      Enter your registered email to receive a reset link
-    </p>
+    <div className="auth-container">
+      <div className="auth-card">
+        {!emailSent ? (
+          <form onSubmit={handleSubmit}>
+            <h2>Forgot Password</h2>
+            <p className="auth-subtitle">
+              Enter your registered email to receive a reset link
+            </p>
 
-    <input
-      type="email"
-      placeholder="Email address"
-      value={email}
-      onChange={(e) => setEmail(e.target.value)}
-      required
-    />
+            <input
+              type="email"
+              placeholder="Email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
 
-    <button type="submit" disabled={loading}>
-      {loading ? "Sending..." : "Send Reset Link"}
-    </button>
-  </form>
-</div>
-
+            <button type="submit" disabled={loading}>
+              {loading ? "Sending..." : "Send Reset Link"}
+            </button>
+          </form>
+        ) : (
+          <div className="email-sent-confirmation">
+            <h2>Check Your Email</h2>
+            <p className="auth-subtitle">
+              A password reset link has been sent to:
+            </p>
+            <p className="masked-email">{maskEmail(email)}</p>
+            <p className="auth-subtitle">
+              Please check your inbox and follow the instructions to reset your password.
+            </p>
+            <button onClick={handleBack} className="back-button">
+              Back to Forgot Password
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

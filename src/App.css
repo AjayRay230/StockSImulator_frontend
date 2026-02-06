@@ -1670,7 +1670,7 @@ table thead {
 } */
 
                       
-    /* Page background */
+ /* Page background */
 .auth-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
@@ -1705,6 +1705,7 @@ table thead {
   font-size: 0.9rem;
   color: #666;
   margin-bottom: 1.5rem;
+  line-height: 1.5;
 }
 
 /* Inputs */
@@ -1716,6 +1717,7 @@ table thead {
   font-size: 0.95rem;
   margin-bottom: 1rem;
   transition: border 0.2s ease;
+  box-sizing: border-box;
 }
 
 .auth-card input:focus {
@@ -1745,6 +1747,81 @@ table thead {
 .auth-card button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
+  transform: none;
+}
+
+/* Email Sent Confirmation */
+.email-sent-confirmation {
+  text-align: center;
+  animation: fadeUp 0.6s ease;
+}
+
+.email-sent-confirmation h2 {
+  color: #222;
+  margin-bottom: 0.5rem;
+}
+
+.email-sent-confirmation .auth-subtitle {
+  margin-bottom: 1rem;
+}
+
+/* Masked Email Display */
+.masked-email {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #2c5364;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  border-radius: 10px;
+  border: 1px solid #bae6fd;
+  letter-spacing: 0.5px;
+  word-break: break-all;
+}
+
+/* Success Icon/Checkmark (optional enhancement) */
+.email-sent-confirmation::before {
+  content: "✓";
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  animation: scaleIn 0.5s ease;
+}
+
+/* Back Button */
+.back-button {
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 0.75rem;
+  background: transparent;
+  color: #2c5364;
+  border: 2px solid #2c5364;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-button:hover {
+  background: linear-gradient(135deg, #203a43, #2c5364);
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* Additional Info Text */
+.email-sent-confirmation p:last-of-type {
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: 1rem;
+  line-height: 1.6;
 }
 
 /* Animation */
@@ -1758,4 +1835,33 @@ table thead {
     transform: translateY(0);
   }
 }
-                   
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 1.5rem;
+  }
+  
+  .masked-email {
+    font-size: 0.95rem;
+    padding: 0.85rem;
+  }
+  
+  .email-sent-confirmation::before {
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    font-size: 1.5rem;
+  }
+}
