@@ -25,21 +25,27 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="forgot-container">
-      <form onSubmit={handleSubmit} className="forgot-form">
-        <h2>Forgot Password</h2>
-        <input
-          type="email"
-          placeholder="Enter your registered email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? "Sending..." : "Send Reset Link"}
-        </button>
-      </form>
-    </div>
+   <div className="auth-container">
+  <form onSubmit={handleSubmit} className="auth-card">
+    <h2>Forgot Password</h2>
+    <p className="auth-subtitle">
+      Enter your registered email to receive a reset link
+    </p>
+
+    <input
+      type="email"
+      placeholder="Email address"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      required
+    />
+
+    <button type="submit" disabled={loading}>
+      {loading ? "Sending..." : "Send Reset Link"}
+    </button>
+  </form>
+</div>
+
   );
 };
 

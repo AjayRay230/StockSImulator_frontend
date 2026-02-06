@@ -37,21 +37,27 @@ const ResetPassword = () => {
   };
 
   return (
-    <div className="reset-container">
-      <form onSubmit={handleSubmit} className="reset-form">
-        <h2>Reset Password</h2>
-        <input
-          type="password"
-          placeholder="Enter new password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? "Resetting..." : "Reset Password"}
-        </button>
-      </form>
-    </div>
+    <div className="auth-container">
+  <form onSubmit={handleSubmit} className="auth-card">
+    <h2>Reset Password</h2>
+    <p className="auth-subtitle">
+      Enter a new password for your account
+    </p>
+
+    <input
+      type="password"
+      placeholder="New password"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      required
+    />
+
+    <button type="submit" disabled={loading}>
+      {loading ? "Resetting..." : "Reset Password"}
+    </button>
+  </form>
+</div>
+
   );
 };
 
