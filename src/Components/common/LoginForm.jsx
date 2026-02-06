@@ -57,6 +57,10 @@ const LoginForm = ({onLogin})=>{
             type = "email" required />
          <input onChange={handleChange} placeholder="Enter Password" name = "password" type = "password"  value = {form.password} required/>
          <button type="submit">Login</button>
+         <p className="forgot-password">
+  <Link to="/forgot-password">Forgot Password?</Link>
+</p>
+
           <p className="register-link">New User ?<Link to = "/register" >Sign Up</Link></p>
          </form>
          
