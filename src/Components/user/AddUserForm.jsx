@@ -1,6 +1,5 @@
 import { useState } from "react";
 // import AddUser from "../api/userAxios";
-import { addUser } from "../../api/userAxios";
 import axios from "axios";
 const AddUserForm = ({onAdd})=>{
     const[form,setForm] = useState({

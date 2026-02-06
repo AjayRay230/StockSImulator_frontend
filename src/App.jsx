@@ -18,7 +18,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import AdminUserControl from './Components/common/AdminUserControl';
 import AdminTradeStats from './Components/common/AdminTradeStats';
-
+import ResetPassword from './Components/common/ResetPassword';
+import ForgotPassword from './Components/common/ForgotPassWord';
 function App() {
   const[selectedSymbol,setSelectedSymbol]  = useState("");
   const[loginIn,setLoginIn] = useState(false);
@@ -72,7 +73,8 @@ function App() {
           
           <Route path="/stock" element={<StockPage/>}/>
           <Route path = "/search-stock" element = {<SearchStock/>}/>
-         
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
          </Routes>
          </div>
        <ToastContainer/>
