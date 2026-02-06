@@ -36,7 +36,7 @@ const deleteUser = async (id) => {
   try {
     const token = localStorage.getItem("token");
     const config = { headers: { Authorization: `Bearer ${token}` } };
-    await axios.delete(`https://stocksimulator-backend.onrender.com/api/user/${id}`, config);
+    await axios.delete(`https://stocksimulator-backend.onrender.com/api/user/id/${id}`, config);
 
     // FIX: use userId instead of id
     setUsers(users.filter((u) => u.userId !== id));
@@ -51,7 +51,7 @@ const updateRole = async (id, newRole) => {
     const token = localStorage.getItem("token");
     const config = { headers: { Authorization: `Bearer ${token}` } };
     await axios.put(
-      `https://stocksimulator-backend.onrender.com/api/user/${id}/role?role=${newRole}`,{},
+      `https://stocksimulator-backend.onrender.com/api/user/id/${id}/role?role=${newRole}`,{},
       config
     );
 
@@ -72,7 +72,7 @@ const updateRole = async (id, newRole) => {
     try {
       const token = localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      const res = await axios.get(`https://stocksimulator-backend.onrender.com/api/user/${id}/portfolio-value`, config);
+      const res = await axios.get(`https://stocksimulator-backend.onrender.com/api/user/id/${id}/portfolio-value`, config);
 
       setUsers(
         users.map((u) =>
