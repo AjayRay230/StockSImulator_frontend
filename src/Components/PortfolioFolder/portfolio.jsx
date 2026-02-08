@@ -39,7 +39,8 @@ const Portfolio = () => {
 
   const { user } = userContext;
   const userId = user?.userId;
- 
+  const isAuthenticated = !!user;
+
 
 
 
@@ -164,7 +165,14 @@ const Portfolio = () => {
         <div className="dashboard-actions">
     <button
     className="primary-btn"
-    onClick={() => setShowAddModal(true)}
+   onClick={() => {
+  if (!isAuthenticated) {
+    window.location.href = "/login";
+    return;
+  }
+  setShowAddModal(true);
+}}
+
     >
     + Add Stock
     </button>
@@ -172,7 +180,14 @@ const Portfolio = () => {
    <button
     className="secondary-btn"
     disabled={portfolio.length === 0|| loading}
-    onClick={() => setShowTradeModal(true)}
+    onClick={() => {
+  if (!isAuthenticated) {
+    window.location.href = "/login";
+    return;
+  }
+  setShowTradeModal(true);
+}}
+
     >
     Buy / Sell
     </button>
