@@ -142,10 +142,10 @@ const Portfolio = () => {
       </div>
        <div className="portfolio-summary">
         <p>
-          <FaWallet /> Invested Value: ₹ {totalInvestment.toFixed(2)}
+          <FaWallet /> Invested Value: $ {totalInvestment.toFixed(2)}
       </p>
       <p>
-        <FaChartLine /> Current Value: ₹ {totalCurrentValue.toFixed(2)}
+        <FaChartLine /> Current Value: $ {totalCurrentValue.toFixed(2)}
       </p>
        <p style={{ color: totalProfitLoss >= 0 ? "green" : "red" }}>
            {totalProfitLoss >= 0 ? <FaArrowUp /> : <FaArrowDown />} Profit/Loss: ₹{" "}
@@ -155,7 +155,7 @@ const Portfolio = () => {
 
       <div className="portfolio-container">
         <p className="totalInvestment">
-          Total Investment: ₹ {totalInvestment.toFixed(2)}
+          Total Investment: $ {totalInvestment.toFixed(2)}
         </p>
 
         
@@ -191,16 +191,16 @@ const Portfolio = () => {
                   <FaBoxes /> Quantity: {item.quantity}
                 </p>
                 <p>
-                  <FaDollarSign /> Avg. Buy Price: ₹ {item.averagebuyprice}
+                  <FaDollarSign /> Avg. Buy Price: $ {item.averagebuyprice}
                 </p>
                 <p>
-                  <FaChartLine /> Total Investment: ₹{" "}
+                  <FaChartLine /> Total Investment: ${" "}
                   {item.totalInvestment.toFixed(2)}
                 </p>
                 {
                   item.currentPrice!=null?(
                    <>
-                   <p><FaMoneyBill/>Current Price : ₹ {item.currentPrice} </p>
+                   <p><FaMoneyBill/>Current Price : $ {item.currentPrice} </p>
                    <p>
                     <span style={{marginRight:"6px"}}>
                      {item.change>=0?(
@@ -212,10 +212,10 @@ const Portfolio = () => {
                     </span>
                     Change :{" "}
                     <span style={{color:item.change>=0?"green":"red"}}>
-                         ₹ {item.change.toFixed(2)} ({item.changePercent.toFixed(2)}%)
+                         $ {item.change.toFixed(2)} ({item.changePercent.toFixed(2)}%)
                     </span>
                    </p>
-                   <p> <MdPriceCheck style={{marginRight:"6px" ,color:"#1565c0"}}/>Current Value : ₹ {item.totalCurrentValue.toFixed(2)}</p>
+                   <p> <MdPriceCheck style={{marginRight:"6px" ,color:"#1565c0"}}/>Current Value : $ {item.totalCurrentValue.toFixed(2)}</p>
                    <p>
                    {
                     item.profitLoss>=0?(
@@ -227,7 +227,7 @@ const Portfolio = () => {
                     }
                     Profit/Loss :{" "}
                     <span style={{color:item.profitLoss>=0?"green":"red"}}>
-                      ₹ {item.profitLoss.toFixed(2)}
+                      $ {item.profitLoss.toFixed(2)}
                     </span>
                    </p>
                    </> 

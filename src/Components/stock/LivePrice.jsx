@@ -94,22 +94,22 @@ const LivePrice = ({ symbol }) => {
         
         transition={{ duration: 0.3 }}
       >
-        ₹{currentPrice.toFixed(2)}{" "}
+        ${currentPrice.toFixed(2)}{" "}
         <span className="price-changes">
           ({data.change > 0 ? "+" : ""}
           {data.change.toFixed(2)}/{changePercent.toFixed(2)}%)
         </span>
       </motion.div>
       <div className="extra-data">
-        <p>Open: ₹ {openPrice?.toFixed(2)||"_ _"}</p>
-        <p>Previous Close: ₹ {previousClose?.toFixed(2)||"_ _"}</p>
-         <p>52W High: ₹ {fiftyTwoWeekHigh?.toFixed(2)||"_ _"}</p>
-         <p>52W Low: ₹ {fiftyTwoWeekLow?.toFixed(2)||"_ _"}</p>
+        <p>Open: $ {openPrice?.toFixed(2)||"_ _"}</p>
+        <p>Previous Close: $ {previousClose?.toFixed(2)||"_ _"}</p>
+         <p>52W High: $ {fiftyTwoWeekHigh?.toFixed(2)||"_ _"}</p>
+         <p>52W Low: $ {fiftyTwoWeekLow?.toFixed(2)||"_ _"}</p>
          
       </div>
       <div className="highlow">
-        <span >High: ₹ {highPrice?.toFixed(2)||"_ _"} </span>
-        <span>Low :  ₹ {lowPrice?.toFixed(2)||"_ _"}</span>
+        <span >High: $ {highPrice?.toFixed(2)||"_ _"} </span>
+        <span>Low :  $ {lowPrice?.toFixed(2)||"_ _"}</span>
       </div>
        <div className="range-selector">
         {["1D","5D","1M","1Y","MAX"].map(r=>(
