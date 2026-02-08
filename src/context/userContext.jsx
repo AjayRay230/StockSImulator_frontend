@@ -20,7 +20,7 @@ export const UserProvider = ({ children }) => {
         const parsedUser = JSON.parse(storedUser);
 
         // Basic validation
-        if (parsedUser?.userId && parsedUser?.email && parsedUser?.role) {
+        if (parsedUser?.role && parsedUser?.firstName) {
           setUser(parsedUser);
           setRole(parsedUser.role);
           setIsLoggedIn(true);
@@ -36,9 +36,10 @@ export const UserProvider = ({ children }) => {
   }, []);
 
 const login = (responseData) => {
-  const { token, userId, role, firstName, lastName, email } = responseData;
+ const { token, role, firstName, lastName } = responseData;
 
-  if (!token || !email || !role || !userId) {
+
+  if (!token || !role ) {
     toast.error("Invalid login response from server.");
     return;
   }
@@ -46,7 +47,7 @@ const login = (responseData) => {
   const decoded = jwtDecode(token);
   const expiryTime = decoded.exp * 1000;
 
-  const userData = { userId, role, firstName, lastName, email };
+  const userData = { role, firstName, lastName};
 
   localStorage.setItem("token", token);
   localStorage.setItem("tokenExpiry", expiryTime);

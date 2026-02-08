@@ -31,36 +31,38 @@ function AdminUserControl() {
 
   // Delete user
   
-const deleteUser = async (id) => {
+const deleteUser = async () => {
   if (!window.confirm("Are you sure you want to delete this user?")) return;
   try {
     const token = localStorage.getItem("token");
     const config = { headers: { Authorization: `Bearer ${token}` } };
-    await axios.delete(`https://stocksimulator-backend.onrender.com/api/user/id/${id}`, config);
+    await axios.delete(`https://stocksimulator-backend.onrender.com/api/user/id/me`, config);
 
     // FIX: use userId instead of id
-    setUsers(users.filter((u) => u.userId !== id));
-    setTotalUsers((prev) => prev - 1);
+    setUsers([]);
+    setTotalUsers(0);
   } catch (err) {
     console.error("Error deleting user:", err);
   }
 };
 
-const updateRole = async (id, newRole) => {
+const updateRole = async (newRole) => {
   try {
     const token = localStorage.getItem("token");
     const config = { headers: { Authorization: `Bearer ${token}` } };
     await axios.put(
-      `https://stocksimulator-backend.onrender.com/api/user/id/${id}/role?role=${newRole}`,{},
+      `https://stocksimulator-backend.onrender.com/api/user/id/me/role?role=${newRole}`,{},
       config
     );
 
     // FIX: use userId instead of id
-    setUsers(
-      users.map((u) =>
-        u.userId === id ? { ...u, role: newRole } : u
-      )
-    );
+setUsers(
+  users.map((u, index) =>
+    index === 0 ? { ...u, role: newRole } : u
+  )
+);
+
+
   } catch (err) {
     console.error("Error updating role:", err);
   }
@@ -68,17 +70,16 @@ const updateRole = async (id, newRole) => {
 
 
   // Get portfolio value
-  const getPortfolioValue = async (id) => {
+  const getPortfolioValue = async () => {
     try {
       const token = localStorage.getItem("token");
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      const res = await axios.get(`https://stocksimulator-backend.onrender.com/api/user/id/${id}/portfolio-value`, config);
+      const res = await axios.get(`https://stocksimulator-backend.onrender.com/api/user/id/me/portfolio-value`, config);
 
-      setUsers(
-        users.map((u) =>
-          u.userId === id ? { ...u, portfolioValue: res.data } : u
-        )
-      );
+setUsers(
+  users.map((u) => ({ ...u, portfolioValue: res.data }))
+);
+
     } catch (err) {
       console.error("Error fetching portfolio value:", err);
     }
@@ -103,7 +104,7 @@ const updateRole = async (id, newRole) => {
           </tr>
         </thead>
         <tbody>
-          {users.map((u) => (
+          {users.slice(0,1).map((u) => (
             <tr key={u.userId}>
               <td>{u.userId}</td>
               <td>{u.username}</td>
@@ -111,7 +112,7 @@ const updateRole = async (id, newRole) => {
               <td>
                 <select
                   value={u.role}
-                  onChange={(e) => updateRole(u.userId, e.target.value)}
+                  onChange={(e) => updateRole( e.target.value)}
                   className="role-select"
                 >
                   <option value="USER">USER</option>
@@ -124,7 +125,7 @@ const updateRole = async (id, newRole) => {
                 ) : (
                   <button
                     className="portfolio-btn"
-                    onClick={() => getPortfolioValue(u.userId)}
+                    onClick={() => getPortfolioValue()}
                   >
                     <FaEye /> View
                   </button>
@@ -133,7 +134,7 @@ const updateRole = async (id, newRole) => {
               <td>
                 <button
                   className="delete-btn"
-                  onClick={() => deleteUser(u.userId)}
+                  onClick={() => deleteUser()}
                 >
                 <FaTrash/>  Delete
                 </button>

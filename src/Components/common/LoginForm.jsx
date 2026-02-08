@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useState } from "react"
-import {Link, redirect,useLocation}  from "react-router-dom"
+import {Link,useLocation}  from "react-router-dom"
 import { useUser } from "../../context/userContext";
-import { jwtDecode } from "jwt-decode";
+
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -21,7 +21,7 @@ const reason =
 const handleLogin = async (e) => {
   e.preventDefault();
 
-  if (isSubmitting) return; // prevent double click
+  if (isSubmitting) return;
 
   try {
     setIsSubmitting(true);
@@ -31,24 +31,16 @@ const handleLogin = async (e) => {
       form
     );
 
-    const { token, userId, role, firstName, lastName, email } = res.data;
+    if (!res.data?.token) {
+      throw new Error("No token returned");
+    }
 
-    if (!token) throw new Error("No token returned");
-
-    const userData = { userId, role, firstName, lastName, email };
-
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(userData));
-
-    login(res.data);
-
+    login(res.data); // ✅ single source of truth
     toast.success("Login successful");
 
-   navigate("/dashboard", { replace: true });
-
+    navigate("/dashboard", { replace: true });
 
     if (onLogin) onLogin();
-
   } catch (err) {
     console.error("Failed to Login", err);
     toast.warn("Failed to login");
@@ -121,6 +113,5 @@ return (
     </div>
   </div>
 );
-
 }
 export default LoginForm; 

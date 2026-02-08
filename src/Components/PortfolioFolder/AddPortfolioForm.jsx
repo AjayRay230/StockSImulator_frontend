@@ -7,7 +7,6 @@ import { FaHashtag, FaSortNumericUp, FaDollarSign, FaSpinner } from "react-icons
 
 const AddPortfolioForm =({onAdd})=>{
    const{user} = useUser();
-   const userId = user?.userId;
    const[loading,setLoading] = useState(false);
   // if(!userId) alert("user is undefined ")
    const[form,setForm] = useState({
@@ -39,7 +38,7 @@ const handleSubmit = async (e) => {
 
   try {
     setLoading(true);
-    await addPortfolioItem(userId, form);
+    await addPortfolioItem(form); // ✅ no userId
     onAdd();
     setForm({ stocksymbol: "", quantity: 0, averagebuyprice: 0 });
   } catch (err) {
@@ -75,7 +74,7 @@ const handleSubmit = async (e) => {
          step = "any"
          />
          </label>
-        <button type="submit" disabled={loading || !userId}>
+        <button type="submit" disabled={loading}>
           {loading ?(
             <>
             <FaSpinner className="icons-spin"/>Processing... 

@@ -8,7 +8,6 @@ import React from "react";
 import { FaFileDownload,FaPrint } from "react-icons/fa";
 const TransactionHistory = () => {
 const{user} = useUser();
-const userId = user?.userId;
   const [transaction, setTransaction] = useState([]);
   const[filterType ,setFilterType] = useState("ALL");
   const[searchQuery,setSearchQuery] = useState("");
@@ -17,37 +16,37 @@ const userId = user?.userId;
   const filter = transaction
                 .filter((txn)=>filterType==="ALL" ?true:txn.type===filterType )
                 .filter((txn)=>txn.stocksymbol.toLowerCase().includes(searchQuery.toLowerCase()))
-                .sort((a,b)=>{
-                  if(sort==="timestamp") return new Date(b.timestamp)-new Date(a.timestamp);
-                  if(sort==="price") return b.currentPrice-a.currentPrice;
-                  if(sort==="total")  return b.totalAmount-a.totalAmount;
-                  return 0;
-                });
+                .sort((a, b) => {
+                    if (sort === "timestamp") return new Date(b.timestamp) - new Date(a.timestamp);
+                    if (sort === "price") return b.currentprice - a.currentprice;
+                    if (sort === "total") return b.totalAmount - a.totalAmount;
+                    return 0;
+                  });
 
 
-  useEffect(() => {
-    const fetchResponse = async () => {
-      if (userId) {
-        try {
-          const token = localStorage.getItem("token");
-          const response = await axios.get(
-            `https://stocksimulator-backend.onrender.com/api/transaction/history/${userId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            }
-          );
-          setTransaction(response.data);
-        } catch (err) {
-          console.error("Failed to get the Transaction History", err);
+
+useEffect(() => {
+  const fetchResponse = async () => {
+    if (!user) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `https://stocksimulator-backend.onrender.com/api/transaction/history/me`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
-      }
-    };
+      );
+      setTransaction(response.data);
+    } catch (err) {
+      console.error("Failed to get the Transaction History", err);
+    }
+  };
 
-    fetchResponse();
-  }, [userId]);
-
+  fetchResponse();
+}, [user]);
 
 
 
@@ -134,7 +133,7 @@ const userId = user?.userId;
                   {txn.type}</span>
                   </td>
                 <td>{txn.quantity}</td>
-                <td>{txn.currentprice.toFixed(2)}</td>
+                <td>{txn.currentprice?.toFixed(2)}</td>
                 <td>{txn.totalAmount.toFixed(2)}</td>
                 <td>{new Date(txn.timestamp).toLocaleString()}</td>
               </tr>

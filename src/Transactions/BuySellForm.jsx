@@ -3,7 +3,7 @@ import axios from "axios";
 import StockSelector from "../Components/stock/StockSelector";
 import { toast } from "react-toastify";
 import { FaExchangeAlt, FaHashtag,FaSortNumericUp,FaSpinner } from "react-icons/fa";
-const BuySellForm = ({ userId, onSuccess }) => {
+const BuySellForm = ({  onSuccess }) => {
   const [form, setForm] = useState({
     stocksymbol: "",
     quantity: "",
@@ -38,8 +38,7 @@ const BuySellForm = ({ userId, onSuccess }) => {
           ? "/api/transaction/buy"
           : "/api/transaction/sell";
 
-      const payload = {
-        id: userId, 
+      const payload = { 
         stocksymbol: form.stocksymbol,
         quantity: Number(form.quantity)
       };

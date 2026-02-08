@@ -8,7 +8,6 @@ const Navbar =()=>{
     const[searchTerm ,setSearchTerm] = useState('');
     const navigate = useNavigate();
     const{isLoggedIn,role,user,logout} = useUser();
-    console.log("user",user);
     const[isSidebarOpen,setIsSidebarOpen] = useState(false);
     const toggleSidebar = ()=>{
       setIsSidebarOpen(prev=>!prev);

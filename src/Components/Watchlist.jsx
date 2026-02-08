@@ -6,16 +6,16 @@ import { FiPlusCircle,FiTrash } from "react-icons/fi";
 import {motion} from "framer-motion";
 const WatchList = ()=>{
     const{user} = useUser();
-    const userId = user?.userId;
+    
    // console.log("user is :", userId);
     const[watchlist,setWatchlist] = useState([]);
     const[symbol,setSymbol]  = useState("");
     useEffect(()=>{
-        if(!userId) return ;
+        if(!user) return ;
         const fetchList = async()=>{
             try{
                 const token = localStorage.getItem("token");
-                const response = await axios.get(`https://stocksimulator-backend.onrender.com/api/watchlist/${userId}`,{
+                const response = await axios.get(`https://stocksimulator-backend.onrender.com/api/watchlist/me`,{
                     headers:{
                         Authorization:`Bearer ${token}`
                     }
@@ -28,7 +28,9 @@ const WatchList = ()=>{
 
         };
         fetchList();
-    },[userId]);
+
+        
+    },[user]);
     const handleAdd = async()=>{
         try{
             if(!symbol)
@@ -57,7 +59,7 @@ const WatchList = ()=>{
                 alert("Stock already in the watchlist!!");
                 return;
             }
-            const payload = {userId:userId,stocksymbol:symbol};
+            const payload = {stocksymbol:symbol};
            
             await axios.post(`https://stocksimulator-backend.onrender.com/api/watchlist/add`,payload,{
                 headers:{
@@ -66,7 +68,7 @@ const WatchList = ()=>{
             });
             setSymbol("");
             //refresh list
-            const res = await axios.get(`https://stocksimulator-backend.onrender.com/api/watchlist/${userId}`
+            const res = await axios.get(`https://stocksimulator-backend.onrender.com/api/watchlist/me`
                 ,{
                     headers:{
                         Authorization:`Bearer ${token}`
@@ -83,7 +85,7 @@ const WatchList = ()=>{
     const handleRemove = async(symbolToRemove)=>{
         try{
             const token = localStorage.getItem("token")
-            const payload = {userId:userId,stocksymbol:symbolToRemove};
+            const payload = {stocksymbol:symbolToRemove};
             await axios.post(`https://stocksimulator-backend.onrender.com/api/watchlist/remove`,payload,{
                 headers:{
                         Authorization:`Bearer ${token}`

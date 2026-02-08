@@ -40,7 +40,7 @@ const Portfolio = () => {
   if (!userContext) return <p>Loading user context...</p>;
 
   const { user } = userContext;
-  const userId = user?.userId;
+
   const isAuthenticated = !!user;
 
 
@@ -50,7 +50,7 @@ const Portfolio = () => {
   const loadPortfolio = async () => {
     try {
       setLoading(true);
-      const response = await fetchPortfoli(userId);
+      const response = await fetchPortfoli();
      // console.log("Portfolio API Response:", response);
       const responseData = response.data;
       const token = localStorage.getItem("token");
@@ -119,11 +119,11 @@ const Portfolio = () => {
     }
   };
 
-  useEffect(() => {
-    if (userId) {
-      loadPortfolio();
-    }
-  }, [userId]);
+ useEffect(() => {
+  if (isAuthenticated) {
+    loadPortfolio();
+  }
+}, [isAuthenticated]);
 
   const handleDelete = async (stocksymbol) => {
     const confirmed = window.confirm(
@@ -132,7 +132,7 @@ const Portfolio = () => {
     if (!confirmed) return;
 
     try {
-      await deletePortfolioItem(userId, stocksymbol);
+      await deletePortfolioItem(stocksymbol);
       toast.success(`${stocksymbol} successfully removed from portfolio`);
       loadPortfolio();
     } catch (err) {
@@ -193,83 +193,7 @@ const Portfolio = () => {
 
 
 
-        {/* {loading ? (
-          <div className="loading-container">
-             Loading your portfolio...<FaSpinner className="icons-spin" />
-          </div>
-        ) : (
-          <div className="portfolio-grid">
-            {portfolio.map((item, index) => (
-              
-
-              <div className="portfolio-card" key={index}>
-                <div className="card-header">
-                  <h2 onClick={() => setSelectedSymbol(item.stocksymbol)}>
-                    {item.stocksymbol}
-                  </h2>
-                  <button
-                    onClick={() => handleDelete(item.stocksymbol)}
-                    className="delete-btn-portfolio"
-                    title="Delete Stock"
-                  >
-                    <FaTrash />
-                  </button>
-                </div>
-                <p>
-                  <FaBoxes /> Quantity: {item.quantity}
-                </p>
-                <p>
-                  <FaDollarSign /> Avg. Buy Price: $ {item.averagebuyprice}
-                </p>
-                <p>
-                  <FaChartLine /> Total Investment: ${" "}
-                  {item.totalInvestment.toFixed(2)}
-                </p>
-                {
-                  item.currentPrice!=null?(
-                   <>
-                   <p><FaMoneyBill/>Current Price : $ {item.currentPrice} </p>
-                   <p>
-                    <span style={{marginRight:"6px"}}>
-                     {item.change>=0?(
-                      <FaArrowUp style={{color:"green"}}/>
-
-                     ):(
-                      <FaArrowDown style={{color:"red"}}/>
-                     )}
-                    </span>
-                    Change :{" "}
-                    <span style={{color:item.change>=0?"green":"red"}}>
-                         $ {item.change.toFixed(2)} ({item.changePercent.toFixed(2)}%)
-                    </span>
-                   </p>
-                   <p> <MdPriceCheck style={{marginRight:"6px" ,color:"#1565c0"}}/>Current Value : $ {item.totalCurrentValue.toFixed(2)}</p>
-                   <p>
-                   {
-                    item.profitLoss>=0?(
-                        <BiTrendingUp style={{marginRight:"6px",color:"green"}}/>
-
-                    ):(
-                      <BiTrendingDown style={{marginRight:"6px",color:"red"}}/>
-                    )
-                    }
-                    Profit/Loss :{" "}
-                    <span style={{color:item.profitLoss>=0?"green":"red"}}>
-                      $ {item.profitLoss.toFixed(2)}
-                    </span>
-                   </p>
-                   </> 
-                  ):(
-                    <>
-                    Loading
-                    <FaSpinner className="icons-spin" style={{marginLeft:"10px"}} />
-                    </>
-                  )
-                }
-              </div>
-            ))}
-          </div>
-        )} */}
+       
         {loading && (
   <div className="loading-container">
     Loading your portfolio... <FaSpinner className="icons-spin" />
@@ -385,25 +309,21 @@ const Portfolio = () => {
 
      {showAddModal && (
   <Modal onClose={() => setShowAddModal(false)}>
-    <AddPortfolioForm
-      userId={userId}
-      onAdd={() => {
-        loadPortfolio();
-        setShowAddModal(false);
-      }}
-    />
+<AddPortfolioForm onAdd={() => {
+  loadPortfolio();
+  setShowAddModal(false);
+}} />
+
   </Modal>
 )}
 
 {showTradeModal && (
   <Modal onClose={() => setShowTradeModal(false)}>
-    <BuySellForm
-      userId={userId}
-      onSuccess={() => {
-        loadPortfolio();
-        setShowTradeModal(false);
-      }}
-    />
+    <BuySellForm onSuccess={() => {
+  loadPortfolio();
+  setShowTradeModal(false);
+}} />
+
   </Modal>
 )}
 

@@ -25,7 +25,15 @@ const AddUserForm = ({onAdd})=>{
             });
             alert("user registered successfully");
             onAdd?.();
-            setForm({username:"",password:"",email:"",role:"USER"});
+            setForm({
+                    firstName:"",
+                    lastName:"",
+                    username:"",
+                    password:"",
+                    email:"",
+                    role:"USER"
+                    });
+
         }
         catch(err)
         {
@@ -33,6 +41,11 @@ const AddUserForm = ({onAdd})=>{
             alert(err.response?.data||"Registration failed");
         }
     }
+    if (!token) {
+  alert("Unauthorized. Please login again.");
+  return;
+}
+
    return(
     <div className="adduser-container">
         <form onSubmit={handleSubmit} className="adduser-form">
