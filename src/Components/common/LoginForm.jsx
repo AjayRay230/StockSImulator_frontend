@@ -59,62 +59,68 @@ const handleLogin = async (e) => {
 
 
 
-    return(
-        <div className="login-container">
 return (
-  <div className="login-container">
+  <div className="auth-login-page">
+    <div className="auth-login-card">
 
-    {/* ✅ STATUS BANNER — EXACT PLACE */}
-    {reason && (
-      <div className={`auth-banner ${reason}`}>
-        {reason === "expired" && (
-          <>⏳ Session expired. Please login again.</>
+      {/* STATUS BANNER */}
+      {reason && (
+        <div className={`auth-login-banner auth-login-banner--${reason}`}>
+          {reason === "manual" && "✅ You have logged out successfully"}
+          {reason === "expired" && "⏳ Session expired. Please login again"}
+        </div>
+      )}
+
+      <form onSubmit={handleLogin} className="auth-login-form">
+
+        <input
+          name="username"
+          type="text"
+          placeholder="Username"
+          value={form.username}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          name="email"
+          type="email"
+          placeholder="Email address"
+          value={form.email}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+          required
+        />
+
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Logging in..." : "Login"}
+        </button>
+
+        {isSubmitting && (
+          <p className="auth-login-hint">
+            ⏳ Authenticating securely…
+          </p>
         )}
-        {reason === "manual" && (
-          <>✅ You have logged out successfully.</>
-        )}
-      </div>
-    )}
 
-    <form onSubmit={handleLogin} className="loginForm">
-      ...
-    </form>
+        <div className="auth-login-links">
+          <Link to="/forgot-password">Forgot password?</Link>
+          <span>
+            New user? <Link to="/register">Sign up</Link>
+          </span>
+        </div>
 
+      </form>
+    </div>
   </div>
 );
 
-
-        <form onSubmit={handleLogin} className="loginForm">
-        <input onChange={handleChange} placeholder="Enter UserName"
-         value = {form.username}
-          name = "username"
-          type = "text"
-          required
-         />
-         <input onChange={handleChange} placeholder="Enter Email Id"
-            value ={form.email}
-            name  = "email"
-            type = "email" required />
-         <input onChange={handleChange} placeholder="Enter Password" name = "password" type = "password"  value = {form.password} required/>
-         <button type="submit" disabled={isSubmitting}>
-  {isSubmitting ? "Logging in..." : "Login"}
-</button>
-{isSubmitting && (
-  <p className="login-wait-message">
-    ⏳ Authenticating... Did you know?  
-    <br />
-    📈 The first stock exchange was established in Amsterdam in 1602.
-  </p>
-)}
-
-         <p className="forgot-password">
-  <Link to="/forgot-password">Forgot Password?</Link>
-</p>
-
-          <p className="register-link">New User ?<Link to = "/register" >Sign Up</Link></p>
-         </form>
-         
-        </div>
-    )
 }
-export default LoginForm;
+export default LoginForm; 
