@@ -1134,7 +1134,7 @@ width: 250px;
 
                                   /* Add User form css */
 
-.adduser-container{
+/* .adduser-container{
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1177,8 +1177,122 @@ width: 250px;
 }
 .adduser-form button:hover{
   background-color: #0056b3;
+} */
+
+/* =========================
+   REGISTER PAGE (SCOPED)
+========================= */
+
+.auth-register-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fb, #eef2ff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-   
+
+/* Card */
+.auth-register-card {
+  width: 420px;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 2.2rem;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
+  animation: authRegisterFade 0.5s ease;
+}
+
+/* Title */
+.auth-register-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+  text-align: center;
+}
+
+.auth-register-subtitle {
+  font-size: 0.9rem;
+  color: #6b7280;
+  text-align: center;
+  margin-bottom: 1.6rem;
+}
+
+/* Form */
+.auth-register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.auth-register-form input {
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #d0d7e2;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.auth-register-form input:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+  outline: none;
+}
+
+/* Two-column row */
+.auth-register-row {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.auth-register-row input {
+  flex: 1;
+}
+
+/* Terms */
+.auth-register-terms {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #374151;
+}
+
+/* Button */
+.auth-register-btn {
+  margin-top: 0.5rem;
+  padding: 0.85rem;
+  border-radius: 12px;
+  border: none;
+  background: #4f46e5;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.auth-register-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
+}
+
+/* Footer */
+.auth-register-footer {
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+/* Animation */
+@keyframes authRegisterFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 
                             /* stock selector css*/
 .stock-selector-container{

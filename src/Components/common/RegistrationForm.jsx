@@ -65,31 +65,94 @@ const RegistrationForm = ({OnRegister})=>{
     const handleCheckBoxChange = (e)=>{
     setForm({...form,[e.target.name]:e.target.checked})
 }
-    return(
-         <div className="adduser-container">
-        <form onSubmit={handleSubmit} className="adduser-form">
-            <input type = "text" onChange={handleChange} value ={form.username} name = "username" placeholder="User Name"/>
-            <input type="text" onChange={handleChange} value={form.firstName} name = "firstName" placeholder="Enter your first Name"/>
-            <input type = "text" onChange={handleChange} value  = {form.lastName} name  = "lastName" placeholder="Enter your last Name"/>
-            <input type = "email" onChange={handleChange} value = {form.email} name = "email" placeholder="Enter your Email Id"/>
-            <input type ="password" onChange={handleChange} value={form.password} name = "password" placeholder="Enter your password"/>
-            <input type = "password" onChange={handleChange} value = {form.confirmPassword} name = "confirmPassword" placeholder="Confirm Password"/>
-            {/* <select onChange={handleChange} value = {form.role} name = "role" placeholder="Enter role">
-                <option value = "USER" >USER</option>
-                <option value = "ADMIN">ADMIN</option>
-            </select> */}
-            <label className="termsCondition-label">
-                <input type = "checkbox" 
-                name = "acceptTerms"
-               checked= {form.acceptTerms}
-               onChange={handleCheckBoxChange}/>
-                I  accept all terms & conditions
-                
-            </label>
-            <button type = "submit" >Register</button>
-            <p className="login-link" >Already Have an account ?<Link to = "/login">Login</Link></p>
-        </form>
+   return (
+  <div className="auth-register-page">
+    <div className="auth-register-card">
+
+      <h2 className="auth-register-title">Create your account</h2>
+      <p className="auth-register-subtitle">
+        Start your stock trading journey today
+      </p>
+
+      <form onSubmit={handleSubmit} className="auth-register-form">
+
+        <input
+          type="text"
+          name="username"
+          placeholder="Username"
+          value={form.username}
+          onChange={handleChange}
+          required
+        />
+
+        <div className="auth-register-row">
+          <input
+            type="text"
+            name="firstName"
+            placeholder="First name"
+            value={form.firstName}
+            onChange={handleChange}
+            required
+          />
+          <input
+            type="text"
+            name="lastName"
+            placeholder="Last name"
+            value={form.lastName}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <input
+          type="email"
+          name="email"
+          placeholder="Email address"
+          value={form.email}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={form.password}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          type="password"
+          name="confirmPassword"
+          placeholder="Confirm password"
+          value={form.confirmPassword}
+          onChange={handleChange}
+          required
+        />
+
+        <label className="auth-register-terms">
+          <input
+            type="checkbox"
+            name="acceptTerms"
+            checked={form.acceptTerms}
+            onChange={handleCheckBoxChange}
+          />
+          <span>I accept the terms & conditions</span>
+        </label>
+
+        <button type="submit" className="auth-register-btn">
+          Register
+        </button>
+
+        <p className="auth-register-footer">
+          Already have an account? <Link to="/login">Login</Link>
+        </p>
+
+      </form>
     </div>
-    )
+  </div>
+);
+
 }
 export default RegistrationForm;
