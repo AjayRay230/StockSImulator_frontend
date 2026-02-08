@@ -20,7 +20,8 @@ import AdminUserControl from './Components/common/AdminUserControl';
 import AdminTradeStats from './Components/common/AdminTradeStats';
 import ResetPassword from './Components/common/ResetPassword';
 import ForgotPassword from './Components/common/ForgotPassWord';
-import LandingPage from "./pages/Landing/LandingPage";
+import LandingPage from "./Components/Landing/LandingPage";
+
 function App() {
   const[selectedSymbol,setSelectedSymbol]  = useState("");
   const[loginIn,setLoginIn] = useState(false);
