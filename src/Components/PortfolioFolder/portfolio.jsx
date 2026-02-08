@@ -163,19 +163,22 @@ const Portfolio = () => {
           Total Investment: $ {totalInvestment.toFixed(2)}
         </p> */}
         <div className="dashboard-actions">
-    <button
-    className="primary-btn"
-   onClick={() => {
-  if (!isAuthenticated) {
-    window.location.href = "/login";
-    return;
-  }
-  setShowAddModal(true);
-}}
+  <button
+  className="primary-btn"
+  onClick={() => {
+    if (!user) {
+      toast.info("Please login to continue");
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 800);
+      return;
+    }
+    setShowAddModal(true);
+  }}
+>
+  + Add Stock
+</button>
 
-    >
-    + Add Stock
-    </button>
 
    <button
     className="secondary-btn"

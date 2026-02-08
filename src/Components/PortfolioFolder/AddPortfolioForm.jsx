@@ -55,7 +55,7 @@ const AddPortfolioForm =({onAdd})=>{
     
    return (
     
-    <form onSubmit={handleSubmit} className="portfolio-forms">
+    <form onSubmit={handleSubmit} className="portfolio-form">
       <h3 style={{textAlign:"center",color:"#222",fontSize:"22px",marginBottom:"20px"}}>Add Stock to portfolio </h3>
       <label><FaHashtag className="icon"/> Stock Symbol:
         <StockSelector selectedSymbol={form.stocksymbol}

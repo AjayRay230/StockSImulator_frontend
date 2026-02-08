@@ -610,18 +610,30 @@ body {
 }
 
 /* ===== Forms ===== */
-.portfolio-forms {
+.portfolio-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: 14px;
 }
 
-@media (min-width: 768px) {
-  .portfolio-forms {
-    flex-direction: row;
-    justify-content: space-between;
-  }
+.portfolio-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 500;
+  gap: 6px;
+}
+
+.portfolio-form input,
+.portfolio-form select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.portfolio-form button {
+  margin-top: 10px;
 }
 
 
