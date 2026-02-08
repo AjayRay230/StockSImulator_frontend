@@ -20,6 +20,7 @@ import AdminUserControl from './Components/common/AdminUserControl';
 import AdminTradeStats from './Components/common/AdminTradeStats';
 import ResetPassword from './Components/common/ResetPassword';
 import ForgotPassword from './Components/common/ForgotPassWord';
+import LandingPage from "./pages/Landing/LandingPage";
 function App() {
   const[selectedSymbol,setSelectedSymbol]  = useState("");
   const[loginIn,setLoginIn] = useState(false);
@@ -57,6 +58,7 @@ function App() {
          <Route path='/admin-trade-stats' element = {<AdminTradeStats/>}/>
          <Route path = "/admin-userControl" element = {<AdminUserControl/>}/>
           <Route path = "/" element = {<StockDashboard/>}/>
+           <Route path="/" element={<LandingPage />} />
           <Route path = "/prices" element = {<div>Stock Chart  Page</div>}/>
           <Route path = "/transaction" element = {<TransactionHistory/>}/>
           <Route path = "/add-user" element = {<div>
