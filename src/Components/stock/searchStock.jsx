@@ -117,7 +117,7 @@ const[showSuggestion,setShowSuggestion] = useState(false);
          
           <p>
             <FaDollarSign style={{ marginRight: "6px", color: "#444" }} />
-            <strong>Price:</strong> ₹{stock.currentprice}
+            <strong>Price:</strong> ${stock.currentprice}
           </p>
           <p style={{ color: stock.changepercent >= 0 ? "green" : "red" }}>
             <FaChartLine style={{ marginRight: "6px" }} />
