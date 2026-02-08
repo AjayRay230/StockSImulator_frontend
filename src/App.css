@@ -103,12 +103,22 @@ body {
   transition: all 0.3s ease;
   backdrop-filter: blur(6px);
 }
-
+   /* disabling search button when user is not login */
 .search-box:focus {
   border-color: #3b82f6;
   box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
   background: rgba(255, 255, 255, 0.25);
 }
+.search-box:disabled {
+  background: #e5e7eb;
+  cursor: not-allowed;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 
 .navbar-search button {
   background-color: #2563eb;

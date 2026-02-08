@@ -42,16 +42,27 @@ const Navbar =()=>{
             
       <div className="navbar-search">
         <input
-          type="search"
-          placeholder="Search stock..."
-          className="search-box"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') handleSearch();
-          }}
-        />
-        <button onClick={handleSearch}><FaSearch /></button>
+      type="search"
+       placeholder={
+      isLoggedIn ? "Search stock..." : "Login to search stocks"
+      }
+      className="search-box"
+      value={searchTerm}
+      disabled={!isLoggedIn}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      onKeyDown={(e) => {
+      if (isLoggedIn && e.key === "Enter") handleSearch();
+    }}
+      />
+
+<button
+  onClick={handleSearch}
+  disabled={!isLoggedIn}
+  className={!isLoggedIn ? "disabled-btn" : ""}
+>
+  <FaSearch />
+</button>
+
       </div>
       <div className="navbar-right">
         <button className="theme-toggle" onClick={toggleTheme}>
