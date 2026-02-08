@@ -10,6 +10,7 @@ const LoginForm = ({onLogin})=>{
     const[form,setForm] = useState({username:"",password:"",email:""});
      const {login} = useUser();
       const navigate = useNavigate();
+      const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e)=>{
         setForm({...form,[e.target.name]:e.target.value});
@@ -17,7 +18,11 @@ const LoginForm = ({onLogin})=>{
 const handleLogin = async (e) => {
   e.preventDefault();
 
+  if (isSubmitting) return; // prevent double click
+
   try {
+    setIsSubmitting(true);
+
     const res = await axios.post(
       "https://stocksimulator-backend.onrender.com/api/user/login",
       form
@@ -27,32 +32,24 @@ const handleLogin = async (e) => {
 
     if (!token) throw new Error("No token returned");
 
-    const userData = {
-      userId,
-      role,
-      firstName,
-      lastName,
-      email,
-    };
+    const userData = { userId, role, firstName, lastName, email };
 
-    // Store auth data
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(userData));
 
-    // Update context
     login(userData);
 
     toast.success("Login successful");
 
-    // ✅ NAVIGATE AFTER LOGIN
     navigate("/dashboard");
 
-    // optional
     if (onLogin) onLogin();
 
   } catch (err) {
     console.error("Failed to Login", err);
     toast.warn("Failed to login");
+  } finally {
+    setIsSubmitting(false);
   }
 };
 
@@ -72,7 +69,17 @@ const handleLogin = async (e) => {
             name  = "email"
             type = "email" required />
          <input onChange={handleChange} placeholder="Enter Password" name = "password" type = "password"  value = {form.password} required/>
-         <button type="submit">Login</button>
+         <button type="submit" disabled={isSubmitting}>
+  {isSubmitting ? "Logging in..." : "Login"}
+</button>
+{isSubmitting && (
+  <p className="login-wait-message">
+    ⏳ Authenticating... Did you know?  
+    <br />
+    📈 The first stock exchange was established in Amsterdam in 1602.
+  </p>
+)}
+
          <p className="forgot-password">
   <Link to="/forgot-password">Forgot Password?</Link>
 </p>

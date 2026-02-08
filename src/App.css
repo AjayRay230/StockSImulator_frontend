@@ -1048,6 +1048,18 @@ width: 250px;
   background-color: #0056b3;
 }
 
+/* disable the button when user have hit the login button */
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-wait-message {
+  margin-top: 12px;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
 
                                   /* Add User form css */
 
