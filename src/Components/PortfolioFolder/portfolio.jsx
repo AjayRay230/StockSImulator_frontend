@@ -58,9 +58,17 @@ const Portfolio = () => {
       responseData.map(async(item)=>{
           const totalInvestment  = item.averagebuyprice*item.quantity;
           try{
-            const liveRes = await axiosInstance.get(
-  `/api/stock-price/closing-price?stocksymbol=${item.stocksymbol}`
+          const token = localStorage.getItem("token");
+
+const liveRes = await axios.get(
+  `https://stocksimulator-backend.onrender.com/api/stock-price/closing-price?stocksymbol=${item.stocksymbol}`,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
 );
+
 
 
 
