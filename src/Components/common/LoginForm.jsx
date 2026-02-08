@@ -41,7 +41,8 @@ const handleLogin = async (e) => {
 
     toast.success("Login successful");
 
-    navigate("/dashboard");
+   navigate("/dashboard", { replace: true });
+
 
     if (onLogin) onLogin();
 
