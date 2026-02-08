@@ -21,7 +21,7 @@ import AdminTradeStats from './Components/common/AdminTradeStats';
 import ResetPassword from './Components/common/ResetPassword';
 import ForgotPassword from './Components/common/ForgotPassWord';
 import LandingPage from "./Components/Landing/LandingPage";
-
+import ProtectedRoute from './Components/common/ProtectedRoute';
 function App() {
   const[selectedSymbol,setSelectedSymbol]  = useState("");
   const[loginIn,setLoginIn] = useState(false);
@@ -58,7 +58,8 @@ function App() {
          
          <Route path='/admin-trade-stats' element = {<AdminTradeStats/>}/>
          <Route path = "/admin-userControl" element = {<AdminUserControl/>}/>
-          <Route path = "/dashboard" element = {<StockDashboard/>}/>
+          <Route path = "/dashboard" element = {<ProtectedRoute><StockDashboard/>
+                                                            </ProtectedRoute> }/>
            <Route path="/" element={<LandingPage />} />
           <Route path = "/prices" element = {<div>Stock Chart  Page</div>}/>
           <Route path = "/transaction" element = {<TransactionHistory/>}/>

@@ -1,15 +1,23 @@
-// HeroSection.jsx
+import { useNavigate } from "react-router-dom";
+
 const HeroSection = () => {
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      navigate("/dashboard");
+    } else {
+      navigate("/login");
+    }
+  };
+
   return (
     <section className="hero">
-      <div className="hero-content">
-        <h1>Simulate. Analyze. Trade Smarter.</h1>
-        <p>
-          A real-time stock market simulator with live prices and intelligent
-          insights.
-        </p>
-        <button className="cta-btn">Get Started</button>
-      </div>
+      <h1>Simulate. Analyze. Trade Smarter.</h1>
+      <p>Practice stock trading with real-time market data.</p>
+      <button onClick={handleGetStarted}>Get Started</button>
     </section>
   );
 };
