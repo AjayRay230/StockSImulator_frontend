@@ -224,10 +224,18 @@ setSeries(mainSeries);
     tooltip:{theme:darkMode?"dark" :"light"},
 
    }),[darkMode]);
-if(series.length===0 || series[0].data.length===0)
-{
-  return <div>No data available</div>
+if (loading) {
+  return (
+    <span>
+      Loading... <FaSpinner className="icons-spin" />
+    </span>
+  );
 }
+
+if (!series.length || !series[0]?.data?.length) {
+  return <div>No data available</div>;
+}
+
 
   return loading ? (
     <span >Loading...{" "}<FaSpinner className='icons-spin'/></span>
