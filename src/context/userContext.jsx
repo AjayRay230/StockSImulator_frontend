@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import { jwtDecode } from "jwt-decode";
 
 // Create context
 export const UserContext = createContext();
@@ -34,33 +35,65 @@ export const UserProvider = ({ children }) => {
     }
   }, []);
 
-  const login = (responseData) => {
-    const { token, userId, role, firstName, lastName, email } = responseData;
+const login = (responseData) => {
+  const { token, userId, role, firstName, lastName, email } = responseData;
 
-    if (!token || !email || !role||!userId) {
-      toast.error("Invalid login response from server.");
-      return;
-    }
+  if (!token || !email || !role || !userId) {
+    toast.error("Invalid login response from server.");
+    return;
+  }
 
-    const userData = { userId, role, firstName, lastName, email };
+  const decoded = jwtDecode(token);
+  const expiryTime = decoded.exp * 1000;
 
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(userData));
+  const userData = { userId, role, firstName, lastName, email };
 
-    setUser(userData);
-    setRole(role);
-    setIsLoggedIn(true);
-    toast.success("Login successful");
-  };
+  localStorage.setItem("token", token);
+  localStorage.setItem("tokenExpiry", expiryTime);
+  localStorage.setItem("user", JSON.stringify(userData));
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setUser(null);
-    setIsLoggedIn(false);
-    setRole(null);
+  setUser(userData);
+  setRole(role);
+  setIsLoggedIn(true);
+
+  toast.success("Login successful");
+};
+
+useEffect(() => {
+  const expiry = localStorage.getItem("tokenExpiry");
+  if (!expiry) return;
+
+  const timeLeft = expiry - Date.now();
+
+  if (timeLeft <= 0) {
+    forceLogout();
+    return;
+  }
+
+  const timer = setTimeout(forceLogout, timeLeft);
+  return () => clearTimeout(timer);
+}, []);
+
+
+const forceLogout = () => {
+  logout("expired");
+  window.location.href = "/login?reason=expired";
+};
+
+const logout = (reason = "manual") => {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  localStorage.removeItem("tokenExpiry");
+
+  setUser(null);
+  setIsLoggedIn(false);
+  setRole(null);
+
+  if (reason === "manual") {
     toast.info("Logged out");
-  };
+  }
+};
+
 
   return (
     <UserContext.Provider value={{ isLoggedIn, role, user, setUser, login, logout }}>

@@ -28,6 +28,15 @@ const Navbar =()=>{
         setTheme(newTheme);
         localStorage.setItem("theme",newTheme);
     }
+
+    const handleLogout = () => {
+  logout("manual");
+  navigate("/login", {
+    replace: true,
+    state: { reason: "manual" }
+  });
+};
+
     useEffect(()=>
     {
         document.body.className = theme;
@@ -133,10 +142,15 @@ const Navbar =()=>{
       Login
       </span></Link></li>
   ) : (
-    <li><button onClick={logout}><FaSignOutAlt className="icon1"/>
+<li>
+  <button onClick={handleLogout}>
+    <FaSignOutAlt className="icon1"/>
     <span className={`link-text ${isSidebarOpen ? 'show' : ''}`}>
-     Logout
-     </span></button></li>
+      Logout
+    </span>
+  </button>
+</li>
+
   )}
 
             </ul>

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useState } from "react"
-import {Link}  from "react-router-dom"
+import {Link, redirect,useLocation}  from "react-router-dom"
 import { useUser } from "../../context/userContext";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
@@ -11,7 +11,10 @@ const LoginForm = ({onLogin})=>{
      const {login} = useUser();
       const navigate = useNavigate();
       const [isSubmitting, setIsSubmitting] = useState(false);
-
+const location = useLocation();
+const reason =
+  location.state?.reason ||
+  new URLSearchParams(location.search).get("reason");
     const handleChange = (e)=>{
         setForm({...form,[e.target.name]:e.target.value});
     }
@@ -37,7 +40,7 @@ const handleLogin = async (e) => {
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(userData));
 
-    login(userData);
+    login(res.data);
 
     toast.success("Login successful");
 
@@ -58,6 +61,14 @@ const handleLogin = async (e) => {
 
     return(
         <div className="login-container">
+          {reason === "expired" && (
+  <p className="error">Session expired. Please login again.</p>
+)}
+
+{reason === "manual" && (
+  <p className="success">You have logged out successfully.</p>
+)}
+
         <form onSubmit={handleLogin} className="loginForm">
         <input onChange={handleChange} placeholder="Enter UserName"
          value = {form.username}
