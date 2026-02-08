@@ -619,9 +619,14 @@ body {
 .portfolio-form label {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  font-weight: 500;
+  gap: 8px;
 }
+
+.portfolio-form label > svg,
+.portfolio-form label > .icon {
+  margin-bottom: 4px;
+}
+
 
 .portfolio-form input,
 .portfolio-form select {
@@ -1980,4 +1985,38 @@ table thead {
     line-height: 50px;
     font-size: 1.5rem;
   }
+}
+
+      /* new Fix for Porfolio-form */
+
+.modal-content .portfolio-form,
+.modal-content .buysell-form {
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.modal-content .stock-selector-container {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.modal-content .portfolio-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modal-content .portfolio-form input,
+.modal-content .portfolio-form select,
+.modal-content .dropdown,
+.modal-content .manual-input {
+  height: 42px;
+  font-size: 14px;
 }
