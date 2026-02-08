@@ -61,13 +61,28 @@ const handleLogin = async (e) => {
 
     return(
         <div className="login-container">
-          {reason === "expired" && (
-  <p className="error">Session expired. Please login again.</p>
-)}
+return (
+  <div className="login-container">
 
-{reason === "manual" && (
-  <p className="success">You have logged out successfully.</p>
-)}
+    {/* ✅ STATUS BANNER — EXACT PLACE */}
+    {reason && (
+      <div className={`auth-banner ${reason}`}>
+        {reason === "expired" && (
+          <>⏳ Session expired. Please login again.</>
+        )}
+        {reason === "manual" && (
+          <>✅ You have logged out successfully.</>
+        )}
+      </div>
+    )}
+
+    <form onSubmit={handleLogin} className="loginForm">
+      ...
+    </form>
+
+  </div>
+);
+
 
         <form onSubmit={handleLogin} className="loginForm">
         <input onChange={handleChange} placeholder="Enter UserName"
