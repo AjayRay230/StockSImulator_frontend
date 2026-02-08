@@ -148,7 +148,7 @@ const Portfolio = () => {
         <FaChartLine /> Current Value: $ {totalCurrentValue.toFixed(2)}
       </p>
        <p style={{ color: totalProfitLoss >= 0 ? "green" : "red" }}>
-           {totalProfitLoss >= 0 ? <FaArrowUp /> : <FaArrowDown />} Profit/Loss: ₹{" "}
+           {totalProfitLoss >= 0 ? <FaArrowUp /> : <FaArrowDown />} Profit/Loss: ${" "}
         {totalProfitLoss.toFixed(2)}
      </p>
         </div>
