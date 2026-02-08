@@ -23,6 +23,8 @@ import AddPortfolioForm from "./AddPortfolioForm";
 import StockPrice from "../stock/StockPrice";
 import BuySellForm from "../../Transactions/BuySellForm";
 import axios from "axios";
+import EmptyPortfolio from "../common/empty/EmptyPortfolio";
+import axiosInstance from "../../api/axiosInstance";
 
 const Portfolio = () => {
   const userContext = useUser();
@@ -56,12 +58,10 @@ const Portfolio = () => {
       responseData.map(async(item)=>{
           const totalInvestment  = item.averagebuyprice*item.quantity;
           try{
-            const liveRes = await axios.get(`https://stocksimulator-backend.onrender.com/api/stock-price/closing-price?stocksymbol=${item.stocksymbol}`,{
-              headers:{
-                Authorization:`Bearer ${token}`
-              }
-            });
-          
+            const liveRes = await axiosInstance.get(
+  `/api/stock-price/closing-price?stocksymbol=${item.stocksymbol}`
+);
+
 
 
             const liveData = liveRes.data.meta;
@@ -163,37 +163,21 @@ const Portfolio = () => {
           Total Investment: $ {totalInvestment.toFixed(2)}
         </p> */}
         <div className="dashboard-actions">
-  <button
+<button
   className="primary-btn"
-  onClick={() => {
-    if (!user) {
-      toast.info("Please login to continue");
-      setTimeout(() => {
-        window.location.href = "/login";
-      }, 800);
-      return;
-    }
-    setShowAddModal(true);
-  }}
+  onClick={() => setShowAddModal(true)}
 >
   + Add Stock
 </button>
 
+<button
+  className="secondary-btn"
+  disabled={portfolio.length === 0 || loading}
+  onClick={() => setShowTradeModal(true)}
+>
+  Buy / Sell
+</button>
 
-   <button
-    className="secondary-btn"
-    disabled={portfolio.length === 0|| loading}
-    onClick={() => {
-  if (!isAuthenticated) {
-    window.location.href = "/login";
-    return;
-  }
-  setShowTradeModal(true);
-}}
-
-    >
-    Buy / Sell
-    </button>
     </div>
 
 
@@ -205,18 +189,8 @@ const Portfolio = () => {
 
         {/* Spinner while loading */}
 
-                    {!loading && portfolio.length === 0 && (
-            <div className="empty-portfolio">
-              <h2>📊 Your portfolio is empty</h2>
-              <p>Add your first stock to start tracking performance.</p>
-              <button
-                className="primary-btn"
-                onClick={() => setShowAddModal(true)}
-              >
-                + Add Stock
-              </button>
-            </div>
-          )}
+{!loading && portfolio.length === 0 && <EmptyPortfolio />}
+
 
 
         {/* {loading ? (

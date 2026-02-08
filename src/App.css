@@ -2137,4 +2137,23 @@ table thead {
   font-size: 2rem;
   margin-bottom: 16px;
 }
-              
+                          /* Empty components Css */
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.empty-title {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.empty-description {
+  margin-bottom: 1rem;
+}
+
+.empty-action a {
+  color: #007bff;
+  font-weight: 600;
+}
