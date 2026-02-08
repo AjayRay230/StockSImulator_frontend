@@ -22,36 +22,33 @@ const AddPortfolioForm =({onAdd})=>{
     [name]: name === "quantity" || name === "averagebuyprice" ? parseFloat(value) : value,
   });
 };
-   const handleSubmit =async(e)=>{
-    e.preventDefault();
-    
-  if (!userId) {
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  const token = localStorage.getItem("token");
+  if (!token) {
     toast.info("Please login to add stocks");
     window.location.href = "/login";
     return;
   }
 
-    if(!form.stocksymbol||form.quantity<=0||form.averagebuyprice<=0)
-    {
-      toast.warn("Please fill all the fields ");
-      return;
-    }
-    try{
-      setLoading(true);
-      //console.log("sending to backend :" , form)
-        await addPortfolioItem(userId,form);
-        onAdd();
-        setForm({stocksymbol:"",quantity:0,averagebuyprice:0});
+  if (!form.stocksymbol || form.quantity <= 0 || form.averagebuyprice <= 0) {
+    toast.warn("Please fill all the fields");
+    return;
+  }
 
-    }
-    catch(err)
-    {
-        console.error("Failed to add the stock",err);
-    }
-    finally{
-      setLoading(false);
-    }
-   }
+  try {
+    setLoading(true);
+    await addPortfolioItem(userId, form);
+    onAdd();
+    setForm({ stocksymbol: "", quantity: 0, averagebuyprice: 0 });
+  } catch (err) {
+    toast.error("Failed to add stock");
+  } finally {
+    setLoading(false);
+  }
+};
+
     
    return (
     
