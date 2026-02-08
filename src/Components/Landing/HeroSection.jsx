@@ -15,10 +15,26 @@ const HeroSection = () => {
 
   return (
     <section className="hero">
-      <h1>Simulate. Analyze. Trade Smarter.</h1>
-      <p>Practice stock trading with real-time market data.</p>
-      <button onClick={handleGetStarted}>Get Started</button>
-    </section>
+  <div className="hero-content">
+    <h1>
+      Simulate. Analyze. <span>Trade Smarter.</span>
+    </h1>
+    <p>
+      A professional stock market simulator with real-time prices and
+      risk-free trading.
+    </p>
+
+    <div className="hero-actions">
+      <button className="cta-btn" onClick={handleGetStarted}>
+        Get Started
+      </button>
+      <button className="secondary-btn-hero">
+        View Features
+      </button>
+    </div>
+  </div>
+</section>
+
   );
 };
 
