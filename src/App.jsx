@@ -57,7 +57,7 @@ function App() {
          
          <Route path='/admin-trade-stats' element = {<AdminTradeStats/>}/>
          <Route path = "/admin-userControl" element = {<AdminUserControl/>}/>
-          <Route path = "/" element = {<StockDashboard/>}/>
+          <Route path = "/dashboard" element = {<StockDashboard/>}/>
            <Route path="/" element={<LandingPage />} />
           <Route path = "/prices" element = {<div>Stock Chart  Page</div>}/>
           <Route path = "/transaction" element = {<TransactionHistory/>}/>

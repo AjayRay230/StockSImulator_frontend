@@ -4,42 +4,58 @@ import {Link}  from "react-router-dom"
 import { useUser } from "../../context/userContext";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
 const LoginForm = ({onLogin})=>{
     const[form,setForm] = useState({username:"",password:"",email:""});
      const {login} = useUser();
-      
+      const navigate = useNavigate();
+
     const handleChange = (e)=>{
         setForm({...form,[e.target.name]:e.target.value});
     }
-  const handleLogin = async (e) => {
+const handleLogin = async (e) => {
   e.preventDefault();
+
   try {
-    const res = await axios.post(`https://stocksimulator-backend.onrender.com/api/user/login`, form);
-    login(res.data);//pass backend the response context
+    const res = await axios.post(
+      "https://stocksimulator-backend.onrender.com/api/user/login",
+      form
+    );
+
     const { token, userId, role, firstName, lastName, email } = res.data;
 
     if (!token) throw new Error("No token returned");
 
     const userData = {
-      userId, 
+      userId,
       role,
       firstName,
       lastName,
-      email
+      email,
     };
 
+    // Store auth data
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(userData));
-    login(userData); 
+
+    // Update context
+    login(userData);
 
     toast.success("Login successful");
-    onLogin();
+
+    // ✅ NAVIGATE AFTER LOGIN
+    navigate("/dashboard");
+
+    // optional
+    if (onLogin) onLogin();
 
   } catch (err) {
     console.error("Failed to Login", err);
     toast.warn("Failed to login");
   }
 };
+
 
 
     return(
