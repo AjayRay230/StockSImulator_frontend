@@ -24,6 +24,13 @@ const AddPortfolioForm =({onAdd})=>{
 };
    const handleSubmit =async(e)=>{
     e.preventDefault();
+    
+  if (!userId) {
+    toast.info("Please login to add stocks");
+    window.location.href = "/login";
+    return;
+  }
+
     if(!form.stocksymbol||form.quantity<=0||form.averagebuyprice<=0)
     {
       toast.warn("Please fill all the fields ");
@@ -48,8 +55,8 @@ const AddPortfolioForm =({onAdd})=>{
     
    return (
     
-    <form onSubmit={handleSubmit} className="portfolio-form">
-      <h3 style={{textAlign:"center",color:"#222",fontSize:"22px",marginBotton:"20px"}}>Add Stock to portfolio </h3>
+    <form onSubmit={handleSubmit} className="portfolio-forms">
+      <h3 style={{textAlign:"center",color:"#222",fontSize:"22px",marginBottom:"20px"}}>Add Stock to portfolio </h3>
       <label><FaHashtag className="icon"/> Stock Symbol:
         <StockSelector selectedSymbol={form.stocksymbol}
         onChange = {(Symbol)=>setForm({...form,stocksymbol:Symbol})}
@@ -71,7 +78,7 @@ const AddPortfolioForm =({onAdd})=>{
          step = "any"
          />
          </label>
-        <button type="submit" disabled={loading} >
+        <button type="submit" disabled={loading || !userId}>
           {loading ?(
             <>
             <FaSpinner className="icons-spin"/>Processing... 
