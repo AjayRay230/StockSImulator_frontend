@@ -4,6 +4,10 @@
   padding: 2rem;
   text-align: center;
 } */
+
+* {
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
 :root {
   --bg: #f4f6fb;
   --surface: #ffffff;
