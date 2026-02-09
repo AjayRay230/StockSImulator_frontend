@@ -36,12 +36,10 @@ const Navbar =()=>{
   });
 };
 
-    useEffect(()=>
-    {
-        document.body.className = theme;
+  useEffect(() => {
+  document.documentElement.setAttribute("data-theme", theme);
+}, [theme]);
 
-    },[theme]
-    );
     return(
       <>
         <div className="navbar">

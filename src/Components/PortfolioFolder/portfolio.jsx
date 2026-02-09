@@ -24,7 +24,7 @@ import StockPrice from "../stock/StockPrice";
 import BuySellForm from "../../Transactions/BuySellForm";
 import axios from "axios";
 import EmptyPortfolio from "../common/empty/EmptyPortfolio";
-import axiosInstance from "../../api/axiosInstance";
+
 
 const Portfolio = () => {
   const userContext = useUser();
