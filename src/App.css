@@ -1159,16 +1159,11 @@ button:active{
   gap: 12px;
   margin-bottom: 30px;
 }
-.watchlist-container input{
-
-padding:10px 15px;
-font-size: 22px;
-
-border:1px solid #ccc;
-border-radius: 10px;
-width: 250px;
+.watchlist-container input {
+  border: 1px solid var(--border);
+  background-color: var(--surface-2);
+  color: var(--text);
 }
-
 .watchlist-container  button{
   padding:6px 12px;
   background-color: #00c853;
@@ -1185,11 +1180,12 @@ width: 250px;
 .watchlist-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-  gap: 20px;
-  align-items: stretch;
+  gap: 24px;
+  align-items: start;
 }
 
 .stock-card {
+   position: relative;  
   background-color: var(--surface);
   padding: 1rem;
   border-radius: 12px;
@@ -1210,14 +1206,17 @@ width: 250px;
  font-weight: bold;
  font-size: 1.1rem;
 }
-.symbol{
-  color:#333;
+.symbol {
+  color: var(--text);
 }
-.date{
-  color:#777;
-  font-size: 0.9rem;
+
+.date {
+  color: var(--text-muted);
 }
+
 .remove-btn{
+    margin-top: auto; 
+    width:100%;
   background-color: #ff4d4f;
   color:white;
   padding:8px 12px;
