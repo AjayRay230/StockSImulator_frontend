@@ -1135,23 +1135,27 @@ button:active{
 
 
 
-                        /* Watchlist style */
-.watchlist-container{
+/* ===============================
+   Watchlist Layout
+================================ */
+
+.watchlist-container {
   max-width: 1200px;
-  padding:30px;
-  
-  margin:0 auto;
-  
-  
+  padding: 30px;
+  margin: 0 auto;
   font-family: Arial, sans-serif;
 }
-.watchlist-container h2{
-  margin-bottom:20px ;
-  font-size: 2rem;
-  
 
-  
+.watchlist-container h2 {
+  margin-bottom: 24px;
+  font-size: 2rem;
+  text-align: center;
 }
+
+/* ===============================
+   Add Stock Section
+================================ */
+
 .watchlist-add {
   display: flex;
   justify-content: center;
@@ -1159,77 +1163,100 @@ button:active{
   gap: 12px;
   margin-bottom: 30px;
 }
+
 .watchlist-container input {
-  border: 1px solid var(--border);
-  background-color: var(--surface-2);
-  color: var(--text);
+  padding: 10px 14px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 260px;
 }
-.watchlist-container  button{
-  padding:6px 12px;
+
+.watchlist-container button {
+  padding: 10px 16px;
   background-color: #00c853;
-  color:white;
-  border:none;
-  border-radius: 6px;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: 14px;
-  transition: background-color 0.3s ease;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.25s ease;
 }
-.watchlist-container table button:hover{
+
+.watchlist-container button:hover {
   background-color: #00b248;
 }
+
+/* ===============================
+   Watchlist Grid
+================================ */
+
 .watchlist-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 28px;
   align-items: start;
 }
 
-.stock-card {
-   position: relative;  
-  background-color: var(--surface);
-  padding: 1rem;
-  border-radius: 12px;
-  box-shadow: var(--shadow);
+/* ===============================
+   Stock Card (LAYOUT ONLY)
+   LivePrice handles the card UI
+================================ */
 
+.stock-card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-
+  gap: 14px;
   width: 100%;
-  max-width: 100%;
-  overflow: hidden;
 }
 
-.stock-card-header{
- display: flex;
- justify-content: space-between;
- font-weight: bold;
- font-size: 1.1rem;
+/* ===============================
+   Header above LivePrice
+================================ */
+
+.stock-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 1.1rem;
 }
+
 .symbol {
-  color: var(--text);
+  color: #333;
 }
 
 .date {
-  color: var(--text-muted);
+  color: #777;
+  font-size: 0.9rem;
 }
 
-.remove-btn{
-    margin-top: auto; 
-    width:100%;
+/* ===============================
+   Remove Button
+================================ */
+
+.remove-btn {
+  margin-top: 8px;
+  width: 100%;
   background-color: #ff4d4f;
-  color:white;
-  padding:8px 12px;
-  border:none;
-  border-radius: 6px;
+  color: #fff;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
   align-items: center;
-  transition: background-color 0.3s ease;
-  
+  gap: 6px;
+  transition: background-color 0.25s ease;
 }
-.remove-btn:hover{
+
+.remove-btn:hover {
   background-color: #d32f2f;
 }
+
 
                                      /* LoginForm */
 
