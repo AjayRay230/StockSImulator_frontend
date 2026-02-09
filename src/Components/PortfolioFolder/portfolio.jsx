@@ -160,7 +160,7 @@ const liveRes = await axios.get(
       <p>
         <FaChartLine /> Current Value: $ {totalCurrentValue.toFixed(2)}
       </p>
-       <p style={{ color: totalProfitLoss >= 0 ? "green" : "red" }}>
+      <p className={totalProfitLoss >= 0 ? "profit" : "loss"}>
            {totalProfitLoss >= 0 ? <FaArrowUp /> : <FaArrowDown />} Profit/Loss: ${" "}
         {totalProfitLoss.toFixed(2)}
      </p>
