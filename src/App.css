@@ -1125,6 +1125,11 @@ button:active{
   background-color: var(--loss);
 }
 
+.page-title {
+  text-align: center;
+  margin: 40px;
+  color: var(--text);
+}
 
 
 
