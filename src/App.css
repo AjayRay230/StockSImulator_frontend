@@ -1259,6 +1259,31 @@ button:active{
 }
 
 
+/* WatchList → LivePrice isolation */
+.liveprice-wrapper .card {
+  width: 100%;
+  min-height: 420px;
+  max-height: 520px;
+
+  background: linear-gradient(180deg, #ffffff 0%, #fafbfc 100%);
+  border-radius: 14px;
+
+  border: 1px solid rgba(0, 0, 0, 0.06);
+
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.08),
+    0 2px 6px rgba(0, 0, 0, 0.04);
+
+  padding: 18px;
+}
+
+/* Dark mode */
+.liveprice-wrapper .card.dark {
+  background: linear-gradient(180deg, #1e1e1e 0%, #161616 100%);
+  color: #f0f0f0;
+}
+
+
                                      /* LoginForm */
 
 /* =========================

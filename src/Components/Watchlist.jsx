@@ -118,7 +118,9 @@ const WatchList = ()=>{
                                 <div className="symbol">{item.stocksymbol}</div>
                                <div className="date">{new Date(item.addTime).toLocaleDateString()}</div>
                                 </div>
+                               <div className="liveprice-wrapper">
                                <LivePrice symbol={item.stocksymbol}/>
+                               </div>
                                <button className="remove-btn" onClick={()=>handleRemove(item.stocksymbol)}>
                                 <FiTrash style={{marginRight:"6px"}}/>
                                 Remove</button>
