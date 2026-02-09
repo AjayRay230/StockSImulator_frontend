@@ -2378,3 +2378,50 @@ table thead {
   color: #007bff;
   font-weight: 600;
 }
+    /* ===========================
+   GLOBAL THEME NORMALIZATION
+   =========================== */
+
+body,
+.main-content,
+.page,
+.container,
+section {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* All cards, modals, forms */
+div[class*="card"],
+div[class*="modal"],
+div[class*="form"],
+form {
+  background-color: var(--surface);
+  color: var(--text);
+}
+
+/* All inputs globally */
+input,
+select,
+textarea {
+  background-color: var(--surface-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* Tables */
+table,
+thead,
+tbody,
+tr,
+td,
+th {
+  background-color: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+}
