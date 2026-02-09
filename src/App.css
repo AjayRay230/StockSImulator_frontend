@@ -899,56 +899,58 @@ button:disabled {
 }
 
                                   /* Transaction History table css */
-.transactionHistory-container{
+.transactionHistory-container {
   padding: 30px;
   max-width: 1000px;
-  margin:0 auto;
+  margin: 0 auto;
   font-family: Arial, sans-serif;
-
+  color: var(--text);
 }
-.table-container{
+
+.table-container {
   overflow-y: auto;
-   max-width: 90vw;
+  max-width: 90vw;
 }
 
-.transaction-table{
+.transaction-table {
   width: 100%;
   border-collapse: collapse;
-  border:1px solid #ddd;
+  border: 1px solid var(--border);
   font-size: 17px;
-  background-color: #ffffff;
+  background-color: var(--surface);
 }
-.transaction-table th,.transaction-table td{
-  padding:15px 20px;
-  text-align: center;
-  border: 1px solid #ddd;
-  /* color:#000;
-  background-color: #fff; */
-}
-.transaction-table th{
-  background-color: #f4f4f4;
-  color:#333;
-}
-.transaction-table tr:hover{
-  background-color: #f1f1f1;
-  transition: background-color 0.3s ease;
-}
-.badge{
+
+.transaction-table th,
+.transaction-table td {
   padding: 15px 20px;
-  border-radius:8px;
+  text-align: center;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.transaction-table th {
+  background-color: var(--surface-2);
+}
+
+.transaction-table tr:hover {
+  background-color: var(--surface-2);
+}
+
+.badge {
+  padding: 8px 14px;
+  border-radius: 8px;
   font-weight: bold;
+  color: #fff;
+}
 
-  display: inline-block;
- color:#fff;
+.buy {
+  background-color: var(--profit);
 }
-.buy{
-  background-color: #28a745;
 
+.sell {
+  background-color: var(--loss);
 }
-.sell{
-  background-color: #dc3545;
-  
-}
+
 .fade-in-table-body{
   animation: fadeIn 0.5s ease-in;
   opacity: 1;
@@ -1051,6 +1053,77 @@ button:active{
   box-shadow:0 4px 12px rgb(229, 57,53,0.4) ;
 }
 
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 30px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.controls input[type="text"] {
+  padding: 10px 25px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  max-width: 300px;
+  flex-grow: 1;
+  background-color: var(--surface-2);
+  color: var(--text);
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.filter-buttons button {
+  padding: 10px 20px;
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  color: var(--text);
+  font-weight: bold;
+}
+
+.filter-buttons button.active {
+  background-color: var(--accent);
+  color: #fff;
+}
+
+.controls select {
+  padding: 6px 8px;
+  border-radius: 5px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+/* PDF / Print buttons */
+.pdf-btn-container {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.pdf-btn-container button {
+  padding: 15px 20px;
+  border-radius: 10px;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  gap: 10px;
+}
+
+.download-pdf-btn {
+  background-color: #00c9a7;
+}
+
+.print-btn {
+  background-color: var(--loss);
+}
 
 
 

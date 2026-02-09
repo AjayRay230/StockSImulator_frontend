@@ -111,7 +111,8 @@ useEffect(() => {
         <p>No transactions found.</p>
       ) : (
         <div ref={PrintRef}>
-          <h2 style={{textAlign:"center",margin:"40px"}}>Transaction History</h2>
+          <h2 className="page-title">Transaction History</h2>
+
         <div   className="table-container">
         <table className="transaction-table">
           <thead>
