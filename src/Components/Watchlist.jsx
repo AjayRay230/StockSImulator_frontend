@@ -107,7 +107,7 @@ const WatchList = ()=>{
             <button onClick={handleAdd} ><FiPlusCircle style={{marginRight:"6px", width:"40px"}}/> Add</button>
             </div>
             
-                    <div className="watclist-list">
+                    <div className="watchlist-list">
                     {watchlist.map((item,index)=>(
                         <motion.div className="stock-card" key = {index}
                         initial={{opacity:0,y:20}}
