@@ -1140,8 +1140,8 @@ button:active{
 ================================ */
 
 .watchlist-container {
-  max-width: 1400px;
-  padding: 30px 48px;
+  max-width: 1500px;
+  padding: 32px 56px;
   margin: 0 auto;
   font-family: Arial, sans-serif;
 }
@@ -1194,7 +1194,7 @@ button:active{
 
 .watchlist-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(560px, 1fr));
   gap: 32px;
   align-items: start;
 }
