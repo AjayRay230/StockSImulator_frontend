@@ -196,26 +196,39 @@ button:disabled {
   top: 64px;
   left: 0;
   bottom: 0;
-  width: 60px; /* collapsed width */
-  overflow-x: auto;
- overflow-y: hidden;
+
+  width: 60px;
   padding: 20px 10px;
   box-sizing: border-box;
-  color: white;
-  z-index: 900;
-  background: linear-gradient(180deg, #0f0f0f, #1e293b);
 
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
-  transition: width 0.3s ease-in-out, padding 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(
+    180deg,
+    var(--surface),
+    var(--surface-2)
+  );
+
+  color: var(--text);
+  border-right: 1px solid var(--border);
+  box-shadow: var(--shadow);
+
+  overflow-x: auto;
+  overflow-y: hidden;
+  z-index: 900;
+
+  transition:
+    width 0.3s ease,
+    padding 0.3s ease,
+    background 0.3s ease,
+    color 0.3s ease;
 }
+
 
 
 /* Expanded state */
 .sidebar.active {
   width: 220px; /* expanded width */
   padding: 20px 18px;
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.6);
+ 
 }
 
 /* Sidebar links/buttons */
@@ -223,7 +236,7 @@ button:disabled {
 .sidebar-menu button {
   text-decoration: none;
   background: none;
-  color: white;
+ color: var(--text);
   padding: 10px 12px;
   border-radius: 10px;
   font-size: 1rem;
@@ -243,9 +256,12 @@ button:disabled {
 /* Hover effects */
 .sidebar-menu a:hover,
 .sidebar-menu button:hover {
-  background: rgba(255, 255, 255, 0.08);
-  transform: translateX(6px);
-  box-shadow: inset 2px 0 0 #3b82f6;
+  background: color-mix(
+    in srgb,
+    var(--accent) 15%,
+    transparent
+  );
+  box-shadow: inset 2px 0 0 var(--accent);
 }
 
 /* Ripple-like hover effect */
@@ -270,7 +286,7 @@ button:disabled {
 /* Icon styling */
 .sidebar .icon1 {
   font-size: 18px;
-  color: #fff;
+   color: var(--text);
   min-width: 24px; 
   text-align: center;
   transition: color 0.3s ease, transform 0.3s ease;
@@ -290,13 +306,21 @@ button:disabled {
   font-size: 1.4rem;
   margin-bottom: 15px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.05);
+  background: color-mix(
+    in srgb,
+    var(--text) 8%,
+    transparent
+  );
   transition: background 0.3s ease;
   z-index: 10;
 }
 
 .toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
+    background: color-mix(
+    in srgb,
+    var(--text) 14%,
+    transparent
+  );
 }
 
 /* Smooth text hide/show for collapsed sidebar */
@@ -497,6 +521,10 @@ button:disabled {
   transform: translate(-50%);
   color:#6b7280;
   
+}
+
+.user-name {
+  color: var(--text);
 }
                                       /* portfolio css  */
      /* .portfolio-parent{
