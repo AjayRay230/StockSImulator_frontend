@@ -131,15 +131,18 @@ const RegistrationForm = ({OnRegister})=>{
           required
         />
 
-        <label className="auth-register-terms">
-          <input
-            type="checkbox"
-            name="acceptTerms"
-            checked={form.acceptTerms}
-            onChange={handleCheckBoxChange}
-          />
-          <span>I accept the terms & conditions</span>
-        </label>
+<div className="auth-register-terms">
+  <label className="auth-register-terms-label">
+    <input
+      type="checkbox"
+      name="acceptTerms"
+      checked={form.acceptTerms}
+      onChange={handleCheckBoxChange}
+    />
+    <span>I accept the terms & conditions</span>
+  </label>
+</div>
+
 
         <button type="submit" className="auth-register-btn">
           Register
