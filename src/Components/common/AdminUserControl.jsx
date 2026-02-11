@@ -104,7 +104,7 @@ setUsers(
           </tr>
         </thead>
         <tbody>
-          {users.slice(0,1).map((u) => (
+          {users.map((u) => (
             <tr key={u.userId}>
               <td>{u.userId}</td>
               <td>{u.username}</td>
