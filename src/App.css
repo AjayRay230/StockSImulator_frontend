@@ -1550,8 +1550,9 @@ button:active{
   border-radius: 20px;
 
   backdrop-filter: blur(20px);
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+background: var(--surface);
+border: 1px solid var(--border);
+
 
   box-shadow: 
     0 20px 40px rgba(0, 0, 0, 0.3),
@@ -1590,13 +1591,15 @@ button:active{
   padding: 0.85rem 1rem;
   border-radius: 12px;
 
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
   color: var(--text);
+
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
   font-size: 0.95rem;
   transition: all 0.25s ease;
 }
+
 
 .auth-register-form input:focus {
   border-color: var(--accent);
@@ -1621,9 +1624,10 @@ button:active{
 .auth-register-terms {
   display: flex;
   align-items: center;
+  justify-content: center;   /* THIS FIXES ALIGNMENT */
   gap: 0.5rem;
   font-size: 0.85rem;
-  color: #374151;
+  color: var(--text-muted);
 }
 
 /* Button */
