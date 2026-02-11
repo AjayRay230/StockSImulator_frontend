@@ -1466,51 +1466,73 @@ button:active{
 
 
                                   /* Add User form css */
-
-/* .adduser-container{
+.adduser-container {
+  width: 100%;
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #f2f6fc;
+  margin-top: 2rem;
 }
-.adduser-form{
-  background-color: #ffffff;
-  padding:2rem 2.5rem;
-  border-radius: 1rem;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  width:400px;
-  display:flex;
-  flex-direction: column;
-  gap:1.5rem;
 
+.adduser-form {
+  width: 100%;
+  max-width: 900px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: var(--shadow);
 
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  align-items: end;
 }
-.adduser-form input,.adduser-form select{
-  padding:0.75rem 1rem;
-  font-size: 1rem;
-  border:1px solid #ccc;
-  border-radius: 0.5rem;
-  transition: border-color 0.3s ease;
+
+/* Inputs & Select */
+.adduser-form input,
+.adduser-form select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
 }
-.adduser-form input:focus{
-  border-color: #007bff;
+
+.adduser-form input:focus,
+.adduser-form select:focus {
   outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
-.adduser-form button{
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  background-color: #007bff;
-  color:white;
-  border:none;
+
+/* Button */
+.adduser-form button {
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  border: none;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-weight: bold;
-  
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  transition: all 0.25s ease;
 }
-.adduser-form button:hover{
-  background-color: #0056b3;
-} */
+
+.adduser-form button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .adduser-form {
+    grid-template-columns: 1fr;
+  }
+}
+
 
 /* =========================
    REGISTER PAGE (SCOPED)
