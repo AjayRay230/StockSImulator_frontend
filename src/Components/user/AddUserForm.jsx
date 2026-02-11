@@ -14,37 +14,45 @@ const AddUserForm = ({onAdd})=>{
       const{name,value} = e.target;
       setForm((prev)=>({...prev,[name]:value}));
     }
-    const handleSubmit = async(e)=>{
-        e.preventDefault();
-        try{
-            const token = localStorage.getItem("token");
-            await axios.post(`https://stocksimulator-backend.onrender.com/api/user/add`,form,{
-                headers:{
-                    Authorization:`Bearer ${token}`,
-                }
-            });
-            alert("user registered successfully");
-            onAdd?.();
-            setForm({
-                    firstName:"",
-                    lastName:"",
-                    username:"",
-                    password:"",
-                    email:"",
-                    role:"USER"
-                    });
+    const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        }
-        catch(err)
-        {
-            console.log("Error while submitting the form",err);
-            alert(err.response?.data||"Registration failed");
-        }
-    }
+    const token = localStorage.getItem("token");
+
     if (!token) {
-  alert("Unauthorized. Please login again.");
-  return;
-}
+        alert("Unauthorized. Please login again.");
+        return;
+    }
+
+    try {
+        await axios.post(
+            "https://stocksimulator-backend.onrender.com/api/user/add",
+            form,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        alert("User registered successfully");
+        onAdd?.();
+
+        setForm({
+            firstName: "",
+            lastName: "",
+            username: "",
+            password: "",
+            email: "",
+            role: "USER",
+        });
+
+    } catch (err) {
+        console.log("Error while submitting the form", err);
+        alert(err.response?.data || "Registration failed");
+    }
+};
+
 
    return(
     <div className="adduser-container">
