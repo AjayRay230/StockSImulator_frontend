@@ -1271,78 +1271,128 @@ button:active{
 
 .auth-login-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fb, #eef2ff);
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.auth-login-page::before {
+  content: "";
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(
+    circle,
+    rgba(79, 70, 229, 0.25),
+    transparent 60%
+  );
+  top: -200px;
+  right: -200px;
+  z-index: 0;
 }
 
 /* Card */
 .auth-login-card {
-  width: 360px;
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 2rem;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
-  animation: authCardFade 0.5s ease;
+  width: 100%;
+  max-width: 420px;
+  padding: 2.4rem;
+  border-radius: 20px;
+
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.3),
+    0 0 80px rgba(79, 70, 229, 0.15);
+
+  position: relative;
+  z-index: 1;
+  animation: authCardFade 0.4s ease;
 }
+
 
 /* Banner */
 .auth-login-banner {
   padding: 0.8rem 1rem;
-  border-radius: 12px;
+  border-radius: 14px;
   font-size: 0.9rem;
   text-align: center;
-  margin-bottom: 1.2rem;
+  margin-bottom: 1.5rem;
+  backdrop-filter: blur(10px);
   animation: authSlideDown 0.4s ease;
 }
 
 .auth-login-banner--manual {
-  background: #e8f5e9;
-  color: #1b5e20;
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
 .auth-login-banner--expired {
-  background: #fff3e0;
-  color: #e65100;
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.3);
 }
+
 
 /* Form */
 .auth-login-form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  width: 100%;
 }
 
 .auth-login-form input {
-  padding: 0.75rem 1rem;
-  border-radius: 10px;
-  border: 1px solid #d0d7e2;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+
+  color: var(--text);
+
   font-size: 0.95rem;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 }
 
 .auth-login-form input:focus {
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.25);
+  background: rgba(255, 255, 255, 0.08);
   outline: none;
 }
-
 .auth-login-form button {
-  margin-top: 0.5rem;
-  padding: 0.8rem;
-  border-radius: 12px;
+  margin-top: 0.8rem;
+  padding: 0.95rem;
+  border-radius: 14px;
   border: none;
-  background: #4f46e5;
-  color: #ffffff;
+
+  background: linear-gradient(
+    135deg,
+    #4f46e5,
+    #6366f1
+  );
+
+  color: white;
   font-weight: 600;
+  letter-spacing: 0.3px;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  transition: all 0.25s ease;
 }
 
 .auth-login-form button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(79, 70, 229, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 10px 25px rgba(79, 70, 229, 0.5);
 }
 
 .auth-login-form button:disabled {
@@ -1350,20 +1400,34 @@ button:active{
   cursor: not-allowed;
 }
 
+
 /* Links */
 .auth-login-links {
-  margin-top: 1rem;
+  margin-top: 1.2rem;
   font-size: 0.85rem;
   display: flex;
   justify-content: space-between;
+  color: var(--text-muted);
 }
+
+.auth-login-links a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.auth-login-links a:hover {
+  opacity: 0.8;
+}
+
 
 /* Hint text */
 .auth-login-hint {
   font-size: 0.8rem;
-  color: #6b7280;
   text-align: center;
+  color: var(--text-muted);
 }
+
 
 /* Animations */
 @keyframes authCardFade {
@@ -1387,7 +1451,16 @@ button:active{
     transform: translateY(0);
   }
 }
-
+/* Fix Chrome autofill in dark mode */
+.auth-login-form input:-webkit-autofill,
+.auth-login-form input:-webkit-autofill:hover,
+.auth-login-form input:-webkit-autofill:focus,
+.auth-login-form input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--surface-2) inset !important;
+  -webkit-text-fill-color: var(--text) !important;
+  border: 1px solid var(--border) !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
 
 
 
