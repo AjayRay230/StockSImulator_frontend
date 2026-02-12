@@ -59,7 +59,6 @@ const AdminTradeStats = () => {
 
   const fetchData = async () => {
     const token = localStorage.getItem("token");
-    console.log("token",token);
     if (!token) {
       setError("Authentication token missing.");
       setLoading(false);
@@ -95,7 +94,7 @@ const AdminTradeStats = () => {
   const recent = Array.isArray(recentTrades) ? recentTrades : [];
   const stocks = Array.isArray(topStocks) ? topStocks : [];
   const executed = Array.isArray(executedTrades) ? executedTrades : [];
-
+  console.log("Active Traders API Response:", traders.data);
   /* ---------- UI STATES ---------- */
   if (loading) {
     return (
