@@ -17,10 +17,6 @@ const StockPage = () => {
         />
         {selectedSymbol && <StockPrice symbol={selectedSymbol} />}
       </div>
-
-      <div className="stock-dashboard">
-        <StockDashboard />
-      </div>
     </div>
   );
 };
