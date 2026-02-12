@@ -1,0 +1,75 @@
+.leaderboard-card {
+  background: #111827;
+  border-radius: 12px;
+  padding: 18px;
+  border: 1px solid #1f2937;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+}
+
+.leaderboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.leaderboard-header h2 {
+  font-size: 16px;
+  color: #00d4ff;
+  font-weight: 600;
+}
+
+.leaderboard-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.leaderboard-tab-btn {
+  background: #1f2937;
+  border: 1px solid #374151;
+  color: #9ca3af;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.leaderboard-tab-btn.active {
+  background: #00d4ff;
+  color: #000;
+  font-weight: 600;
+}
+
+.leaderboard-table-container {
+  margin-top: 10px;
+  overflow-x: auto;
+}
+
+.leaderboard-table-container table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #d1d5db;
+}
+
+.leaderboard-table-container th {
+  text-align: left;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #6b7280;
+  padding: 8px 0;
+}
+
+.leaderboard-table-container td {
+  padding: 10px 0;
+  border-bottom: 1px solid #1f2937;
+}
+
+.leaderboard-badge {
+  background: #1f2937;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #00d4ff;
+  font-weight: 600;
+}
