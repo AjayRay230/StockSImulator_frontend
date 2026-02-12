@@ -136,35 +136,57 @@ const AdminTradeStats = () => {
             {traders.length === 0 ? (
               <div className="empty-state">No trader activity today.</div>
             ) : (
-              <ResponsiveContainer width="100%" height={280}>
-                <BarChart data={traders} layout="vertical">
-                  <XAxis type="number" hide />
-                  <YAxis
-                    dataKey="userName"
-                    type="category"
-                    tick={{ fill: "#94a3b8", fontSize: 12 }}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "#1e293b",
-                      border: "1px solid rgba(255,255,255,0.1)",
-                    }}
-                  />
-                  <Bar dataKey="tradeCount" radius={[0, 6, 6, 0]}>
-                    {traders.map((_, index) => (
-                      <Cell
-                        key={index}
-                        fill={medalColors[index] || "#00d4ff"}
-                      />
-                    ))}
-                    <LabelList
-                      dataKey="tradeCount"
-                      position="right"
-                      fill="#fff"
-                    />
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+<ResponsiveContainer width="100%" height={220}>
+  <BarChart
+    data={traders}
+    layout="vertical"
+    margin={{ top: 5, right: 40, left: 10, bottom: 5 }}
+  >
+    <defs>
+      <linearGradient id="barGradient" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stopColor="#00d4ff" />
+        <stop offset="100%" stopColor="#2563eb" />
+      </linearGradient>
+    </defs>
+
+    <XAxis
+      type="number"
+      tick={{ fill: "#64748b", fontSize: 12 }}
+      axisLine={false}
+      tickLine={false}
+    />
+
+    <YAxis
+      dataKey="userName"
+      type="category"
+      width={120}
+      tick={{
+        fill: "#e2e8f0",
+        fontSize: 13,
+        fontWeight: 500
+      }}
+      axisLine={false}
+      tickLine={false}
+    />
+
+    <Bar
+      dataKey="tradeCount"
+      fill="url(#barGradient)"
+      radius={[6, 6, 6, 6]}
+      barSize={18}
+    >
+      {/* THIS makes values always visible */}
+      <LabelList
+        dataKey="tradeCount"
+        position="right"
+        fill="#ffffff"
+        fontSize={13}
+        fontWeight={600}
+      />
+    </Bar>
+  </BarChart>
+</ResponsiveContainer>
+
             )}
           </div>
 
