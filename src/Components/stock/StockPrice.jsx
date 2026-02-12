@@ -243,9 +243,18 @@ if (!series.length || !series[0]?.data?.length) {
   
     <div className={`chart-card ${darkMode ?"dark":""}`}>
 <div className='chart-header'>
-    {onSimulate && (
-  <button onClick={onSimulate} className="simulate-btn">
-    Simulate
+{onSimulate && (
+  <button
+    onClick={onSimulate}
+    style={{
+      background: "red",
+      padding: "12px",
+      color: "white",
+      fontSize: "16px",
+      marginRight: "10px"
+    }}
+  >
+    SIMULATE TEST BUTTON
   </button>
 )}
 
