@@ -1,7 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import StockPrice from "../Dashboard/StockPrice";
-import SimulateStock from "../Dashboard/SimulateStock";
+import StockPrice from "../stock/StockPrice";
+import SimulateStock from "../stock/SimulateStock";
+
 import TradeHeader from "./TradeHeader";
 
 const TradePage = () => {
