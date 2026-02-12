@@ -3,6 +3,7 @@ import axios from 'axios';
 import Chart from 'react-apexcharts';
 import { toast } from 'react-toastify';
 import { FaMoon, FaSpinner,FaSun } from 'react-icons/fa';
+import SimulateStock from "./SimulateStock";
 
 const calculateSMA = (data,period)=>{
   return data.map((_,idx,arr)=>{
@@ -243,20 +244,8 @@ if (!series.length || !series[0]?.data?.length) {
   
     <div className={`chart-card ${darkMode ?"dark":""}`}>
 <div className='chart-header'>
-{onSimulate && (
-  <button
-    onClick={onSimulate}
-    style={{
-      background: "red",
-      padding: "12px",
-      color: "white",
-      fontSize: "16px",
-      marginRight: "10px"
-    }}
-  >
-    SIMULATE TEST BUTTON
-  </button>
-)}
+<SimulateStock onSimulate={onSimulate} />
+
 
   {onBack && (
     <button onClick={onBack} className="back-btn">
