@@ -2716,17 +2716,21 @@ table thead {
 
 
                         /* Landing Page Css  hero section*/
+/* HERO */
+
 .hero {
   min-height: 75vh;
   display: flex;
   align-items: center;
   padding: 0 12%;
+
   background: linear-gradient(
     180deg,
-    #0b1220 0%,
-    #0e1628 100%
+    var(--hero-gradient-start),
+    var(--hero-gradient-end)
   );
-  color: #fff;
+
+  color: var(--text);
 }
 
 .hero-content {
@@ -2739,13 +2743,13 @@ table thead {
 }
 
 .hero h1 span {
-  color: #4f8cff; /* trading blue */
+  color: var(--accent);
 }
 
 .hero p {
   margin-top: 16px;
   font-size: 1.15rem;
-  color: #cbd5e1;
+  color: var(--text-muted);
 }
 
 .hero-actions {
@@ -2755,7 +2759,7 @@ table thead {
 }
 
 .cta-btn {
-  background: #4f8cff;
+  background: var(--accent);
   color: #fff;
   border: none;
   padding: 14px 28px;
@@ -2766,12 +2770,13 @@ table thead {
 
 .secondary-btn-hero {
   background: transparent;
-  color: #cbd5e1;
-  border: 1px solid #334155;
+  color: var(--text);
+  border: 1px solid var(--border);
   padding: 14px 28px;
   border-radius: 6px;
   cursor: pointer;
 }
+
 
 .hero-metrics {
   display: flex;
@@ -2804,10 +2809,11 @@ table thead {
 
 
                /* Landing Page Features section */
- .features {
+ 
+.features {
   padding: 100px 12%;
-  background: #0b1220;
-  color: #e5e7eb;
+  background: var(--bg);
+  color: var(--text);
 }
 
 .features h2 {
@@ -2822,22 +2828,25 @@ table thead {
 }
 
 .feature-card {
-  background: #111827;
+  background: var(--surface);
   padding: 32px;
   border-radius: 10px;
-  border: 1px solid #1f2937;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
   transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .feature-card:hover {
   transform: translateY(-6px);
-  border-color: #4f8cff;
+  border-color: var(--accent);
 }
 
 .feature-icon {
   font-size: 2rem;
   margin-bottom: 16px;
+  color: var(--accent);
 }
+
                           /* Empty components Css */
 .empty-state {
   text-align: center;
