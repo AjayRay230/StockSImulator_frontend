@@ -4,7 +4,9 @@ import { useUser } from "../../context/userContext";
 const ProtectedRoute = ({ children }) => {
   const { isLoggedIn, authReady } = useUser();
 
-  if (!authReady) return null; // or loader
+  if (!authReady) {
+    return <div>Loading session...</div>;
+  }
 
   if (!isLoggedIn) {
     return <Navigate to="/login" replace />;

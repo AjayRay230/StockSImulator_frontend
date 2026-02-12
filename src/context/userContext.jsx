@@ -10,30 +10,35 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
 
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  const storedUser = localStorage.getItem("user");
 
-    if (token && storedUser) {
-      try {
-        const parsedUser = JSON.parse(storedUser);
+  if (token && storedUser) {
+    try {
+      const parsedUser = JSON.parse(storedUser);
 
-        // Basic validation
-        if (parsedUser?.role && parsedUser?.firstName) {
-          setUser(parsedUser);
-          setRole(parsedUser.role);
-          setIsLoggedIn(true);
-        } else {
-          throw new Error("Invalid user data");
-        }
-      } catch (err) {
-        toast.error("Failed to load user info.");
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
+      if (parsedUser?.role && parsedUser?.firstName) {
+        setUser(parsedUser);
+        setRole(parsedUser.role);
+        setIsLoggedIn(true);
+      } else {
+        throw new Error("Invalid user data");
       }
+    } catch (err) {
+      toast.error("Failed to load user info.");
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
     }
-  }, []);
+  }
+
+  // IMPORTANT
+  setAuthReady(true);
+
+}, []);
+
 
 const login = (responseData) => {
  const { token, role, firstName, lastName } = responseData;
@@ -97,7 +102,8 @@ const logout = (reason = "manual") => {
 
 
   return (
-    <UserContext.Provider value={{ isLoggedIn, role, user, setUser, login, logout }}>
+   <UserContext.Provider value={{ isLoggedIn, role, user, setUser, login, logout, authReady }}>
+
       {children}
     </UserContext.Provider>
   );
