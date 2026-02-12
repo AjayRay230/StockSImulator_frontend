@@ -7,7 +7,7 @@ import StockPrice from "./StockPrice";
 import { useNavigate } from "react-router-dom";
 const StockDashboard = ()=>{
  const[stocks,setStocks] = useState([]);
- const[selectedSymbol,setSelectedSymbol] = useState("");
+ const[selectedSymbol,setSelectedSymbol] = useState("AAPL");
  const [loading, setLoading] = useState(true);
 const navigate = useNavigate();
 const [refreshKey, setRefreshKey] = useState(0);
