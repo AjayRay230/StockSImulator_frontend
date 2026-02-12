@@ -47,13 +47,21 @@ useEffect(()=>{
 return(
     <div className="">
  <section>
-  <header>
-    <h2>All Stocks</h2>
-    <StockSelector onSelect={setSelectedSymbol} />
-    <SimulateStock onSimulate={fetchStocks} />
-  </header>
+<header>
+  <h2>All Stocks</h2>
 
-  {selectedSymbol && <StockPrice symbol={selectedSymbol} />}
+  <StockSelector
+    selectedSymbol={selectedSymbol}
+    onChange={setSelectedSymbol}
+  />
+
+  <SimulateStock onSimulate={fetchStocks} />
+</header>
+
+{selectedSymbol && (
+  <StockPrice symbol={selectedSymbol} />
+)}
+
 
   {loading && <p>Loading stocks...</p>}
 
