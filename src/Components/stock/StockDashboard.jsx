@@ -46,36 +46,45 @@ useEffect(()=>{
 },[]);
 return(
     <div className="">
- <section>
-<header>
-  <h2>All Stocks</h2>
+      <div className="dashboard">
 
-  <StockSelector
-    selectedSymbol={selectedSymbol}
-    onChange={setSelectedSymbol}
-  />
+  <header>
+    <h2>Stock Overview</h2>
 
-  <SimulateStock onSimulate={fetchStocks} />
-</header>
+    <StockSelector
+      selectedSymbol={selectedSymbol}
+      onChange={setSelectedSymbol}
+    />
 
-{selectedSymbol && (
-  <StockPrice symbol={selectedSymbol} />
-)}
+    <SimulateStock onSimulate={fetchStocks} />
+  </header>
 
+  {selectedSymbol ? (
+    <StockPrice
+  symbol={selectedSymbol}
+  onBack={() => setSelectedSymbol("")}
+/>
 
-  {loading && <p>Loading stocks...</p>}
+  ) : (
+    <>
+      {loading && <p>Loading stocks...</p>}
 
-  {!loading && stocks.length === 0 && (
-    <p>No stocks available</p>
+      {!loading && stocks.length === 0 && (
+        <p>No stocks available</p>
+      )}
+
+      {!loading && (
+        <main className="stock-grid">
+          {stocks.map((stock) => (
+            <StockCard key={stock.symbol} stock={stock} />
+          ))}
+        </main>
+      )}
+    </>
   )}
 
-  <main>
-    {!loading &&
-      stocks.map((stock) => (
-        <StockCard key={stock.symbol} stock={stock} />
-      ))}
-  </main>
-</section>
+</div>
+
 
 
     </div>

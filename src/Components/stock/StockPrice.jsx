@@ -39,7 +39,7 @@ const calculateEMA = (data,period)=>{
   return ema;
 };
 
-const StockPrice = ({ symbol }) => {
+const StockPrice = ({ symbol,OnBack }) => {
   const [loading, setLoading] = useState(false);
   const [series, setSeries] = useState([]);
   const[darkMode,setDarkMode] = useState(null);
@@ -242,11 +242,20 @@ if (!series.length || !series[0]?.data?.length) {
   ) : (
   
     <div className={`chart-card ${darkMode ?"dark":""}`}>
-      <div className='chart-header'>
-        <button onClick={()=>setDarkMode(!darkMode)}>
-          {darkMode ?<FaSun/>:<FaMoon/>}
-        </button>
-        <div className="range-selector">
+<div className='chart-header'>
+
+  {onBack && (
+    <button onClick={onBack} className="back-btn">
+      ← Back
+    </button>
+  )}
+
+  <button onClick={() => setDarkMode(!darkMode)}>
+    {darkMode ? <FaSun /> : <FaMoon />}
+  </button>
+
+  <div className="range-selector">
+
         {["1D","5D","1M","1Y","MAX"].map(r=>(
             <button 
             key = {r}
