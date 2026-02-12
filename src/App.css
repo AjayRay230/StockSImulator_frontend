@@ -2772,6 +2772,37 @@ table thead {
   border-radius: 6px;
   cursor: pointer;
 }
+
+.hero-metrics {
+  display: flex;
+  gap: 3rem;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  flex-wrap: wrap;
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.metric-value {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #4f8cff;
+  letter-spacing: 0.5px;
+}
+
+.metric-label {
+  font-size: 0.85rem;
+  color: #9aa4b2;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+
                /* Landing Page Features section */
  .features {
   padding: 100px 12%;

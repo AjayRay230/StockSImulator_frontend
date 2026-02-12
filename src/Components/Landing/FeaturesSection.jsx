@@ -1,39 +1,28 @@
-// FeaturesSection.jsx
+import { FaChartLine, FaFlask, FaStar, FaChartPie } from "react-icons/fa";
+
 const features = [
   {
-    title: "Live Market Prices",
-    description: "Low-latency real-time stock price updates.",
-    icon: "📈",
+    title: "Low-Latency Market Data Feed",
+    description:
+      "Continuously streamed equity price data engineered for minimal latency and high-frequency state synchronization across the trading engine.",
+    icon: <FaChartLine />,
   },
   {
-    title: "Stock Simulation",
-    description: "Test trading strategies without risking capital.",
-    icon: "🧪",
+    title: "Deterministic Trade Execution Engine",
+    description:
+      "Order execution logic modeled to simulate real-market conditions, including position updates, capital constraints, and execution consistency.",
+    icon: <FaFlask />,
   },
   {
-    title: "Watchlist",
-    description: "Track selected stocks in a focused dashboard.",
-    icon: "⭐",
+    title: "Real-Time Portfolio State Tracking",
+    description:
+      "Mark-to-market valuation with continuous P&L recalculation, capital exposure monitoring, and allocation-level visibility.",
+    icon: <FaChartPie />,
+  },
+  {
+    title: "Signal-Focused Watchlist Architecture",
+    description:
+      "Structured asset monitoring for rapid signal validation and volatility-aware observation across selected instruments.",
+    icon: <FaStar />,
   },
 ];
-
-const FeaturesSection = () => {
-  return (
-    <section className="features">
-      <h2>Why Choose Our Platform?</h2>
-
-<div className="features-grid">
-  {features.map((feature, index) => (
-    <div key={index} className="feature-card">
-      <div className="feature-icon">{feature.icon}</div>
-      <h3>{feature.title}</h3>
-      <p>{feature.description}</p>
-    </div>
-  ))}
-</div>
-
-    </section>
-  );
-};
-
-export default FeaturesSection;
