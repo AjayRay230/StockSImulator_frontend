@@ -46,7 +46,7 @@ useEffect(()=>{
     fetchStocks();
 },[]);
 return(
-    <div className="">
+    <div className="dashboard-container">
       <div className="dashboard">
 
   <header>

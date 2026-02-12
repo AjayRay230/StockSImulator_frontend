@@ -33,38 +33,41 @@ const StockSelector = ({ selectedSymbol, onChange }) => {
   if (loading) return <h2  style={{textAlign:"center",fontSize:"18px",color:"#666"}}>Loading ...</h2>;
 
   return (
-    <div className="stock-selector-container">
-      <label htmlFor="stock-dropdown" className="label">
-        Select from availabel stocks:
-      </label>
-      <select
-      id = "stock-dropdown"
-        value={selectedSymbol}
-        onChange={(e) => onChange(e.target.value)}
-        className="drowpdown"
-      >
-        <option value="" disabled hidden>
-          -- choose a stock --
+<div className="stock-selector-container">
+
+  <div className="selector-group">
+    <label htmlFor="stock-dropdown">Select Stock</label>
+    <select
+      id="stock-dropdown"
+      value={selectedSymbol}
+      onChange={(e) => onChange(e.target.value)}
+    >
+      <option value="" disabled hidden>
+        -- choose --
+      </option>
+      {options.map((item, index) => (
+        <option key={index} value={item.symbol}>
+          {item.symbol}
         </option>
-        {options.map((item, index) => (
-          <option key={index} value={item.symbol}>
-            {item.symbol}
-          </option>
-        ))}
-      </select>
-        <label htmlFor="manual-input"  className="label">
-          Or search manually:
-        </label>
-      
-      <input
-        type="text"
-        id = "manual-input"
-        className="manual-input"
-        value = {selectedSymbol}
-        onChange={(e) => onChange(e.target.value.toUpperCase())}
-        placeholder="Enter the symbol (e.g. AAPL, GOOGL)"
-      />
-    </div>
+      ))}
+    </select>
+  </div>
+
+  <div className="selector-divider">OR</div>
+
+  <div className="selector-group">
+    <label htmlFor="manual-input">Search Manually</label>
+    <input
+      type="text"
+      id="manual-input"
+      value={selectedSymbol}
+      onChange={(e) => onChange(e.target.value.toUpperCase())}
+      placeholder="AAPL, GOOGL..."
+    />
+  </div>
+
+</div>
+
   );
 };
 

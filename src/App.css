@@ -829,6 +829,21 @@ button:disabled {
 
 
                       /* Dashboard Action Buttons */
+
+   .dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.dashboard header {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+                   
  .dashboard-actions {
   display: flex;
   gap: 12px;
@@ -1712,36 +1727,53 @@ border: 1px solid var(--border);
 
 
                             /* stock selector css*/
-.stock-selector-container{
-  
-  margin: 20px auto ;
-  padding:16px;
-  border:1px solid #ccc;
-  background-color: #fafafa;
-box-shadow: 0 0 8px rgba(0,0,0,0.05);
-border-radius: 10px;
-font-family: Arial, Helvetica, sans-serif;
-}
-.label{
-  display: block;
-  color:#333;
-  font-weight: bold;
- margin-top: 10px;
- margin-bottom: 10px;
+.stock-selector-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
 
+  padding: 16px 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
-.dropdown,.manual-input{
-  width:100%;
-  padding:10px 7px;
-  text-align: center;
-  border-radius: 5px;
-  border: 1px solid  #ccc;
-  box-sizing: border-box;
-  font-size: 18px;
+
+.selector-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
-.dropdown:focus,.manual-input:focus{
-  border-color:#007bff;
-  outline:none;
+
+.selector-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+}
+
+.selector-group select,
+.selector-group input {
+  min-width: 200px;
+  padding: 8px 12px;
+
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+
+  transition: 0.2s ease;
+}
+
+.selector-group select:focus,
+.selector-group input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+  outline: none;
+}
+
+.selector-divider {
+  font-size: 13px;
+  font-weight: 600;
+  color: #9ca3af;
 }
 
                                   /* Add Portfolio  And BuySell form css *//* ====== Shared Form Styles ====== */
@@ -1877,6 +1909,10 @@ margin-right:6px;
   color:red;
  }
                      /*===== stockPrice CSS ====*/
+
+
+  
+                     
 .chart-card {
   padding: 1rem;
   border-radius: 12px;
@@ -1892,12 +1928,13 @@ margin-right:6px;
 
 .chart-header {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  margin-bottom: 10px;
   align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 15px;
 }
+
 
 .range-selector button {
   background: none;
@@ -2081,6 +2118,37 @@ margin-right:6px;
     font-size: 14px;
   }
 }
+
+
+                                      /* Simulate Stock */
+
+.simulate-btn,
+.back-btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.simulate-btn {
+  background-color: #2563eb;
+  color: white;
+}
+
+.simulate-btn:hover {
+  background-color: #1e4ed8;
+}
+
+.back-btn {
+  background-color: #e5e7eb;
+}
+
+.back-btn:hover {
+  background-color: #d1d5db;
+}
+
 
                 /* AdminDashBoar Css */
  .dashboard-container {
