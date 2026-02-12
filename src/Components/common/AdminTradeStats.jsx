@@ -190,8 +190,13 @@ const AdminTradeStats = () => {
       <td>{trade.stockSymbol}</td>
       <td>{trade.quantity}</td>
       <td>{trade.type}</td>
-      <td>{trade.currentPrice}</td>
-      <td>{(trade.currentPrice * trade.quantity).toFixed(2)}</td>
+      <td>{trade.currentPrice ?? 0}</td>
+      <td>
+      {(
+      (trade.currentPrice ?? 0) * (trade.quantity ?? 0)
+       ).toFixed(2)}
+      </td>
+
     </tr>
   ))}
   </tbody>
