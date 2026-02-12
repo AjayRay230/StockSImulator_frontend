@@ -29,9 +29,16 @@ const HeroSection = () => {
       <button className="cta-btn" onClick={handleGetStarted}>
         Initialize Trading Session
       </button>
-      <button className="secondary-btn-hero">
-        Review Infrastructure
-      </button>
+<button
+  className="secondary-btn-hero"
+  onClick={() =>
+    document.getElementById("features")
+      ?.scrollIntoView({ behavior: "smooth" })
+  }
+>
+  Review Infrastructure
+</button>
+
     </div>
 
     {/* Metrics Row */}

@@ -29,7 +29,7 @@ const features = [
 
 const FeaturesSection = () => {
   return (
-    <section className="features">
+    <section id="features" className="features">
       <h2>System Architecture & Execution Capabilities</h2>
 
       <div className="features-grid">
