@@ -22,6 +22,7 @@ import ResetPassword from './Components/common/ResetPassword';
 import ForgotPassword from './Components/common/ForgotPassWord';
 import LandingPage from "./Components/Landing/LandingPage";
 import ProtectedRoute from './Components/common/ProtectedRoute';
+import TradePage from "./Components/Trade/TradePage";
 function App() {
   const[selectedSymbol,setSelectedSymbol]  = useState("");
   const[loginIn,setLoginIn] = useState(false);
@@ -79,6 +80,7 @@ function App() {
           <Route path = "/search-stock" element = {<SearchStock/>}/>
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/trade/:symbol" element={<TradePage />} />
          </Routes>
          </div>
        <ToastContainer/>

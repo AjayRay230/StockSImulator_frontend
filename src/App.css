@@ -2914,3 +2914,53 @@ th {
   color: var(--text);
   border-color: var(--border);
 }
+                                          /* Trader Section */
+ .trade-header-info {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.price-block {
+  display: flex;
+  flex-direction: column;
+}
+
+.live-price {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.price-change {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.price-change.positive {
+  color: var(--profit);
+}
+
+.price-change.negative {
+  color: var(--loss);
+}
+                                     /* StockCard Section     */
+  .liveprice-wrapper {
+  margin-top: 10px;
+  background: var(--surface-2);
+  padding: 10px;
+  border-radius: 8px;
+}
+   .stockcard-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: var(--shadow);
+  transition: 0.2s ease;
+}
+
+.stockcard-container:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+}
+                                
