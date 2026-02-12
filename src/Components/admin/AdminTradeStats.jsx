@@ -144,7 +144,9 @@ const AdminTradeStats = () => {
                 </tr>
               </thead>
               <tbody>
-                {recentTrades.map((trade, i) => (
+                {Array.isArray(recentTrades) &&
+              recentTrades.map((trade, i) => (
+
                   <tr key={i}>
                     <td>{trade.username}</td>
                     <td>{trade.stockSymbol}</td>
@@ -178,7 +180,9 @@ const AdminTradeStats = () => {
               <FaChartLine /> Top Stocks
             </div>
 
-            {topStocks.map((stock, i) => (
+            {Array.isArray(topStocks) &&
+              topStocks.map((stock, i) => (
+
               <div key={i} className="stock-row">
                 <div>
                   <div className="stock-symbol">
@@ -199,7 +203,9 @@ const AdminTradeStats = () => {
               <FaCheckCircle /> Execution Feed
             </div>
 
-            {executedTrades.map((trade, i) => (
+            {Array.isArray(executedTrades) &&
+            executedTrades.map((trade, i) => (
+
               <div key={i} className="execution-row">
                 <div className="execution-symbol">
                   {trade.stockSymbol}
