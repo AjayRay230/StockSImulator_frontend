@@ -39,7 +39,7 @@ const calculateEMA = (data,period)=>{
   return ema;
 };
 
-const StockPrice = ({ symbol,OnBack }) => {
+const StockPrice = ({ symbol,onBack }) => {
   const [loading, setLoading] = useState(false);
   const [series, setSeries] = useState([]);
   const[darkMode,setDarkMode] = useState(null);
