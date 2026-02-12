@@ -39,7 +39,7 @@ const calculateEMA = (data,period)=>{
   return ema;
 };
 
-const StockPrice = ({ symbol,onBack,refreshKey }) => {
+const StockPrice = ({ symbol,onBack,refreshKey,onSimulate }) => {
   const [loading, setLoading] = useState(false);
   const [series, setSeries] = useState([]);
   const[darkMode,setDarkMode] = useState(null);
@@ -243,6 +243,11 @@ if (!series.length || !series[0]?.data?.length) {
   
     <div className={`chart-card ${darkMode ?"dark":""}`}>
 <div className='chart-header'>
+    {onSimulate && (
+  <button onClick={onSimulate} className="simulate-btn">
+    Simulate
+  </button>
+)}
 
   {onBack && (
     <button onClick={onBack} className="back-btn">

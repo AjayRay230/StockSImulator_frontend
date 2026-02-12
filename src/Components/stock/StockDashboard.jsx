@@ -57,21 +57,26 @@ return(
       onChange={setSelectedSymbol}
     />
 
-   <SimulateStock
+   {/* <SimulateStock
+  onSimulate={() => {
+    fetchStocks();
+    setRefreshKey(prev => prev + 1);
+  }}
+/> */}
+
+  </header>
+
+{selectedSymbol ? (
+<StockPrice
+  symbol={selectedSymbol}
+  refreshKey={refreshKey}
+  onBack={() => setSelectedSymbol("")}
   onSimulate={() => {
     fetchStocks();
     setRefreshKey(prev => prev + 1);
   }}
 />
 
-  </header>
-
-{selectedSymbol ? (
-  <StockPrice
-    symbol={selectedSymbol}
-    refreshKey={refreshKey}
-    onBack={() => setSelectedSymbol("")}
-  />
 ) : (
 
     <>
