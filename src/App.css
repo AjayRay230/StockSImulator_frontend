@@ -135,21 +135,28 @@ html, body {
   max-width: 720px;
   min-width: 220px;
   flex: 1;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+
   padding: 0.5rem 0.8rem;
-  color: white;
   font-size: 0.95rem;
   border-radius: 28px;
+
+  color: var(--text);           /* FIXED */
   transition: all 0.3s ease;
-  backdrop-filter: blur(6px);
 }
+.search-box::placeholder {
+  color: var(--text-muted);
+}
+
    /* disabling search button when user is not login */
 .search-box:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
-  background: rgba(255, 255, 255, 0.25);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(96,165,250,0.2);
+  background: var(--surface);
 }
+
 .search-box:disabled {
   background: #e5e7eb;
   cursor: not-allowed;
