@@ -21,27 +21,37 @@ import {
   FaCheckCircle,
 } from "react-icons/fa";
 
+const API_BASE = "https://stocksimulator-backend.onrender.com";
+
 const medalColors = ["#FFD700", "#C0C0C0", "#CD7F32"];
 
-const Sparkline = ({ data }) => (
-  <ResponsiveContainer width="100%" height={40}>
-    <LineChart data={data}>
-      <Line
-        type="monotone"
-        dataKey="price"
-        stroke="#00d4ff"
-        strokeWidth={2}
-        dot={false}
-      />
-    </LineChart>
-  </ResponsiveContainer>
-);
+/* ---------- Sparkline ---------- */
+const Sparkline = ({ data }) => {
+  const safeData = Array.isArray(data) ? data : [];
+
+  return (
+    <ResponsiveContainer width="100%" height={40}>
+      <LineChart data={safeData}>
+        <Line
+          type="monotone"
+          dataKey="price"
+          stroke="#00d4ff"
+          strokeWidth={2}
+          dot={false}
+        />
+      </LineChart>
+    </ResponsiveContainer>
+  );
+};
 
 const AdminTradeStats = () => {
   const [activeTraders, setActiveTraders] = useState([]);
   const [recentTrades, setRecentTrades] = useState([]);
   const [topStocks, setTopStocks] = useState([]);
   const [executedTrades, setExecutedTrades] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -50,30 +60,58 @@ const AdminTradeStats = () => {
   const fetchData = async () => {
     const token = localStorage.getItem("token");
 
+    if (!token) {
+      setError("Authentication token missing.");
+      setLoading(false);
+      return;
+    }
+
     try {
+      const headers = { Authorization: `Bearer ${token}` };
+
       const [traders, recent, top, executed] = await Promise.all([
-        axios.get("/api/transaction/active-traders?limit=5", {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        axios.get("/api/transaction/recent?limit=10", {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        axios.get("/api/transaction/top-stocks?limit=5", {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        axios.get("/api/transaction/executed?limit=5", {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+        axios.get(`${API_BASE}/api/transaction/active-traders?limit=5`, { headers }),
+        axios.get(`${API_BASE}/api/transaction/recent?limit=10`, { headers }),
+        axios.get(`${API_BASE}/api/transaction/top-stocks?limit=5`, { headers }),
+        axios.get(`${API_BASE}/api/transaction/executed?limit=5`, { headers }),
       ]);
 
-      setActiveTraders(traders.data);
-      setRecentTrades(recent.data);
-      setTopStocks(top.data);
-      setExecutedTrades(executed.data);
+      setActiveTraders(Array.isArray(traders.data) ? traders.data : []);
+      setRecentTrades(Array.isArray(recent.data) ? recent.data : []);
+      setTopStocks(Array.isArray(top.data) ? top.data : []);
+      setExecutedTrades(Array.isArray(executed.data) ? executed.data : []);
+
+      setError(null);
     } catch (err) {
-      console.error(err);
+      console.error("AdminTradeStats fetch error:", err);
+      setError("Failed to load trading data. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
+
+  /* ---------- Safe Normalization ---------- */
+  const traders = Array.isArray(activeTraders) ? activeTraders : [];
+  const recent = Array.isArray(recentTrades) ? recentTrades : [];
+  const stocks = Array.isArray(topStocks) ? topStocks : [];
+  const executed = Array.isArray(executedTrades) ? executedTrades : [];
+
+  /* ---------- UI STATES ---------- */
+  if (loading) {
+    return (
+      <div className="terminal-loading">
+        Loading trading terminal...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="terminal-error">
+        {error}
+      </div>
+    );
+  }
 
   return (
     <div className="terminal-container">
@@ -89,41 +127,45 @@ const AdminTradeStats = () => {
         {/* LEFT PANEL */}
         <div className="terminal-main">
 
-          {/* Leaderboard */}
+          {/* Active Traders */}
           <div className="terminal-card large">
             <div className="card-title">
               <FaUsers /> Active Traders
             </div>
 
-            <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={activeTraders} layout="vertical">
-                <XAxis type="number" hide />
-                <YAxis
-                  dataKey="userName"
-                  type="category"
-                  tick={{ fill: "#94a3b8", fontSize: 12 }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "#1e293b",
-                    border: "1px solid rgba(255,255,255,0.1)",
-                  }}
-                />
-                <Bar dataKey="tradeCount" radius={[0, 6, 6, 0]}>
-                  {activeTraders.map((_, index) => (
-                    <Cell
-                      key={index}
-                      fill={medalColors[index] || "#00d4ff"}
-                    />
-                  ))}
-                  <LabelList
-                    dataKey="tradeCount"
-                    position="right"
-                    fill="#fff"
+            {traders.length === 0 ? (
+              <div className="empty-state">No trader activity today.</div>
+            ) : (
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={traders} layout="vertical">
+                  <XAxis type="number" hide />
+                  <YAxis
+                    dataKey="userName"
+                    type="category"
+                    tick={{ fill: "#94a3b8", fontSize: 12 }}
                   />
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#1e293b",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                    }}
+                  />
+                  <Bar dataKey="tradeCount" radius={[0, 6, 6, 0]}>
+                    {traders.map((_, index) => (
+                      <Cell
+                        key={index}
+                        fill={medalColors[index] || "#00d4ff"}
+                      />
+                    ))}
+                    <LabelList
+                      dataKey="tradeCount"
+                      position="right"
+                      fill="#fff"
+                    />
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
 
           {/* Recent Trades */}
@@ -144,28 +186,37 @@ const AdminTradeStats = () => {
                 </tr>
               </thead>
               <tbody>
-                {Array.isArray(recentTrades) &&
-              recentTrades.map((trade, i) => (
-
-                  <tr key={i}>
-                    <td>{trade.username}</td>
-                    <td>{trade.stockSymbol}</td>
-                    <td>{trade.quantity}</td>
-                    <td>
-                      <span
-                        className={`trade-badge ${
-                          trade.type === "BUY" ? "buy" : "sell"
-                        }`}
-                      >
-                        {trade.type}
-                      </span>
-                    </td>
-                    <td>{trade.currentPrice}</td>
-                    <td>
-                      {(trade.currentPrice * trade.quantity).toFixed(2)}
+                {recent.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="empty-state">
+                      No recent trades.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  recent.map((trade, i) => (
+                    <tr key={i}>
+                      <td>{trade.username}</td>
+                      <td>{trade.stockSymbol}</td>
+                      <td>{trade.quantity}</td>
+                      <td>
+                        <span
+                          className={`trade-badge ${
+                            trade.type === "BUY" ? "buy" : "sell"
+                          }`}
+                        >
+                          {trade.type}
+                        </span>
+                      </td>
+                      <td>{trade.currentPrice}</td>
+                      <td>
+                        {(
+                          (trade.currentPrice || 0) *
+                          (trade.quantity || 0)
+                        ).toFixed(2)}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -180,21 +231,23 @@ const AdminTradeStats = () => {
               <FaChartLine /> Top Stocks
             </div>
 
-            {Array.isArray(topStocks) &&
-              topStocks.map((stock, i) => (
-
-              <div key={i} className="stock-row">
-                <div>
-                  <div className="stock-symbol">
-                    {stock.stockSymbol}
+            {stocks.length === 0 ? (
+              <div className="empty-state">No stock activity.</div>
+            ) : (
+              stocks.map((stock, i) => (
+                <div key={i} className="stock-row">
+                  <div>
+                    <div className="stock-symbol">
+                      {stock.stockSymbol}
+                    </div>
+                    <div className="stock-count">
+                      {stock.tradeCount} trades
+                    </div>
                   </div>
-                  <div className="stock-count">
-                    {stock.tradeCount} trades
-                  </div>
+                  <Sparkline data={stock.trendData} />
                 </div>
-                <Sparkline data={stock.trendData || []} />
-              </div>
-            ))}
+              ))
+            )}
           </div>
 
           {/* Execution Feed */}
@@ -203,21 +256,25 @@ const AdminTradeStats = () => {
               <FaCheckCircle /> Execution Feed
             </div>
 
-            {Array.isArray(executedTrades) &&
-            executedTrades.map((trade, i) => (
-
-              <div key={i} className="execution-row">
-                <div className="execution-symbol">
-                  {trade.stockSymbol}
+            {executed.length === 0 ? (
+              <div className="empty-state">No executions today.</div>
+            ) : (
+              executed.map((trade, i) => (
+                <div key={i} className="execution-row">
+                  <div className="execution-symbol">
+                    {trade.stockSymbol}
+                  </div>
+                  <div className="execution-count">
+                    {trade.tradeCount} trades
+                  </div>
+                  <div className="execution-time">
+                    {trade.timestamp
+                      ? new Date(trade.timestamp).toLocaleTimeString()
+                      : "-"}
+                  </div>
                 </div>
-                <div className="execution-count">
-                  {trade.tradeCount} trades
-                </div>
-                <div className="execution-time">
-                  {new Date(trade.timestamp).toLocaleTimeString()}
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 
