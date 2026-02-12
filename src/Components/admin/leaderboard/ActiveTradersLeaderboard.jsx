@@ -20,6 +20,7 @@ import "./ActiveTradersLeaderboard.css";
 
 export default function ActiveTradersLeaderboard({ activeTraders = [] }) {
   const [view, setView] = useState("chart");
+  const traders = Array.isArray(activeTraders) ? activeTraders : [];
 
   const medalColors = ["#FFD700", "#C0C0C0", "#CD7F32"];
 
@@ -60,7 +61,7 @@ export default function ActiveTradersLeaderboard({ activeTraders = [] }) {
         {view === "chart" ? (
           <ResponsiveContainer width="100%" height={260}>
             <BarChart
-              data={activeTraders}
+              data={traders}
               layout="vertical"
               margin={{ top: 10, right: 30, left: 10, bottom: 10 }}
             >
@@ -82,7 +83,7 @@ export default function ActiveTradersLeaderboard({ activeTraders = [] }) {
               />
 
               <Bar dataKey="tradeCount" radius={[0, 6, 6, 0]}>
-                {activeTraders.map((_, index) => (
+                {traders.map((_, index) => (
                   <Cell
                     key={index}
                     fill={medalColors[index] || "#00d4ff"}
@@ -109,7 +110,7 @@ export default function ActiveTradersLeaderboard({ activeTraders = [] }) {
                 </tr>
               </thead>
               <tbody>
-                {activeTraders.map((trader, index) => (
+                {traders.map((trader, index) => (
                   <tr key={trader.userId || index}>
                     <td>
                       {index < 3 ? (
