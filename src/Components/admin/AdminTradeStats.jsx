@@ -156,7 +156,7 @@ const AdminTradeStats = () => {
     />
 
     <YAxis
-      dataKey="userName"
+      dataKey="username"
       type="category"
       width={120}
       tick={{
