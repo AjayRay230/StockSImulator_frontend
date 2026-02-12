@@ -10,6 +10,7 @@ const StockDashboard = ()=>{
  const[selectedSymbol,setSelectedSymbol] = useState("");
  const [loading, setLoading] = useState(true);
 const navigate = useNavigate();
+const [refreshKey, setRefreshKey] = useState(0);
 
 const fetchStocks = async () => {
   try {
@@ -56,16 +57,23 @@ return(
       onChange={setSelectedSymbol}
     />
 
-    <SimulateStock onSimulate={fetchStocks} />
-  </header>
-
-  {selectedSymbol ? (
-    <StockPrice
-  symbol={selectedSymbol}
-  onBack={() => setSelectedSymbol("")}
+   <SimulateStock
+  onSimulate={() => {
+    fetchStocks();
+    setRefreshKey(prev => prev + 1);
+  }}
 />
 
-  ) : (
+  </header>
+
+{selectedSymbol ? (
+  <StockPrice
+    symbol={selectedSymbol}
+    refreshKey={refreshKey}
+    onBack={() => setSelectedSymbol("")}
+  />
+) : (
+
     <>
       {loading && <p>Loading stocks...</p>}
 
