@@ -20,27 +20,36 @@ const StockSelector = ({ selectedSymbol, onChange }) => {
     return () => clearTimeout(timer);
   }, [input]);
 
-  const fetchStocks = async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
+const fetchStocks = async () => {
+  try {
+    setLoading(true);
 
-      const res = await axios.get(
-        `/api/stock/search?query=${input}`,
-        {
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
+    const token = localStorage.getItem("token");
 
-      setSuggestions(res.data);
-      setShowDropdown(true);
-    } catch {
-      setSuggestions([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const res = await axios.get(
+      "https://stocksimulator-backend.onrender.com/api/stock/search",
+      {
+        params: { query: input },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
+    const data = res.data;
+
+    setSuggestions(
+      Array.isArray(data) ? data : data.content || []
+    );
+
+    setShowDropdown(true);
+  } catch (err) {
+    console.error("Search error:", err);
+    setSuggestions([]);
+  } finally {
+    setLoading(false);
+  }
+};
   const handleSelect = (stock) => {
     setInput(`${stock.symbol} - ${stock.companyname}`);
     onChange(stock.symbol);   // send only symbol to parent form
