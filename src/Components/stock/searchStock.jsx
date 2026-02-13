@@ -1,75 +1,95 @@
 import axios from "axios";
-import { FaDollarSign, FaChartLine, FaClock } from "react-icons/fa";
-import {useRef, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-
+import { FaChartLine, FaClock, FaSpinner } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const SearchStock = () => {
-
   const { symbol } = useParams();
+
   const [stock, setStock] = useState(null);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    const fetchStock = async () => {
+      try {
+        setLoading(true);
+        setError("");
+        setStock(null);
 
-useEffect(() => {
-  const fetchStock = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(
-        `https://stocksimulator-backend.onrender.com/api/stock/${symbol}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setStock(response.data);
-      setError("");
-    } catch (err) {
-      setStock(null);
-      setError("Stock not found");
-    }
-  };
+        const token = localStorage.getItem("token");
 
-  if (symbol) fetchStock();
-}, [symbol]);
+        const response = await axios.get(
+          `/api/stock/${symbol}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setStock(response.data);
+
+      } catch {
+        setError("Stock not found");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (symbol) fetchStock();
+  }, [symbol]);
+
+  const isPositive = stock?.changepercent >= 0;
+
   return (
     <div className="search-card">
 
-      {error && <p className="error-stocksymbol">{error}</p>}
-      {stock && (
-  <div className="searchstock-body">
+      {loading && (
+        <div className="searchstock-loading">
+          <FaSpinner className="icons-spin" /> Loading...
+        </div>
+      )}
 
-    <h2 className="searchstock-title">
-      {stock.companyname}
-      <span className="searchstock-symbol">
-        ({stock.symbol})
-      </span>
-    </h2>
+      {error && !loading && (
+        <p className="error-stocksymbol">{error}</p>
+      )}
 
-    <div className="searchstock-price">
-      ${stock.currentprice}
-    </div>
+      {stock && !loading && (
+        <div className="searchstock-body">
 
-    <div
-      className={`searchstock-change ${
-        stock.changepercent >= 0
-          ? "searchstock-positive"
-          : "searchstock-negative"
-      }`}
-    >
-      <FaChartLine />
-      {stock.changepercent >= 0 ? "+" : ""}
-      {stock.changepercent}%
-    </div>
+          <h2 className="searchstock-title">
+            {stock.companyname}
+            <span className="searchstock-symbol">
+              ({stock.symbol})
+            </span>
+          </h2>
 
-    <div className="searchstock-updated">
-      <FaClock />
-      Updated {new Date(stock.lastupdate).toLocaleString()}
-    </div>
+          <div className="searchstock-price">
+            ${Number(stock.currentprice || 0).toFixed(2)}
+          </div>
 
-  </div>
-)}
+          <div
+            className={`searchstock-change ${
+              isPositive
+                ? "searchstock-positive"
+                : "searchstock-negative"
+            }`}
+          >
+            <FaChartLine />
+            {isPositive ? "+" : ""}
+            {Number(stock.changepercent || 0).toFixed(2)}%
+          </div>
+
+          <div className="searchstock-updated">
+            <FaClock />
+            {stock.lastupdate
+              ? `Updated ${new Date(stock.lastupdate).toLocaleString()}`
+              : "Update time unavailable"}
+          </div>
+
+        </div>
+      )}
     </div>
   );
 };

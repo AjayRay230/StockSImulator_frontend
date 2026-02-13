@@ -1789,58 +1789,43 @@ border: 1px solid var(--border);
 
 
                             /* stock selector css*/
-.stock-selector-container {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex-wrap: wrap;
-
-  padding: 12px 20px;
-  margin-bottom: 20px;
-
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+.stock-selector {
+  position: relative;
+  width: 100%;
 }
 
-
-.selector-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.stock-selector input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
 }
 
-.selector-group label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #555;
-}
-
-.selector-group select,
-.selector-group input {
-  min-width: 200px;
-  padding: 8px 12px;
-
+.stock-dropdown {
+  position: absolute;
+  width: 100%;
+  background: var(--surface);
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  font-size: 14px;
-
-  transition: 0.2s ease;
+  max-height: 250px;
+  overflow-y: auto;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  z-index: 1000;
 }
 
-.selector-group select:focus,
-.selector-group input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
-  outline: none;
+.stock-dropdown li {
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background 0.2s ease;
 }
 
-.selector-divider {
-  font-size: 13px;
-  font-weight: 600;
-  color: #9ca3af;
+.stock-dropdown li:hover {
+  background: var(--surface-2);
 }
 
+.selector-loading {
+  font-size: 12px;
+  margin-top: 4px;
+  color: var(--text-muted);
+}
                                   /* Add Portfolio  And BuySell form css *//* ====== Shared Form Styles ====== */
 /* ===== Form Container ===== */
 .portfolio-form,.buysell-form{

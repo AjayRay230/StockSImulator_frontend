@@ -1,90 +1,143 @@
-import { useState } from "react"
+import { useState } from "react";
 import { useUser } from "../../context/userContext";
-import { addPortfolioItem} from "../../api/portfolioAxios";
+import { addPortfolioItem } from "../../api/portfolioAxios";
 import StockSelector from "../stock/StockSelector";
 import { toast } from "react-toastify";
-import { FaHashtag, FaSortNumericUp, FaDollarSign, FaSpinner } from "react-icons/fa";
+import {
+  FaHashtag,
+  FaSortNumericUp,
+  FaDollarSign,
+  FaSpinner
+} from "react-icons/fa";
 
-const AddPortfolioForm =({onAdd})=>{
-   const{user} = useUser();
-   const[loading,setLoading] = useState(false);
-  // if(!userId) alert("user is undefined ")
-   const[form,setForm] = useState({
-    stocksymbol:"",
+const AddPortfolioForm = ({ onAdd }) => {
+  const { user } = useUser();
+  const [loading, setLoading] = useState(false);
+
+  const [form, setForm] = useState({
+    stocksymbol: "",
     quantity: "",
-    averagebuyprice:""
-   }) ;
-   const handleChange = (e) => {
-  const { name, value } = e.target;
-  setForm({
-    ...form,
-    [name]: name === "quantity" || name === "averagebuyprice" ? parseFloat(value) : value,
+    averagebuyprice: ""
   });
-};
-const handleSubmit = async (e) => {
-  e.preventDefault();
 
-  const token = localStorage.getItem("token");
-  if (!token) {
-    toast.info("Please login to add stocks");
-    window.location.href = "/login";
-    return;
-  }
+  // 🔹 Safe input handling (no NaN issue)
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-  if (!form.stocksymbol || form.quantity <= 0 || form.averagebuyprice <= 0) {
-    toast.warn("Please fill all the fields");
-    return;
-  }
+    setForm((prev) => ({
+      ...prev,
+      [name]:
+        name === "quantity" || name === "averagebuyprice"
+          ? value === "" ? "" : Number(value)
+          : value
+    }));
+  };
 
-  try {
-    setLoading(true);
-    await addPortfolioItem(form); // ✅ no userId
-    onAdd();
-    setForm({ stocksymbol: "", quantity: 0, averagebuyprice: 0 });
-  } catch (err) {
-    toast.error("Failed to add stock");
-  } finally {
-    setLoading(false);
-  }
-};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    
-   return (
-    
+    if (!form.stocksymbol) {
+      toast.warn("Please select a stock");
+      return;
+    }
+
+    if (!form.quantity || form.quantity <= 0) {
+      toast.warn("Quantity must be greater than 0");
+      return;
+    }
+
+    if (!form.averagebuyprice || form.averagebuyprice <= 0) {
+      toast.warn("Average price must be greater than 0");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      await addPortfolioItem({
+        stocksymbol: form.stocksymbol.toUpperCase(),
+        quantity: form.quantity,
+        averagebuyprice: form.averagebuyprice
+      });
+
+      toast.success("Stock added successfully");
+
+      // Refresh portfolio
+      onAdd();
+
+      // Clean reset (no 0 flicker)
+      setForm({
+        stocksymbol: "",
+        quantity: "",
+        averagebuyprice: ""
+      });
+
+    } catch (err) {
+      toast.error("Failed to add stock");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
     <form onSubmit={handleSubmit} className="portfolio-form">
-      <h3 style={{textAlign:"center",color:"#222",fontSize:"22px",marginBottom:"20px"}}>Add Stock to portfolio </h3>
-      <label><FaHashtag className="icon"/> Stock Symbol:
-        <StockSelector selectedSymbol={form.stocksymbol}
-        onChange = {(Symbol)=>setForm({...form,stocksymbol:Symbol})}
-        />
-        </label>
-        <label><FaSortNumericUp className="icon"/> Quantity:
-        <input type = "number" name = "quantity" 
-        placeholder="Quantity" value={form.quantity|| ""} 
-        onChange={handleChange}
-        min = "0"
-        step ="any"
-        />
-        </label>
-        <label><FaDollarSign className="icon"/> Avg. Buy Price:
-        <input type = "number" name ="averagebuyprice" placeholder="Avg Buy Price"
-         value={form.averagebuyprice|| ""} 
-         onChange={handleChange}
-         min = "0"
-         step = "any"
-         />
-         </label>
-        <button type="submit" disabled={loading}>
-          {loading ?(
-            <>
-            <FaSpinner className="icons-spin"/>Processing... 
-            </>
-          ):(
-            "Add"
-          )}
+      <h3 className="form-title">
+        Add Stock to Portfolio
+      </h3>
 
-        </button>
+      <label>
+        <FaHashtag className="icon" />
+        Stock Symbol:
+        <StockSelector
+          selectedSymbol={form.stocksymbol}
+          onChange={(symbol) =>
+            setForm((prev) => ({
+              ...prev,
+              stocksymbol: symbol
+            }))
+          }
+        />
+      </label>
+
+      <label>
+        <FaSortNumericUp className="icon" />
+        Quantity:
+        <input
+          type="number"
+          name="quantity"
+          placeholder="Quantity"
+          value={form.quantity}
+          onChange={handleChange}
+          min="0"
+          step="any"
+        />
+      </label>
+
+      <label>
+        <FaDollarSign className="icon" />
+        Avg. Buy Price:
+        <input
+          type="number"
+          name="averagebuyprice"
+          placeholder="Avg Buy Price"
+          value={form.averagebuyprice}
+          onChange={handleChange}
+          min="0"
+          step="any"
+        />
+      </label>
+
+      <button type="submit" disabled={loading}>
+        {loading ? (
+          <>
+            <FaSpinner className="icons-spin" /> Processing...
+          </>
+        ) : (
+          "Add"
+        )}
+      </button>
     </form>
-   )
-}
+  );
+};
+
 export default AddPortfolioForm;

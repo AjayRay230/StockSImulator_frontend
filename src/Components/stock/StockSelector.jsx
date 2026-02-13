@@ -2,72 +2,77 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 const StockSelector = ({ selectedSymbol, onChange }) => {
-  const [options, setOptions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [input, setInput] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchSymbols = async () => {
-      try {
-        const token = localStorage.getItem("token");
-       // console.log("JWT Token:", token);
+    if (input.length < 2) {
+      setSuggestions([]);
+      return;
+    }
 
-        const response = await axios.get("https://stocksimulator-backend.onrender.com/api/stock/symbol", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+    const timer = setTimeout(() => {
+      fetchStocks();
+    }, 400);
 
-       // console.log("Stock options response:", response.data); // debug log
-        setOptions(response.data); // assumed response is a list of objects like { symbol: "AAPL", ... }
-      } catch (err) {
-        console.error("Error while fetching the stock list", err);
-        setOptions([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+    return () => clearTimeout(timer);
+  }, [input]);
 
-    fetchSymbols();
-  }, []);
+  const fetchStocks = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
 
-  if (loading) return <h2  style={{textAlign:"center",fontSize:"18px",color:"#666"}}>Loading ...</h2>;
+      const res = await axios.get(
+        `/api/stock/search?query=${input}`,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
+      setSuggestions(res.data);
+      setShowDropdown(true);
+    } catch {
+      setSuggestions([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSelect = (stock) => {
+    setInput(`${stock.symbol} - ${stock.companyname}`);
+    onChange(stock.symbol);   // send only symbol to parent form
+    setShowDropdown(false);
+  };
 
   return (
-<div className="stock-selector-container">
+    <div className="stock-selector">
+      <input
+        type="text"
+        placeholder="Search stock (AAPL, Apple...)"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        onFocus={() => suggestions.length && setShowDropdown(true)}
+      />
 
-  <div className="selector-group">
-    <label htmlFor="stock-dropdown">Select Stock</label>
-    <select
-      id="stock-dropdown"
-      value={selectedSymbol}
-      onChange={(e) => onChange(e.target.value)}
-    >
-      <option value="" disabled hidden>
-        -- choose --
-      </option>
-      {options.map((item, index) => (
-        <option key={index} value={item.symbol}>
-          {item.symbol}
-        </option>
-      ))}
-    </select>
-  </div>
+      {showDropdown && suggestions.length > 0 && (
+        <ul className="stock-dropdown">
+          {suggestions.map((stock) => (
+            <li
+              key={stock.symbol}
+              onMouseDown={() => handleSelect(stock)}
+            >
+              <strong>{stock.symbol}</strong>
+              <span> — {stock.companyname}</span>
+            </li>
+          ))}
+        </ul>
+      )}
 
-  <div className="selector-divider">OR</div>
-
-  <div className="selector-group">
-    <label htmlFor="manual-input">Search Manually</label>
-    <input
-      type="text"
-      id="manual-input"
-      value={selectedSymbol}
-      onChange={(e) => onChange(e.target.value.toUpperCase())}
-      placeholder="AAPL, GOOGL..."
-    />
-  </div>
-
-</div>
-
+      {loading && <div className="selector-loading">Searching...</div>}
+    </div>
   );
 };
 
