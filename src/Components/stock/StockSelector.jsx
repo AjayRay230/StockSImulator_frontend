@@ -27,7 +27,7 @@ const fetchStocks = async () => {
     const token = localStorage.getItem("token");
 
     const res = await axios.get(
-      "https://stocksimulator-backend.onrender.com/api/stock/search",
+      "https://stocksimulator-backend.onrender.com/api/stock/suggestions",
       {
         params: { query: input },
         headers: {
