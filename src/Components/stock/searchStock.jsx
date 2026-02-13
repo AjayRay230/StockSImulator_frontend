@@ -17,7 +17,7 @@ const[showSuggestion,setShowSuggestion] = useState(false);
     e.preventDefault();
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`https://stocksimulator-backend.onrender.com/api/stock/search?query=${symbol}`,{
+      const response = await axios.get(`https://stocksimulator-backend.onrender.com/api/stock/${symbol}`,{
         headers:{
                         Authorization:`Bearer ${token}`
                 }
