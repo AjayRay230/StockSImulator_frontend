@@ -20,14 +20,13 @@ const SearchStock = () => {
         const token = localStorage.getItem("token");
 
         const response = await axios.get(
-          `/api/stock/${symbol}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
+  `https://stocksimulator-backend.onrender.com/api/stock/detail/${symbol}`,
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
         setStock(response.data);
 
       } catch {
