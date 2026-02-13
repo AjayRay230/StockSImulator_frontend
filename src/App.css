@@ -538,6 +538,21 @@ button:disabled {
 .user-name {
   color: var(--text);
 }
+
+ /* search box style */
+
+ .search-card {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
                                       /* portfolio css  */
      /* .portfolio-parent{
       box-shadow: 20px 10px 20px rgb(255, 205,105,0.4);

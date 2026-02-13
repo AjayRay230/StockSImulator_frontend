@@ -73,7 +73,7 @@ useEffect(() => {
   if (symbol) fetchStock();
 }, [symbol]);
   return (
-    <div style={StylesSearchBox.chart}>
+    <div className="search-card">
       {/* <h2 style={StylesSearchBox.title}>Search stocks by its symbol</h2>
       <form className="stockSymbol-form" onSubmit={handleSubmit}>
         <input
@@ -140,7 +140,7 @@ useEffect(() => {
           <p>
             <FaClock style={{ marginRight: "6px", color: "#555" }} />
             <strong>Last Updated:</strong>{" "}
-            {new Date(stock.lastupdate).toLocaleDateString()}
+            {new Date(stock.lastupdate).toLocaleString()}
           </p>
         </div>
       )}
