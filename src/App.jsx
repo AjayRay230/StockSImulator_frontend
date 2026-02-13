@@ -77,7 +77,7 @@ function App() {
           <Route path  = "/watchlist" element = {<WatchList/>}/>
           
           <Route path="/stock" element={<StockPage/>}/>
-          <Route path = "/search-stock" element = {<SearchStock/>}/>
+          <Route path = "/search-stock/:symbol" element = {<SearchStock/>}/>
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/trade/:symbol" element={<TradePage />} />

@@ -18,7 +18,7 @@ const Navbar =()=>{
     }
     const handleSearch =()=>{
         if(!searchTerm.trim()) return ;
-        navigate(`/search-stock?symbol=${searchTerm.trim().toUpperCase()}`); 
+        navigate(`/search-stock/${searchTerm.trim().toUpperCase()}`);
     }
 
     const[theme,setTheme] = useState(getInitialTheme);

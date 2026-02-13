@@ -1,66 +1,80 @@
 import axios from "axios";
 import { FaDollarSign, FaChartLine, FaClock } from "react-icons/fa";
 import {useRef, useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import StylesSearchBox from "./StylesSearchBox";
 
 const SearchStock = () => {
-    const inputRef = useRef(null);
-  const [suggestions, setSuggestions] = useState([]);
-  const [searchParams] = useSearchParams();
-  const querySymbol = searchParams.get("symbol") || "";
-  const [symbol, setSymbol] = useState(querySymbol);
+  //   const inputRef = useRef(null);
+  // const [suggestions, setSuggestions] = useState([]);
+  const { symbol } = useParams();
   const [stock, setStock] = useState(null);
   const [error, setError] = useState("");
-const[showSuggestion,setShowSuggestion] = useState(false);
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+// const[showSuggestion,setShowSuggestion] = useState(false);
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const token = localStorage.getItem("token");
+  //     const response = await axios.get(`https://stocksimulator-backend.onrender.com/api/stock/${symbol}`,{
+  //       headers:{
+  //                       Authorization:`Bearer ${token}`
+  //               }
+  //     });
+  //     setStock(response.data);
+  //     setError("");
+  //   } catch (err) {
+  //     setStock(null);
+  //     setError(err.response?.data.message || "Stock not found or server error");
+  //     alert("Stock not found");
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (symbol.length > 1) {
+  //     const token = localStorage.getItem("token");
+  //     axios
+  //       .get(`https://stocksimulator-backend.onrender.com/api/stock/suggestions?query=${symbol}`,{
+  //         headers:{
+  //           Authorization : `Bearer ${token}`
+  //         }
+  //       })
+  //       .then((res) => {
+  //         const symbolList = res.data.map(stock=>stock.symbol);
+  //         setSuggestions(symbolList);
+  //       })
+  //       .catch((err) => {
+  //           console.log(err);
+  //           setSuggestions([]);});
+  //   } else {
+  //     setSuggestions([]);
+  //   }
+  // }, [symbol]);
+
+useEffect(() => {
+  const fetchStock = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(`https://stocksimulator-backend.onrender.com/api/stock/${symbol}`,{
-        headers:{
-                        Authorization:`Bearer ${token}`
-                }
-      });
+      const response = await axios.get(
+        `https://stocksimulator-backend.onrender.com/api/stock/${symbol}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setStock(response.data);
       setError("");
     } catch (err) {
       setStock(null);
-      setError(err.response?.data.message || "Stock not found or server error");
-      alert("Stock not found");
+      setError("Stock not found");
     }
   };
 
-  useEffect(() => {
-    if (symbol.length > 1) {
-      const token = localStorage.getItem("token");
-      axios
-        .get(`https://stocksimulator-backend.onrender.com/api/stock/suggestions?query=${symbol}`,{
-          headers:{
-            Authorization : `Bearer ${token}`
-          }
-        })
-        .then((res) => {
-          const symbolList = res.data.map(stock=>stock.symbol);
-          setSuggestions(symbolList);
-        })
-        .catch((err) => {
-            console.log(err);
-            setSuggestions([]);});
-    } else {
-      setSuggestions([]);
-    }
-  }, [symbol]);
-
-  useEffect(() => {
-    if (querySymbol) {
-      handleSubmit({ preventDefault: () => {} });
-    }
-  }, [querySymbol]);
-
+  if (symbol) fetchStock();
+}, [symbol]);
   return (
     <div style={StylesSearchBox.chart}>
-      <h2 style={StylesSearchBox.title}>Search stocks by its symbol</h2>
+      {/* <h2 style={StylesSearchBox.title}>Search stocks by its symbol</h2>
       <form className="stockSymbol-form" onSubmit={handleSubmit}>
         <input
         ref = {inputRef}
@@ -103,7 +117,7 @@ const[showSuggestion,setShowSuggestion] = useState(false);
         <button type="submit" className="stocksymbol-btn">
           Search
         </button>
-      </form>
+      </form> */}
 
       {error && <p className="error-stocksymbol">{error}</p>}
 
