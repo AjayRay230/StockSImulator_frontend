@@ -541,18 +541,58 @@ button:disabled {
 
  /* search box style */
 
- .search-card {
-  max-width: 400px;
+.search-card {
+  max-width: 420px;
   margin: 2rem auto;
-  padding: 1.5rem;
-  border-radius: 12px;
+  padding: 2rem;
+  border-radius: 16px;
   background: var(--surface);
   color: var(--text);
   box-shadow: var(--shadow);
-  text-align: center;
   transition: all 0.3s ease;
 }
 
+.searchstock-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.searchstock-symbol {
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-left: 6px;
+}
+
+.searchstock-price {
+  font-size: 2.4rem;
+  font-weight: 700;
+  margin: 0.5rem 0 1rem 0;
+}
+
+.searchstock-change {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.searchstock-positive {
+  color: var(--profit);
+}
+
+.searchstock-negative {
+  color: var(--loss);
+}
+
+.searchstock-updated {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
                                       /* portfolio css  */
      /* .portfolio-parent{
       box-shadow: 20px 10px 20px rgb(255, 205,105,0.4);
