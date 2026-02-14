@@ -22,7 +22,7 @@ import StockPrice from "../stock/StockPrice";
 import BuySellForm from "../../Transactions/BuySellForm";
 import axios from "axios";
 import EmptyPortfolio from "../common/empty/EmptyPortfolio";
-
+import axiosInstance from "../../api/axiosInstance";
 const Portfolio = () => {
   const { user } = useUser();
   const isAuthenticated = !!user;
@@ -177,11 +177,14 @@ const loadPortfolio = async () => {
     const symbols = data.map(item => item.stocksymbol).join(",");
     const token = localStorage.getItem("token");
 
-    const liveRes = await axios.get(
-      `/api/stock-price/batch-live?symbols=${symbols}`,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
+const liveRes = await axiosInstance.get(
+  `/api/stock-price/batch-live?symbols=${symbols}`,
+  {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+  }
+);
     const liveMap = {};
     liveRes.data.forEach(item => {
       liveMap[item.symbol] = item;
