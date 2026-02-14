@@ -56,11 +56,11 @@ const loadPortfolio = async () => {
     const token = localStorage.getItem("token");
 
 const liveRes = await axiosInstance.get(
-  `/api/stock-price/batch-live?symbols=${symbols}`,
+  "/api/stock-price/batch-live",
   {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
+    params: {
+      symbols: data.map(item => item.stocksymbol)
+    }
   }
 );
     const liveMap = {};
