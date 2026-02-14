@@ -243,7 +243,7 @@ useEffect(() => {
 
   const interval = setInterval(() => {
     loadPortfolio();
-  }, 10000); // every 5 seconds
+  }, 30000); 
 
   return () => clearInterval(interval);
 }, [isAuthenticated]);
