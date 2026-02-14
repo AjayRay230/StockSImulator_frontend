@@ -58,9 +58,9 @@ const loadPortfolio = async () => {
 const liveRes = await axiosInstance.get(
   "/api/stock-price/batch-live",
   {
-    params: {
-      symbols: data.map(item => item.stocksymbol).join(",")
-    },
+params: {
+  symbols: data.map(item => item.stocksymbol)
+},
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`
     }
