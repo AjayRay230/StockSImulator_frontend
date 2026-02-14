@@ -22,7 +22,7 @@ import StockPrice from "../stock/StockPrice";
 import BuySellForm from "../../Transactions/BuySellForm";
 import axios from "axios";
 import EmptyPortfolio from "../common/empty/EmptyPortfolio";
-import axiosInstance from "../../api/axiosInstance";
+
 const Portfolio = () => {
   const { user } = useUser();
   const isAuthenticated = !!user;
@@ -36,100 +36,87 @@ const Portfolio = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showTradeModal, setShowTradeModal] = useState(false);
 
+  const loadPortfolio = async () => {
+    try {
+      setLoading(true);
 
+      const { data } = await fetchPortfoli();
+      const token = localStorage.getItem("token");
 
-const loadPortfolio = async () => {
-  try {
-    setLoading(true);
+      const enrichedData = await Promise.all(
+        data.map(async (item) => {
+          const totalInvestment =
+            Number(item.averagebuyprice) * Number(item.quantity);
 
-    const { data } = await fetchPortfoli();
+          try {
+            const liveRes = await axios.get(
+              `/api/stock-price/closing-price?stocksymbol=${item.stocksymbol}`,
+              {
+                headers: { Authorization: `Bearer ${token}` },
+              }
+            );
 
-    if (!data.length) {
-      setPortfolio([]);
-      setTotalInvestment(0);
-      setTotalCurrentValue(0);
-      setTotalProfitLoss(0);
-      return;
+            const liveData = liveRes.data.meta;
+            const currentPrice = Number(liveData.currentPrice || 0);
+
+            const totalCurrentValue =
+              currentPrice * Number(item.quantity);
+
+            const profitLoss = totalCurrentValue - totalInvestment;
+
+            return {
+              ...item,
+              totalInvestment,
+              currentPrice,
+              change: Number(liveData.change || 0),
+              changePercent: Number(liveData.changePercent || 0),
+              totalCurrentValue,
+              profitLoss,
+            };
+          } catch {
+            return {
+              ...item,
+              totalInvestment,
+              currentPrice: null,
+              change: null,
+              changePercent: null,
+              totalCurrentValue: 0,
+              profitLoss: 0,
+            };
+          }
+        })
+      );
+
+      const totalInvestmentSum = enrichedData.reduce(
+        (acc, item) => acc + item.totalInvestment,
+        0
+      );
+
+      const totalCurrentValueSum = enrichedData.reduce(
+        (acc, item) => acc + item.totalCurrentValue,
+        0
+      );
+
+      const totalProfitLossSum = enrichedData.reduce(
+        (acc, item) => acc + item.profitLoss,
+        0
+      );
+
+      setPortfolio(enrichedData);
+      setTotalInvestment(totalInvestmentSum);
+      setTotalCurrentValue(totalCurrentValueSum);
+      setTotalProfitLoss(totalProfitLossSum);
+
+    } catch {
+      toast.error("Failed to load portfolio");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const symbols = data.map(item => item.stocksymbol).join(",");
-    const token = localStorage.getItem("token");
-
-const symbolsArray = data.map(item => item.stocksymbol);
-
-const liveRes = await axiosInstance.get(
-  "/api/stock-price/batch-live",
-  {
-    params: new URLSearchParams(
-      symbolsArray.map(symbol => ["symbols", symbol])
-    )
-  }
-);
-    const liveMap = {};
-    liveRes.data.forEach(item => {
-      liveMap[item.symbol] = item;
-    });
-
-    const enrichedData = data.map(item => {
-      const totalInvestment =
-        Number(item.averagebuyprice) * Number(item.quantity);
-
-      const live = liveMap[item.stocksymbol];
-
-      const currentPrice = live ? Number(live.price) : 0;
-      const change = live ? Number(live.change) : 0;
-      const changePercent = live ? Number(live.percentChange) : 0;
-
-      const totalCurrentValue =
-        currentPrice * Number(item.quantity);
-
-      const profitLoss =
-        totalCurrentValue - totalInvestment;
-
-      return {
-        ...item,
-        totalInvestment,
-        currentPrice,
-        change,
-        changePercent,
-        totalCurrentValue,
-        profitLoss,
-      };
-    });
-
-    setPortfolio(enrichedData);
-
-    setTotalInvestment(
-      enrichedData.reduce((acc, item) => acc + item.totalInvestment, 0)
-    );
-
-    setTotalCurrentValue(
-      enrichedData.reduce((acc, item) => acc + item.totalCurrentValue, 0)
-    );
-
-    setTotalProfitLoss(
-      enrichedData.reduce((acc, item) => acc + item.profitLoss, 0)
-    );
-
-  } catch (err) {
-    console.error(err);
-    toast.error("Failed to load portfolio");
-  } finally {
-    setLoading(false);
-  }
-};
-
-useEffect(() => {
-  if (!isAuthenticated) return;
-
-  loadPortfolio();
-
-  // const interval = setInterval(() => {
-  //   loadPortfolio();
-  // }, 30000); 
-
-  // return () => clearInterval(interval);
-}, [isAuthenticated]);
+  useEffect(() => {
+    if (isAuthenticated) loadPortfolio();
+  }, [isAuthenticated]);
 
   const handleDelete = async (stocksymbol) => {
     if (!window.confirm(`Delete ${stocksymbol}?`)) return;
@@ -190,7 +177,7 @@ useEffect(() => {
             <div className="portfolio-card" key={item.stocksymbol}>
               <div className="card-header">
                 <h2 onClick={() => setSelectedSymbol(item.stocksymbol)}>
-                  {item.companyname}
+                  {item.stocksymbol}
                 </h2>
                 <button
                   onClick={() => handleDelete(item.stocksymbol)}
