@@ -59,7 +59,10 @@ const liveRes = await axiosInstance.get(
   "/api/stock-price/batch-live",
   {
     params: {
-      symbols: data.map(item => item.stocksymbol)
+      symbols: data.map(item => item.stocksymbol).join(",")
+    },
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`
     }
   }
 );
