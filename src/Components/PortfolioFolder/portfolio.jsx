@@ -36,128 +36,6 @@ const Portfolio = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showTradeModal, setShowTradeModal] = useState(false);
 
-//   const loadPortfolio = async () => {
-//     try {
-//       setLoading(true);
-
-//       const { data } = await fetchPortfoli();
-//       const token = localStorage.getItem("token");
-
-//       const loadPortfolio = async () => {
-//   try {
-//     setLoading(true);
-
-//     // 1️⃣ Fetch portfolio from DB
-//     const { data } = await fetchPortfoli();
-
-//     if (!data.length) {
-//       setPortfolio([]);
-//       setTotalInvestment(0);
-//       setTotalCurrentValue(0);
-//       setTotalProfitLoss(0);
-//       return;
-//     }
-
-//     // 2️⃣ Build symbol list
-//     const symbols = data.map(item => item.stocksymbol).join(",");
-
-//     const token = localStorage.getItem("token");
-
-//     // 3️⃣ ONE request for all live prices
-//     const liveRes = await axios.get(
-//       `/api/stock-price/batch-live?symbols=${symbols}`,
-//       { headers: { Authorization: `Bearer ${token}` } }
-//     );
-
-//     // 4️⃣ Convert response to map for fast lookup
-//     const liveMap = {};
-//     liveRes.data.forEach(item => {
-//       liveMap[item.symbol] = item;
-//     });
-
-//     // 5️⃣ Merge DB data + live data
-//     const enrichedData = data.map(item => {
-
-//       const totalInvestment =
-//         Number(item.averagebuyprice) * Number(item.quantity);
-
-//       const live = liveMap[item.stocksymbol];
-
-//       const currentPrice = live ? Number(live.price) : 0;
-//       const change = live ? Number(live.change) : 0;
-//       const changePercent = live ? Number(live.percentChange) : 0;
-
-//       const totalCurrentValue =
-//         currentPrice * Number(item.quantity);
-
-//       const profitLoss =
-//         totalCurrentValue - totalInvestment;
-
-//       return {
-//         ...item,
-//         totalInvestment,
-//         currentPrice,
-//         change,
-//         changePercent,
-//         totalCurrentValue,
-//         profitLoss,
-//       };
-//     });
-
-//     // 6️⃣ Calculate totals
-//     const totalInvestmentSum = enrichedData.reduce(
-//       (acc, item) => acc + item.totalInvestment,
-//       0
-//     );
-
-//     const totalCurrentValueSum = enrichedData.reduce(
-//       (acc, item) => acc + item.totalCurrentValue,
-//       0
-//     );
-
-//     const totalProfitLossSum = enrichedData.reduce(
-//       (acc, item) => acc + item.profitLoss,
-//       0
-//     );
-
-//     setPortfolio(enrichedData);
-//     setTotalInvestment(totalInvestmentSum);
-//     setTotalCurrentValue(totalCurrentValueSum);
-//     setTotalProfitLoss(totalProfitLossSum);
-
-//   } catch {
-//     toast.error("Failed to load portfolio");
-//   } finally {
-//     setLoading(false);
-//   }
-// };
-
-//       const totalInvestmentSum = enrichedData.reduce(
-//         (acc, item) => acc + item.totalInvestment,
-//         0
-//       );
-
-//       const totalCurrentValueSum = enrichedData.reduce(
-//         (acc, item) => acc + item.totalCurrentValue,
-//         0
-//       );
-
-//       const totalProfitLossSum = enrichedData.reduce(
-//         (acc, item) => acc + item.profitLoss,
-//         0
-//       );
-
-//       setPortfolio(enrichedData);
-//       setTotalInvestment(totalInvestmentSum);
-//       setTotalCurrentValue(totalCurrentValueSum);
-//       setTotalProfitLoss(totalProfitLossSum);
-
-//     } catch {
-//       toast.error("Failed to load portfolio");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
 
 
 const loadPortfolio = async () => {
@@ -244,11 +122,11 @@ useEffect(() => {
 
   loadPortfolio();
 
-  const interval = setInterval(() => {
-    loadPortfolio();
-  }, 30000); 
+  // const interval = setInterval(() => {
+  //   loadPortfolio();
+  // }, 30000); 
 
-  return () => clearInterval(interval);
+  // return () => clearInterval(interval);
 }, [isAuthenticated]);
 
   const handleDelete = async (stocksymbol) => {
