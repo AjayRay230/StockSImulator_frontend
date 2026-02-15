@@ -43,7 +43,7 @@ const calculateEMA = (data,period)=>{
 const StockPrice = ({ symbol,  onBack, refreshKey, onSimulate }) => {
   const [loading, setLoading] = useState(false);
   const [series, setSeries] = useState([]);
-  const[darkMode,setDarkMode] = useState(null);
+  const[darkMode,setDarkMode] = useState(true);
   const[chartType,setChartType] = useState("line");
   const[dateRange,setDateRange] = useState("1D");
   const[volumeSeries,setVolumeSeries] = useState([]);
@@ -79,7 +79,7 @@ const fullName =
   symbol;
 
 setCompanyName(fullName);
-  console.log("FULL API RESPONSE:", response.data);      
+     
       } catch (error) {
         toast.error("Error while getting the price", error);
         
