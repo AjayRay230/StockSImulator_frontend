@@ -8,38 +8,38 @@ export const WebSocketProvider = ({ children }) => {
 
   const [latestUpdate, setLatestUpdate] = useState(null);
 
-  useEffect(() => {
+useEffect(() => {
+  console.log("🚀 WebSocketProvider mounted");
 
-    const socket = new SockJS(
-      "https://stocksimulator-backend.onrender.com/ws"
-    );
+  const socket = new SockJS(
+    "https://stocksimulator-backend.onrender.com/ws"
+  );
 
-    const client = new Client({
-      webSocketFactory: () => socket,
-      reconnectDelay: 5000,
+  socket.onopen = () => console.log("🟢 SockJS open");
+  socket.onerror = (e) => console.log("🔴 SockJS error", e);
+  socket.onclose = () => console.log("🟡 SockJS closed");
 
-      onConnect: () => {
-        console.log("✅ Connected to WebSocket");
+  const client = new Client({
+    webSocketFactory: () => socket,
+    reconnectDelay: 5000,
 
-        client.subscribe("/topic/prices", (message) => {
-          const data = JSON.parse(message.body);
-          console.log("📈 Real-time update:", data);
-          setLatestUpdate(data);
-        });
-      },
+    onConnect: () => {
+      console.log("✅ STOMP connected");
 
-      onStompError: (frame) => {
-        console.error("STOMP Error:", frame);
-      }
-    });
+      client.subscribe("/topic/prices", (message) => {
+        console.log("📈 Message received");
+      });
+    },
 
-    client.activate();
+    onStompError: (frame) => {
+      console.error("STOMP Error:", frame);
+    }
+  });
 
-    return () => {
-      client.deactivate();
-    };
+  client.activate();
 
-  }, []);
+  return () => client.deactivate();
+}, []);
 
   return (
     <WebSocketContext.Provider value={{ latestUpdate }}>
