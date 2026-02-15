@@ -95,12 +95,12 @@ const WatchList = () => {
   }, [fetchWatchlist]);
 
   // 🔁 Auto refresh every 15 seconds
-  useEffect(() => {
-    if (!user) return;
+  // useEffect(() => {
+  //   if (!user) return;
 
-    const interval = setInterval(fetchWatchlist, 15000);
-    return () => clearInterval(interval);
-  }, [fetchWatchlist, user]);
+  //   const interval = setInterval(fetchWatchlist, 15000);
+  //   return () => clearInterval(interval);
+  // }, [fetchWatchlist, user]);
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -150,10 +150,10 @@ const filteredStocks = search.trim() === ""
 
         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext
-            items={filteredStocks.map((s) => s.stocksymbol)}
+            items={stocks.map((s) => s.stocksymbol)}
             strategy={verticalListSortingStrategy}
           >
-            {filteredStocks.map((stock) => (
+            {stocks.map((stock) => (
               <SortableRow
                 key={stock.stocksymbol}
                 stock={stock}
