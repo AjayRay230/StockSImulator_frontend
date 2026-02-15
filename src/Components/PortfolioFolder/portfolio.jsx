@@ -37,82 +37,63 @@ const Portfolio = () => {
   const [showTradeModal, setShowTradeModal] = useState(false);
 
   const loadPortfolio = async () => {
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const { data } = await fetchPortfoli();
-      const token = localStorage.getItem("token");
-        console.log("Portfolio raw data:", data);
-      const enrichedData = await Promise.all(
-        data.map(async (item) => {
-          const totalInvestment =
-            Number(item.averagebuyprice) * Number(item.quantity);
+    const { data } = await fetchPortfoli();
+    console.log("Portfolio raw data:", data);
 
-          try {
-            const liveRes = await axios.get(
-              `/api/stock-price/closing-price?stocksymbol=${item.stocksymbol}`,
-              {
-                headers: { Authorization: `Bearer ${token}` },
-              }
-            );
+    const enrichedData = data.map((item) => {
+      const quantity = Number(item.quantity);
+      const avgPrice = Number(item.averagebuyprice);
 
-            const liveData = liveRes.data.meta;
-            const currentPrice = Number(liveData.currentPrice || 0);
+      const totalInvestment = avgPrice * quantity;
 
-            const totalCurrentValue =
-              currentPrice * Number(item.quantity);
+      // Use backend-enriched stock data
+      const currentPrice = Number(item.stock?.currentprice ?? 0);
+      const changePercent = Number(item.stock?.changepercent ?? 0);
 
-            const profitLoss = totalCurrentValue - totalInvestment;
+      const totalCurrentValue = currentPrice * quantity;
+      const profitLoss = totalCurrentValue - totalInvestment;
 
-            return {
-              ...item,
-              totalInvestment,
-              currentPrice,
-              change: Number(liveData.change || 0),
-              changePercent: Number(liveData.changePercent || 0),
-              totalCurrentValue,
-              profitLoss,
-            };
-          } catch {
-            return {
-              ...item,
-              totalInvestment,
-              currentPrice: null,
-              change: null,
-              changePercent: null,
-              totalCurrentValue: 0,
-              profitLoss: 0,
-            };
-          }
-        })
-      );
+      return {
+        ...item,
+        totalInvestment,
+        currentPrice,
+        change: changePercent,          // if backend only provides percent
+        changePercent,
+        totalCurrentValue,
+        profitLoss,
+      };
+    });
 
-      const totalInvestmentSum = enrichedData.reduce(
-        (acc, item) => acc + item.totalInvestment,
-        0
-      );
+    const totalInvestmentSum = enrichedData.reduce(
+      (acc, item) => acc + item.totalInvestment,
+      0
+    );
 
-      const totalCurrentValueSum = enrichedData.reduce(
-        (acc, item) => acc + item.totalCurrentValue,
-        0
-      );
+    const totalCurrentValueSum = enrichedData.reduce(
+      (acc, item) => acc + item.totalCurrentValue,
+      0
+    );
 
-      const totalProfitLossSum = enrichedData.reduce(
-        (acc, item) => acc + item.profitLoss,
-        0
-      );
+    const totalProfitLossSum = enrichedData.reduce(
+      (acc, item) => acc + item.profitLoss,
+      0
+    );
 
-      setPortfolio(enrichedData);
-      setTotalInvestment(totalInvestmentSum);
-      setTotalCurrentValue(totalCurrentValueSum);
-      setTotalProfitLoss(totalProfitLossSum);
+    setPortfolio(enrichedData);
+    setTotalInvestment(totalInvestmentSum);
+    setTotalCurrentValue(totalCurrentValueSum);
+    setTotalProfitLoss(totalProfitLossSum);
 
-    } catch {
-      toast.error("Failed to load portfolio");
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (error) {
+    console.error("Portfolio load error:", error);
+    toast.error("Failed to load portfolio");
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     if (isAuthenticated) loadPortfolio();
