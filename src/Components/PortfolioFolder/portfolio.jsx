@@ -30,11 +30,11 @@ const Portfolio = () => {
   const [totalInvestment, setTotalInvestment] = useState(0);
   const [totalCurrentValue, setTotalCurrentValue] = useState(0);
   const [totalProfitLoss, setTotalProfitLoss] = useState(0);
-  const [selectedSymbol, setSelectedSymbol] = useState(null);
+
   const [loading, setLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showTradeModal, setShowTradeModal] = useState(false);
-
+  const [selectedStock, setSelectedStock] = useState(null);
 const loadPortfolio = async () => {
   try {
     setLoading(true);
@@ -101,17 +101,7 @@ const loadPortfolio = async () => {
       toast.error("Delete failed");
     }
   };
-const selectedStock = useMemo(() => {
-  if (!selectedSymbol || !portfolio.length) return null;
 
-  return portfolio.find(
-    (item) =>
-      String(item.stocksymbol).trim().toUpperCase() ===
-      String(selectedSymbol).trim().toUpperCase()
-  ) || null;
-}, [portfolio, selectedSymbol]);
-console.log("Selected Symbol:", selectedSymbol);
-console.log("Portfolio Symbols:", portfolio.map(p => p.stocksymbol));
   return (
 <div className="portfolio-page1">
 
@@ -185,7 +175,7 @@ console.log("Portfolio Symbols:", portfolio.map(p => p.stocksymbol));
           <div className="card-header">
             <div
               className="stock-info"
-              onClick={() => setSelectedSymbol(item.stocksymbol)}
+              onClick={() => setSelectedStock(item)}
             >
               <h2 className="company-name">
                 {item.stock?.companyname || item.stocksymbol}
@@ -253,28 +243,26 @@ console.log("Portfolio Symbols:", portfolio.map(p => p.stocksymbol));
       ))}
     </div>
   )}
-
-{selectedSymbol && (
+{selectedStock && (
   <div className="stock-chart">
     <div className="chart-header">
       <h3>
-        {selectedStock?.stock?.companyname || selectedSymbol}
+        {selectedStock.stock?.companyname}
       </h3>
       <button
         className="close-chart-btn"
-        onClick={() => setSelectedSymbol(null)}
+        onClick={() => setSelectedStock(null)}
       >
         <FaTimes />
       </button>
     </div>
 
     <StockPrice
-      symbol={selectedSymbol}
-      companyName={selectedStock?.stock?.companyname}
+      symbol={selectedStock.stocksymbol}
+      companyName={selectedStock.stock?.companyname}
     />
   </div>
 )}
-
  
   {showAddModal && (
     <Modal onClose={() => setShowAddModal(false)}>
