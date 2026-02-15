@@ -11,7 +11,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import StockPrice from "./stock/StockPrice";
 
-const SortableRow = ({ stock, onClick, expanded }) => {
+const SortableRow = ({ stock, onClick, onRemove, expanded }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: stock.stocksymbol });
 
@@ -25,9 +25,14 @@ const SortableRow = ({ stock, onClick, expanded }) => {
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0 }}
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{
+        opacity: 0,
+        x: -50,
+        backgroundColor: "#330000"
+      }}
+      transition={{ duration: 0.3 }}
       ref={setNodeRef}
       style={style}
       {...attributes}
@@ -46,6 +51,16 @@ const SortableRow = ({ stock, onClick, expanded }) => {
           {isUp ? "+" : ""}
           {Number(stock.percentChange).toFixed(2)}%
         </div>
+
+        <button
+          className="remove-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove(stock);
+          }}
+        >
+          ✕
+        </button>
       </div>
     </motion.div>
   );
@@ -55,11 +70,11 @@ const WatchList = () => {
   const { user } = useUser();
   const [stocks, setStocks] = useState([]);
   const [selected, setSelected] = useState(null);
-  const [search, setSearch] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [searchMode, setSearchMode] = useState(false);
   const [loading, setLoading] = useState(false);
-  const debounceRef = useRef(null);
+
+  const [confirmStock, setConfirmStock] = useState(null);
+  const [toast, setToast] = useState(null);
+  const undoRef = useRef(null);
 
   const fetchWatchlist = useCallback(async () => {
     if (!user) return;
@@ -75,7 +90,7 @@ const WatchList = () => {
 
       const symbols = listRes.data.map((s) => s.stocksymbol);
 
-      if (symbols.length === 0) {
+      if (!symbols.length) {
         setStocks([]);
         return;
       }
@@ -102,61 +117,70 @@ const WatchList = () => {
     fetchWatchlist();
   }, [fetchWatchlist]);
 
-  /* =======================
-     Debounced Search
-  ======================== */
-  const handleSearch = (value) => {
-    setSearch(value);
+  /* ================= REMOVE LOGIC ================= */
 
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-
-    if (value.trim().length < 2) {
-      setSearchMode(false);
-      setSearchResults([]);
-      return;
-    }
-
-    debounceRef.current = setTimeout(async () => {
-      try {
-        const token = localStorage.getItem("token");
-
-        const res = await axios.get(
-          `https://stocksimulator-backend.onrender.com/api/stock/suggestions`,
-          {
-            params: { query: value },
-            headers: { Authorization: `Bearer ${token}` }
-          }
-        );
-
-        setSearchResults(res.data);
-        setSearchMode(true);
-      } catch (err) {
-        console.error("Search failed", err);
-      }
-    }, 300);
+  const confirmRemove = (stock) => {
+    setConfirmStock(stock);
   };
 
-  /* =======================
-     Add to Watchlist
-  ======================== */
-  const addToWatchlist = async (symbol) => {
-    try {
-      const token = localStorage.getItem("token");
+  const executeRemove = async () => {
+    if (!confirmStock) return;
 
+    const stockToRemove = confirmStock;
+    setConfirmStock(null);
+
+    // Optimistic removal
+    setStocks((prev) =>
+      prev.filter((s) => s.stocksymbol !== stockToRemove.stocksymbol)
+    );
+
+    if (selected === stockToRemove.stocksymbol) {
+      setSelected(null);
+    }
+
+    const token = localStorage.getItem("token");
+
+    try {
       await axios.post(
-        `https://stocksimulator-backend.onrender.com/api/watchlist/add`,
-        { stocksymbol: symbol },
+        `https://stocksimulator-backend.onrender.com/api/watchlist/remove`,
+        { stocksymbol: stockToRemove.stocksymbol },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setSearch("");
-      setSearchMode(false);
-      setSearchResults([]);
-      fetchWatchlist();
+      // Toast with Undo
+      setToast({
+        message: `${stockToRemove.stocksymbol} removed`,
+        stock: stockToRemove
+      });
+
+      undoRef.current = setTimeout(() => {
+        setToast(null);
+      }, 5000);
+
     } catch (err) {
-      console.error("Add failed", err.response?.data || err);
+      console.error(err);
+      fetchWatchlist();
     }
   };
+
+  const undoRemove = async () => {
+    if (!toast?.stock) return;
+
+    clearTimeout(undoRef.current);
+
+    const token = localStorage.getItem("token");
+
+    await axios.post(
+      `https://stocksimulator-backend.onrender.com/api/watchlist/add`,
+      { stocksymbol: toast.stock.stocksymbol },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    fetchWatchlist();
+    setToast(null);
+  };
+
+  /* ================= DRAG ================= */
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -172,60 +196,10 @@ const WatchList = () => {
     setStocks(updated);
   };
 
-  const gainers = stocks.filter((s) => s.percentChange > 0);
-  const losers = stocks.filter((s) => s.percentChange <= 0);
-
   return (
     <div className="terminal-layout">
       <div className="watchlist-panel">
         <h3>WATCHLIST</h3>
-
-        <div className="search-wrapper">
-          <input
-            type="text"
-            placeholder="Search stock to add..."
-            value={search}
-            onChange={(e) => handleSearch(e.target.value)}
-            className="search-input"
-          />
-
-          <AnimatePresence>
-            {searchMode && searchResults.length > 0 && (
-              <motion.div
-                className="search-dropdown"
-                initial={{ opacity: 0, y: -5 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-              >
-                {searchResults.map((stock) => {
-                  const alreadyAdded = stocks.some(
-                    (s) => s.stocksymbol === stock.symbol
-                  );
-
-                  return (
-                    <div key={stock.symbol} className="search-item">
-                      <div>
-                        <strong>{stock.symbol}</strong> -{" "}
-                        {stock.companyname}
-                      </div>
-
-                      <button
-                        disabled={alreadyAdded}
-                        onClick={() =>
-                          !alreadyAdded &&
-                          addToWatchlist(stock.symbol)
-                        }
-                        className="add-btn"
-                      >
-                        {alreadyAdded ? "Added" : "Add"}
-                      </button>
-                    </div>
-                  );
-                })}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
 
         {loading && <div className="loading">Updating prices...</div>}
 
@@ -240,28 +214,13 @@ const WatchList = () => {
                   key={stock.stocksymbol}
                   stock={stock}
                   onClick={setSelected}
+                  onRemove={confirmRemove}
                   expanded={selected === stock.stocksymbol}
                 />
               ))}
             </AnimatePresence>
           </SortableContext>
         </DndContext>
-
-        <div className="group-section">
-          <h4>GAINERS</h4>
-          {gainers.map((s) => (
-            <div key={s.stocksymbol} className="mini-row positive">
-              {s.stocksymbol} +{Number(s.percentChange).toFixed(2)}%
-            </div>
-          ))}
-
-          <h4>LOSERS</h4>
-          {losers.map((s) => (
-            <div key={s.stocksymbol} className="mini-row negative">
-              {s.stocksymbol} {Number(s.percentChange).toFixed(2)}%
-            </div>
-          ))}
-        </div>
       </div>
 
       <div className="chart-panel">
@@ -271,6 +230,51 @@ const WatchList = () => {
           <div className="placeholder">Select a stock</div>
         )}
       </div>
+
+      {/* ================= CONFIRM MODAL ================= */}
+      <AnimatePresence>
+        {confirmStock && (
+          <motion.div
+            className="modal-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="modal"
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.8 }}
+            >
+              <p>
+                Remove <strong>{confirmStock.stocksymbol}</strong> from
+                watchlist?
+              </p>
+              <div className="modal-actions">
+                <button onClick={() => setConfirmStock(null)}>Cancel</button>
+                <button className="danger" onClick={executeRemove}>
+                  Remove
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ================= TOAST ================= */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            className="toast"
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 50, opacity: 0 }}
+          >
+            {toast.message}
+            <button onClick={undoRemove}>Undo</button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
