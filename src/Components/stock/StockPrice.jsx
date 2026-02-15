@@ -75,7 +75,7 @@ if (apiData.meta?.companyname) {
 } else if (apiData.data?.[0]?.companyname) {
   setCompanyName(apiData.data[0].companyname);
 }
-        
+  console.log("FULL API RESPONSE:", response.data);      
       } catch (error) {
         toast.error("Error while getting the price", error);
         
