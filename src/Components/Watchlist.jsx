@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useUser } from "../context/userContext";
 import axios from "axios";
-import { motion } from "framer-motion";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -51,11 +50,14 @@ const WatchList = () => {
   const { user } = useUser();
   const [stocks, setStocks] = useState([]);
   const [selected, setSelected] = useState(null);
+  const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  const fetchWatchlist = useCallback(async () => {
     if (!user) return;
 
-    const fetchWatchlist = async () => {
+    try {
+      setLoading(true);
       const token = localStorage.getItem("token");
 
       const listRes = await axios.get(
@@ -65,49 +67,90 @@ const WatchList = () => {
 
       const symbols = listRes.data.map((s) => s.stocksymbol);
 
+      if (symbols.length === 0) {
+        setStocks([]);
+        return;
+      }
+
       const liveRes = await axios.get(
         `https://stocksimulator-backend.onrender.com/api/stock-price/batch-live`,
         {
           params: { symbols },
-              paramsSerializer: params => {
-      return params.symbols.map(s => `symbols=${s}`).join(".");
-    },
+          paramsSerializer: (params) =>
+            params.symbols.map((s) => `symbols=${s}`).join("&"),
           headers: { Authorization: `Bearer ${token}` }
         }
       );
 
       setStocks(liveRes.data);
-    };
-
-    fetchWatchlist();
+    } catch (err) {
+      console.error("Error fetching watchlist:", err);
+    } finally {
+      setLoading(false);
+    }
   }, [user]);
+
+  useEffect(() => {
+    fetchWatchlist();
+  }, [fetchWatchlist]);
+
+  // 🔁 Auto refresh every 15 seconds
+  useEffect(() => {
+    if (!user) return;
+
+    const interval = setInterval(fetchWatchlist, 15000);
+    return () => clearInterval(interval);
+  }, [fetchWatchlist, user]);
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
-    if (active.id !== over.id) {
-      const oldIndex = stocks.findIndex((s) => s.stocksymbol === active.id);
-      const newIndex = stocks.findIndex((s) => s.stocksymbol === over.id);
-      const updated = [...stocks];
-      const [moved] = updated.splice(oldIndex, 1);
-      updated.splice(newIndex, 0, moved);
-      setStocks(updated);
-    }
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = stocks.findIndex((s) => s.stocksymbol === active.id);
+    const newIndex = stocks.findIndex((s) => s.stocksymbol === over.id);
+
+    const updated = [...stocks];
+    const [moved] = updated.splice(oldIndex, 1);
+    updated.splice(newIndex, 0, moved);
+
+    setStocks(updated);
   };
 
-  const gainers = stocks.filter((s) => s.percentChange > 0);
-  const losers = stocks.filter((s) => s.percentChange <= 0);
+  // 🔎 Search filter
+  const filteredStocks = stocks.filter(
+    (s) =>
+      s.stocksymbol.toLowerCase().includes(search.toLowerCase()) ||
+      s.companyname.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const gainers = filteredStocks.filter((s) => s.percentChange > 0);
+  const losers = filteredStocks.filter((s) => s.percentChange <= 0);
 
   return (
     <div className="terminal-layout">
       <div className="watchlist-panel">
         <h3>WATCHLIST</h3>
 
+        <input
+          type="text"
+          placeholder="Search symbol..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="search-input"
+        />
+
+        {loading && <div className="loading">Updating prices...</div>}
+
+        {filteredStocks.length === 0 && !loading && (
+          <div className="empty-state">No stocks found</div>
+        )}
+
         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext
-            items={stocks.map((s) => s.stocksymbol)}
+            items={filteredStocks.map((s) => s.stocksymbol)}
             strategy={verticalListSortingStrategy}
           >
-            {stocks.map((stock) => (
+            {filteredStocks.map((stock) => (
               <SortableRow
                 key={stock.stocksymbol}
                 stock={stock}
@@ -121,15 +164,15 @@ const WatchList = () => {
         <div className="group-section">
           <h4>GAINERS</h4>
           {gainers.map((s) => (
-            <div key={s.symbol} className="mini-row positive">
-              {s.symbol} +{Number(s.percentChange).toFixed(2)}%
+            <div key={s.stocksymbol} className="mini-row positive">
+              {s.stocksymbol} +{Number(s.percentChange).toFixed(2)}%
             </div>
           ))}
 
           <h4>LOSERS</h4>
           {losers.map((s) => (
-            <div key={s.symbol} className="mini-row negative">
-              {s.symbol} {Number(s.percentChange).toFixed(2)}%
+            <div key={s.stocksymbol} className="mini-row negative">
+              {s.stocksymbol} {Number(s.percentChange).toFixed(2)}%
             </div>
           ))}
         </div>
