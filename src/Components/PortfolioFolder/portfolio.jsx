@@ -36,51 +36,43 @@ const Portfolio = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showTradeModal, setShowTradeModal] = useState(false);
 
-  const loadPortfolio = async () => {
+const loadPortfolio = async () => {
   try {
     setLoading(true);
 
     const { data } = await fetchPortfoli();
     console.log("Portfolio raw data:", data);
 
+    let totalInvestmentSum = 0;
+    let totalCurrentValueSum = 0;
+    let totalProfitLossSum = 0;
+
     const enrichedData = data.map((item) => {
-      const quantity = Number(item.quantity);
-      const avgPrice = Number(item.averagebuyprice);
+      const quantity = Number(item.quantity) || 0;
+      const avgPrice = Number(item.averagebuyprice) || 0;
 
       const totalInvestment = avgPrice * quantity;
 
-      // Use backend-enriched stock data
-      const currentPrice = Number(item.stock?.currentprice ?? 0);
-      const changePercent = Number(item.stock?.changepercent ?? 0);
+      const currentPrice = Number(item.stock?.currentprice) || 0;
+      const changePercent = Number(item.stock?.changepercent) || 0;
 
       const totalCurrentValue = currentPrice * quantity;
       const profitLoss = totalCurrentValue - totalInvestment;
+
+      // Accumulate totals in same pass
+      totalInvestmentSum += totalInvestment;
+      totalCurrentValueSum += totalCurrentValue;
+      totalProfitLossSum += profitLoss;
 
       return {
         ...item,
         totalInvestment,
         currentPrice,
-        change: changePercent,          // if backend only provides percent
         changePercent,
         totalCurrentValue,
         profitLoss,
       };
     });
-
-    const totalInvestmentSum = enrichedData.reduce(
-      (acc, item) => acc + item.totalInvestment,
-      0
-    );
-
-    const totalCurrentValueSum = enrichedData.reduce(
-      (acc, item) => acc + item.totalCurrentValue,
-      0
-    );
-
-    const totalProfitLossSum = enrichedData.reduce(
-      (acc, item) => acc + item.profitLoss,
-      0
-    );
 
     setPortfolio(enrichedData);
     setTotalInvestment(totalInvestmentSum);
