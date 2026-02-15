@@ -20,7 +20,7 @@ const AddPortfolioForm = ({ onAdd }) => {
     averagebuyprice: ""
   });
 
-  
+  // 🔹 Safe input handling (no NaN issue)
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -78,9 +78,7 @@ const AddPortfolioForm = ({ onAdd }) => {
       setLoading(false);
     }
   };
-      useEffect(() => {
-  console.log("Portfolio Symbol:", item);
-}, [item]);
+
   return (
     <form onSubmit={handleSubmit} className="portfolio-form">
       <h3 className="form-title">

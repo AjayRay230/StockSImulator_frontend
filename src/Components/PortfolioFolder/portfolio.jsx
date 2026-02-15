@@ -129,7 +129,7 @@ const Portfolio = () => {
       toast.error("Delete failed");
     }
   };
-
+    console.log("Portfolio raw data:", data);
   return (
     <div className="portfolio-page1">
       <div className="portfolio-header">
