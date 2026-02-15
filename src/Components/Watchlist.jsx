@@ -69,6 +69,9 @@ const WatchList = () => {
         `https://stocksimulator-backend.onrender.com/api/stock-price/batch-live`,
         {
           params: { symbols },
+              paramsSerializer: params => {
+      return params.symbols.map(s => `symbols=${s}`).join(".");
+    },
           headers: { Authorization: `Bearer ${token}` }
         }
       );
