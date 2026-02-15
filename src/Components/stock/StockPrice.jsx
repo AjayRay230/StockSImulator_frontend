@@ -48,6 +48,7 @@ const StockPrice = ({ symbol, companyName, onBack, refreshKey, onSimulate }) => 
   const[dateRange,setDateRange] = useState("1D");
   const[volumeSeries,setVolumeSeries] = useState([]);
   const[ohlcData,setOhlcData] = useState([]);
+  console.log(companyName);
   useEffect(() => {
     
     const fetchPrice = async () => {
