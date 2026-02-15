@@ -42,7 +42,7 @@ const Portfolio = () => {
 
       const { data } = await fetchPortfoli();
       const token = localStorage.getItem("token");
-
+        console.log("Portfolio raw data:", data);
       const enrichedData = await Promise.all(
         data.map(async (item) => {
           const totalInvestment =
@@ -129,7 +129,7 @@ const Portfolio = () => {
       toast.error("Delete failed");
     }
   };
-    console.log("Portfolio raw data:", data);
+  
   return (
     <div className="portfolio-page1">
       <div className="portfolio-header">
