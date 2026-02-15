@@ -101,7 +101,8 @@ const loadPortfolio = async () => {
       toast.error("Delete failed");
     }
   };
-
+console.log(Object.keys(selectedStock || {}));
+console.log(selectedStock?.stock);
   return (
 <div className="portfolio-page1">
 
