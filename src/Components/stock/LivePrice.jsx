@@ -30,7 +30,7 @@ const LivePrice = ({ symbol }) => {
             },
           }
         );
-       // console.log("API response", res.data);
+      //  console.log("API response", res.data);
        setSecondAgo(0);
         setData(res.data[0]);
         setLastUpdated(new Date().toLocaleDateString());

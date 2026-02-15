@@ -11,7 +11,6 @@ import {
   FaTrash,
   FaWallet,
 } from "react-icons/fa";
-import { MdPriceCheck } from "react-icons/md";
 import { BiTrendingUp, BiTrendingDown } from "react-icons/bi";
 import { toast, ToastContainer } from "react-toastify";
 import Modal from "../common/modal/Modal";
@@ -102,7 +101,11 @@ const loadPortfolio = async () => {
       toast.error("Delete failed");
     }
   };
-  
+  const selectedStock = useMemo(() => {
+  return portfolio.find(
+    (item) => item.stocksymbol === selectedSymbol
+  );
+}, [portfolio, selectedSymbol]);
   return (
 <div className="portfolio-page1">
 
@@ -245,21 +248,26 @@ const loadPortfolio = async () => {
     </div>
   )}
 
-
-  {selectedSymbol && (
-    <div className="stock-chart">
-      <div className="chart-header">
-        <h3>{selectedSymbol} Chart</h3>
-        <button
-          className="close-chart-btn"
-          onClick={() => setSelectedSymbol(null)}
-        >
-          <FaTimes />
-        </button>
-      </div>
-      <StockPrice symbol={selectedSymbol} />
+{selectedSymbol && (
+  <div className="stock-chart">
+    <div className="chart-header">
+      <h3>
+        {selectedStock?.stock?.companyname || selectedSymbol}
+      </h3>
+      <button
+        className="close-chart-btn"
+        onClick={() => setSelectedSymbol(null)}
+      >
+        <FaTimes />
+      </button>
     </div>
-  )}
+
+    <StockPrice
+      symbol={selectedSymbol}
+      companyName={selectedStock?.stock?.companyname}
+    />
+  </div>
+)}
 
  
   {showAddModal && (

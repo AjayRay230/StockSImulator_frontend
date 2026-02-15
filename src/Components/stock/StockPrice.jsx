@@ -40,7 +40,7 @@ const calculateEMA = (data,period)=>{
   return ema;
 };
 
-const StockPrice = ({ symbol,onBack,refreshKey,onSimulate }) => {
+const StockPrice = ({ symbol, companyName, onBack, refreshKey, onSimulate }) => {
   const [loading, setLoading] = useState(false);
   const [series, setSeries] = useState([]);
   const[darkMode,setDarkMode] = useState(null);
@@ -155,62 +155,63 @@ setSeries(mainSeries);
 }, [ohlcData, chartType, ma20, ema20, closePriceData]);
 
 
-  const options = useMemo(()=>( {
-    chart: { type: 'candlestick',height:400,
-      background:"transparent",
-      animations:{enabled:true,easing:"easeinout",speed:300},
-      toolbar:{show:true},
-     },
-     grid:{borderColor:darkMode?"#444":"#eee"},
-     theme:{mode:darkMode?"dark":"light"},
-     
-   
-    title: { text: `Stock Chart - ${symbol}`, align: 'center' },
-    plotOptions: {
-      candlestick: {
-        colors: {
-          upward: '#26a69a',
-          downward: '#ef5350',
-        },
-        wick:{useFiller:true},
-        
-      },
-      bar:{borderRadius:4},
+const options = useMemo(() => ({
+  chart: {
+    type: 'candlestick',
+    height: 400,
+    background: "transparent",
+    animations: { enabled: true, easing: "easeinout", speed: 300 },
+    toolbar: { show: true },
+  },
 
+  grid: { borderColor: darkMode ? "#444" : "#eee" },
+  theme: { mode: darkMode ? "dark" : "light" },
+
+  plotOptions: {
+    candlestick: {
+      colors: {
+        upward: '#26a69a',
+        downward: '#ef5350',
+      },
+      wick: { useFiller: true },
     },
-    stroke:{
-      width:chartType==='line' || chartType ==='area'?2:[1,1,1],
-      curve:"smooth",
+    bar: { borderRadius: 4 },
+  },
 
-    },
-     xaxis: { type: 'datetime',
-      labels:{style:{colors:darkMode?"#ccc":"#333"}},
+  stroke: {
+    width: chartType === 'line' || chartType === 'area' ? 2 : [1, 1, 1],
+    curve: "smooth",
+  },
 
-      },
-      dataLabels:{
-          enabled:false//avoid too many labels warning 
-      },
-      yaxis:{
-        tooltip:{enabled:true},
-         labels:{style:{colors:darkMode?"#ccc":"#333"}},
-      },
-      tooltip:{
-        shared:true,
-        intersect:false,
-        theme:darkMode?"dark":"light",
+  xaxis: {
+    type: 'datetime',
+    labels: { style: { colors: darkMode ? "#ccc" : "#333" } },
+  },
 
-      },
-      title:{
-        text:`Stock Chart - ${symbol}`,
-        align:"center",
-        style:{
-          fontSize:"18px",
-          fontWeight:"bold",
-          color:darkMode ?"#fff":"#000",
-        }
-      }
+  yaxis: {
+    tooltip: { enabled: true },
+    labels: { style: { colors: darkMode ? "#ccc" : "#333" } },
+  },
 
-  }),[darkMode,chartType,symbol]);
+  tooltip: {
+    shared: true,
+    intersect: false,
+    theme: darkMode ? "dark" : "light",
+  },
+
+  dataLabels: { enabled: false },
+
+  title: {
+    text: companyName || symbol,
+    align: "center",
+    style: {
+      fontSize: "18px",
+      fontWeight: "600",
+      color: darkMode ? "#fff" : "#000",
+    }
+  }
+
+}), [darkMode, chartType, symbol, companyName]);
    const volumeOptions =useMemo(()=>({
     chart:{type:"bar",height:150,background:"transparent"},
     grid:{borderColor:darkMode?"#444":"#eee"},
