@@ -40,7 +40,7 @@ const calculateEMA = (data,period)=>{
   return ema;
 };
 
-const StockPrice = ({ symbol, companyName, onBack, refreshKey, onSimulate }) => {
+const StockPrice = ({ symbol,  onBack, refreshKey, onSimulate }) => {
   const [loading, setLoading] = useState(false);
   const [series, setSeries] = useState([]);
   const[darkMode,setDarkMode] = useState(null);
@@ -48,7 +48,8 @@ const StockPrice = ({ symbol, companyName, onBack, refreshKey, onSimulate }) => 
   const[dateRange,setDateRange] = useState("1D");
   const[volumeSeries,setVolumeSeries] = useState([]);
   const[ohlcData,setOhlcData] = useState([]);
-  console.log(companyName);
+  const [companyName, setCompanyName] = useState("");
+ 
   useEffect(() => {
     
     const fetchPrice = async () => {
@@ -64,9 +65,16 @@ const StockPrice = ({ symbol, companyName, onBack, refreshKey, onSimulate }) => 
             },
           }
         );
-        setOhlcData(response.data.data||[]);
-        // const ohlData  = response.data.data;
-        // const meta = response.data.meta;
+const apiData = response.data;
+
+setOhlcData(apiData.data || []);
+
+// Extract company name safely
+if (apiData.meta?.companyname) {
+  setCompanyName(apiData.meta.companyname);
+} else if (apiData.data?.[0]?.companyname) {
+  setCompanyName(apiData.data[0].companyname);
+}
         
       } catch (error) {
         toast.error("Error while getting the price", error);
