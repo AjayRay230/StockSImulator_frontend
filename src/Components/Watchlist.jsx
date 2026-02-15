@@ -1,6 +1,7 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useUser } from "../context/userContext";
 import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -22,7 +23,11 @@ const SortableRow = ({ stock, onClick, expanded }) => {
   const isUp = stock.percentChange >= 0;
 
   return (
-    <div
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
       ref={setNodeRef}
       style={style}
       {...attributes}
@@ -42,7 +47,7 @@ const SortableRow = ({ stock, onClick, expanded }) => {
           {Number(stock.percentChange).toFixed(2)}%
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -51,7 +56,11 @@ const WatchList = () => {
   const [stocks, setStocks] = useState([]);
   const [selected, setSelected] = useState(null);
   const [search, setSearch] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchMode, setSearchMode] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const debounceRef = useRef(null);
 
   const fetchWatchlist = useCallback(async () => {
     if (!user) return;
@@ -84,7 +93,7 @@ const WatchList = () => {
 
       setStocks(liveRes.data);
     } catch (err) {
-      console.error("Error fetching watchlist:", err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -94,14 +103,65 @@ const WatchList = () => {
     fetchWatchlist();
   }, [fetchWatchlist]);
 
-  // 🔁 Auto refresh every 15 seconds
-  // useEffect(() => {
-  //   if (!user) return;
+  /* =======================
+     🔎 Debounced Search
+  ======================== */
+  const handleSearch = (value) => {
+    setSearch(value);
 
-  //   const interval = setInterval(fetchWatchlist, 15000);
-  //   return () => clearInterval(interval);
-  // }, [fetchWatchlist, user]);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
 
+    if (value.trim().length < 2) {
+      setSearchMode(false);
+      setSearchResults([]);
+      return;
+    }
+
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await axios.get(
+          `https://stocksimulator-backend.onrender.com/api/stock/suggestions`,
+          {
+            params: { query: value },
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
+
+        setSearchResults(res.data);
+        setSearchMode(true);
+      } catch (err) {
+        console.error("Search failed", err);
+      }
+    }, 300);
+  };
+
+  /* =======================
+     ➕ Add to Watchlist
+  ======================== */
+  const addToWatchlist = async (symbol) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await axios.post(
+        `https://stocksimulator-backend.onrender.com/api/watchlist/add`,
+        { stocksymbol: symbol },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setSearch("");
+      setSearchMode(false);
+      setSearchResults([]);
+      fetchWatchlist();
+    } catch (err) {
+      console.error("Add failed", err);
+    }
+  };
+
+  /* =======================
+     🔄 Drag Handling
+  ======================== */
   const handleDragEnd = (event) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -116,54 +176,85 @@ const WatchList = () => {
     setStocks(updated);
   };
 
-
-const filteredStocks = search.trim() === ""
-  ? stocks
-  : stocks.filter((s) => {
-      const symbol = s.stocksymbol?.toLowerCase() || "";
-      const name = s.companyname?.toLowerCase() || "";
-      const query = search.toLowerCase();
-      return symbol.includes(query) || name.includes(query);
-    });
-
-  const gainers = filteredStocks.filter((s) => s.percentChange > 0);
-  const losers = filteredStocks.filter((s) => s.percentChange <= 0);
+  const gainers = stocks.filter((s) => s.percentChange > 0);
+  const losers = stocks.filter((s) => s.percentChange <= 0);
 
   return (
     <div className="terminal-layout">
       <div className="watchlist-panel">
         <h3>WATCHLIST</h3>
 
-        <input
-          type="text"
-          placeholder="Search symbol..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="search-input"
-        />
+        {/* Search Input */}
+        <div className="search-wrapper">
+          <input
+            type="text"
+            placeholder="Search stock to add..."
+            value={search}
+            onChange={(e) => handleSearch(e.target.value)}
+            className="search-input"
+          />
+
+          {/* Dropdown */}
+          <AnimatePresence>
+            {searchMode && searchResults.length > 0 && (
+              <motion.div
+                className="search-dropdown"
+                initial={{ opacity: 0, y: -5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+              >
+                {searchResults.map((stock) => {
+                  const alreadyAdded = stocks.some(
+                    (s) => s.stocksymbol === stock.stocksymbol
+                  );
+
+                  return (
+                    <div key={stock.stocksymbol} className="search-item">
+                      <div>
+                        <strong>{stock.stocksymbol}</strong> -{" "}
+                        {stock.companyname}
+                      </div>
+
+                      <button
+                        disabled={alreadyAdded}
+                        onClick={() =>
+                          !alreadyAdded &&
+                          addToWatchlist(stock.stocksymbol)
+                        }
+                        className="add-btn"
+                      >
+                        {alreadyAdded ? "Added" : "Add"}
+                      </button>
+                    </div>
+                  );
+                })}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
         {loading && <div className="loading">Updating prices...</div>}
 
-        {filteredStocks.length === 0 && !loading && (
-          <div className="empty-state">No stocks found</div>
-        )}
-
+        {/* Watchlist */}
         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext
             items={stocks.map((s) => s.stocksymbol)}
             strategy={verticalListSortingStrategy}
           >
-            {stocks.map((stock) => (
-              <SortableRow
-                key={stock.stocksymbol}
-                stock={stock}
-                onClick={setSelected}
-                expanded={selected === stock.stocksymbol}
-              />
-            ))}
+            <AnimatePresence>
+              {stocks.map((stock) => (
+                <SortableRow
+                  key={stock.stocksymbol}
+                  stock={stock}
+                  onClick={setSelected}
+                  expanded={selected === stock.stocksymbol}
+                />
+              ))}
+            </AnimatePresence>
           </SortableContext>
         </DndContext>
 
+        {/* Gainers / Losers */}
         <div className="group-section">
           <h4>GAINERS</h4>
           {gainers.map((s) => (

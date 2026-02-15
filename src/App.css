@@ -1341,6 +1341,46 @@ button:active{
   overflow-y: auto;
   height: 100vh;
 }
+.search-wrapper {
+  position: relative;
+}
+
+.search-dropdown {
+  position: absolute;
+  width: 100%;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 6px;
+  margin-top: 4px;
+  z-index: 10;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.search-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  border-bottom: 1px solid #222;
+}
+
+.search-item:hover {
+  background: #1a1a1a;
+}
+
+.add-btn {
+  background: #1db954;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-btn:disabled {
+  background: #555;
+  cursor: not-allowed;
+}
+
                                      /* LoginForm */
 
 /* =========================
