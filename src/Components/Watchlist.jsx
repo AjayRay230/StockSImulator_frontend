@@ -1,136 +1,278 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useUser } from "../context/userContext";
 import axios from "axios";
 import LivePrice from "./stock/LivePrice";
-import { FiPlusCircle,FiTrash } from "react-icons/fi";
-import {motion} from "framer-motion";
-const WatchList = ()=>{
-    const{user} = useUser();
-    
-   // console.log("user is :", userId);
-    const[watchlist,setWatchlist] = useState([]);
-    const[symbol,setSymbol]  = useState("");
-    useEffect(()=>{
-        if(!user) return ;
-        const fetchList = async()=>{
-            try{
-                const token = localStorage.getItem("token");
-                const response = await axios.get(`https://stocksimulator-backend.onrender.com/api/watchlist/me`,{
-                    headers:{
-                        Authorization:`Bearer ${token}`
-                    }
-                });
-                setWatchlist(response.data);
-            }
-            catch(err){
-                console.error("Failed to load watchlist",err);
-            }
+import { FiPlusCircle, FiTrash } from "react-icons/fi";
+import { motion } from "framer-motion";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable
+} from "@hello-pangea/dnd";
 
-        };
-        fetchList();
+const WatchList = () => {
+  const { user } = useUser();
 
-        
-    },[user]);
-    const handleAdd = async()=>{
-        try{
-            if(!symbol)
-            {
-                alert("please enter the stock symbol..");
-                return ;
-            };
-             const token = localStorage.getItem("token");
-            const validateSymbol = await axios.get(`https://stocksimulator-backend.onrender.com/api/stock/${symbol}`,{
-                headers:{
-                   Authorization:`Bearer ${token}`, 
-                }
-            });
-            if(!validateSymbol.data)
-            {
-                alert(
-                    "Sorry for the inconvenience, this stock symbol does not exist.\nPlease enter a valid symbol."
-                    );
-                return ;
-                
-            }
-            // if already in the watchlist
-            const check = watchlist.find(item=>item.stocksymbol === symbol);
-            if(check)
-            {
-                alert("Stock already in the watchlist!!");
-                return;
-            }
-            const payload = {stocksymbol:symbol};
-           
-            await axios.post(`https://stocksimulator-backend.onrender.com/api/watchlist/add`,payload,{
-                headers:{
-                        Authorization:`Bearer ${token}`
-                    }
-            });
-            setSymbol("");
-            //refresh list
-            const res = await axios.get(`https://stocksimulator-backend.onrender.com/api/watchlist/me`
-                ,{
-                    headers:{
-                        Authorization:`Bearer ${token}`
-                    }
-                }
-            );
-            setWatchlist(prev=>[...prev,{stocksymbol:symbol,addTime:new Date().toISOString()}]);
-        }
-        catch(err)
-        {
-            console.error("Error while adding to watchlist",err);
-        }
+  const [watchlist, setWatchlist] = useState([]);
+  const [symbol, setSymbol] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [companyMap, setCompanyMap] = useState({});
+  const [activeIndex, setActiveIndex] = useState(-1);
+
+  const debounceRef = useRef(null);
+
+  /* ---------------- LOAD WATCHLIST ---------------- */
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchList = async () => {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.get(
+        `https://stocksimulator-backend.onrender.com/api/watchlist/me`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const savedOrder =
+        JSON.parse(localStorage.getItem("watchlistOrder")) || [];
+
+      const ordered = res.data.sort(
+        (a, b) =>
+          savedOrder.indexOf(a.stocksymbol) -
+          savedOrder.indexOf(b.stocksymbol)
+      );
+
+      setWatchlist(ordered);
+
+      // Batch full names
+      const symbols = ordered.map((i) => i.stocksymbol);
+
+      if (symbols.length > 0) {
+        const liveRes = await axios.get(
+          `https://stocksimulator-backend.onrender.com/api/stock-price/batch-live`,
+          {
+            params: { symbols },
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
+
+        const map = {};
+        liveRes.data.forEach((s) => {
+          map[s.symbol] = s.name;
+        });
+
+        setCompanyMap(map);
+      }
     };
-    const handleRemove = async(symbolToRemove)=>{
-        try{
-            const token = localStorage.getItem("token")
-            const payload = {stocksymbol:symbolToRemove};
-            await axios.post(`https://stocksimulator-backend.onrender.com/api/watchlist/remove`,payload,{
-                headers:{
-                        Authorization:`Bearer ${token}`
-                    }
-            });
-            setWatchlist(prev =>prev.filter(item=>item.stocksymbol!==symbolToRemove));
-        }
-        catch(err)
-        {
-            console.error("Error to Remove: ",err);
-        }
-    }
-    return(
-        <div className="watchlist-container">
-            <h2>WatchList</h2>
-            <div className="watchlist-add">
-            <input type="text" placeholder="Enter stock symbol" value = {symbol}
-            onChange={(e)=>setSymbol(e.target.value.toUpperCase())}/>
-            <button onClick={handleAdd} ><FiPlusCircle style={{marginRight:"6px", width:"40px"}}/> Add</button>
-            </div>
-            
-                    <div className="watchlist-list">
-                    {watchlist.map((item,index)=>(
-                        <motion.div className="stock-card" key = {index}
-                        initial={{opacity:0,y:20}}
-                        animate={{opacity:1,y:0}}
-                        transition={{duration:0.3 ,delay:index*0.1}}
-                        >
-                            <div className="stock-card-header">
-                                <div className="symbol">{item.stocksymbol}</div>
-                               <div className="date">{new Date(item.addTime).toLocaleDateString()}</div>
-                                </div>
-                               
-                               <LivePrice symbol={item.stocksymbol}/>
-                               
-                               <button className="remove-btn" onClick={()=>handleRemove(item.stocksymbol)}>
-                                <FiTrash style={{marginRight:"6px"}}/>
-                                Remove</button>
-                            </motion.div>
 
-                    ))}
+    fetchList();
+  }, [user]);
+
+  /* ---------------- SEARCH AUTO SUGGEST ---------------- */
+
+  useEffect(() => {
+    if (!symbol.trim()) {
+      setSuggestions([]);
+      return;
+    }
+
+    clearTimeout(debounceRef.current);
+
+    debounceRef.current = setTimeout(async () => {
+      const token = localStorage.getItem("token");
+
+      const res = await axios.get(
+        `https://stocksimulator-backend.onrender.com/api/stock/suggestions`,
+        {
+          params: { query: symbol },
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+
+      setSuggestions(res.data || []);
+    }, 400);
+
+    return () => clearTimeout(debounceRef.current);
+  }, [symbol]);
+
+  /* ---------------- KEYBOARD NAVIGATION ---------------- */
+
+  const handleKeyDown = (e) => {
+    if (e.key === "ArrowDown") {
+      setActiveIndex((prev) =>
+        prev < suggestions.length - 1 ? prev + 1 : prev
+      );
+    } else if (e.key === "ArrowUp") {
+      setActiveIndex((prev) => (prev > 0 ? prev - 1 : 0));
+    } else if (e.key === "Enter" && activeIndex >= 0) {
+      handleAdd(suggestions[activeIndex].symbol);
+    }
+  };
+
+  /* ---------------- ADD STOCK ---------------- */
+
+  const handleAdd = async (selectedSymbol = null) => {
+    const finalSymbol = selectedSymbol || symbol;
+    if (!finalSymbol) return;
+
+    if (watchlist.find((w) => w.stocksymbol === finalSymbol)) return;
+
+    const token = localStorage.getItem("token");
+
+    await axios.post(
+      `https://stocksimulator-backend.onrender.com/api/watchlist/add`,
+      { stocksymbol: finalSymbol },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    const newList = [
+      ...watchlist,
+      { stocksymbol: finalSymbol, addTime: new Date().toISOString() }
+    ];
+
+    setWatchlist(newList);
+
+    localStorage.setItem(
+      "watchlistOrder",
+      JSON.stringify(newList.map((i) => i.stocksymbol))
+    );
+
+    setSymbol("");
+    setSuggestions([]);
+  };
+
+  /* ---------------- REMOVE ---------------- */
+
+  const handleRemove = async (symbolToRemove) => {
+    const token = localStorage.getItem("token");
+
+    await axios.post(
+      `https://stocksimulator-backend.onrender.com/api/watchlist/remove`,
+      { stocksymbol: symbolToRemove },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    const updated = watchlist.filter(
+      (i) => i.stocksymbol !== symbolToRemove
+    );
+
+    setWatchlist(updated);
+
+    localStorage.setItem(
+      "watchlistOrder",
+      JSON.stringify(updated.map((i) => i.stocksymbol))
+    );
+  };
+
+  /* ---------------- DRAG REORDER ---------------- */
+
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+
+    const items = Array.from(watchlist);
+    const [reordered] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reordered);
+
+    setWatchlist(items);
+
+    localStorage.setItem(
+      "watchlistOrder",
+      JSON.stringify(items.map((i) => i.stocksymbol))
+    );
+  };
+
+  return (
+    <div className="watchlist-container">
+      <h2>Watchlist</h2>
+
+      <div className="watchlist-add">
+        <input
+          type="text"
+          placeholder="Search stock..."
+          value={symbol}
+          onChange={(e) => setSymbol(e.target.value.toUpperCase())}
+          onKeyDown={handleKeyDown}
+        />
+
+        <button onClick={() => handleAdd()}>
+          <FiPlusCircle /> Add
+        </button>
+      </div>
+
+      {symbol && suggestions.length > 0 && (
+        <motion.div
+          className="suggestions-dropdown"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          {suggestions.map((stock, index) => (
+            <div
+              key={stock.symbol}
+              className={`suggestion-item ${
+                index === activeIndex ? "active" : ""
+              }`}
+              onClick={() => handleAdd(stock.symbol)}
+            >
+              <strong>{stock.symbol}</strong>
+              <span>{stock.companyname}</span>
+            </div>
+          ))}
+        </motion.div>
+      )}
+
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable droppableId="watchlist">
+          {(provided) => (
+            <div
+              className="watchlist-list"
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+            >
+              {watchlist.map((item, index) => (
+                <Draggable
+                  key={item.stocksymbol}
+                  draggableId={item.stocksymbol}
+                  index={index}
+                >
+                  {(provided) => (
+                    <div
+                      className="stock-card"
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                    >
+                      <div className="stock-card-header">
+                        <div>
+                          <div className="symbol">
+                            {item.stocksymbol}
+                          </div>
+                          <div className="company">
+                            {companyMap[item.stocksymbol]}
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() =>
+                            handleRemove(item.stocksymbol)
+                          }
+                        >
+                          <FiTrash />
+                        </button>
+                      </div>
+
+                      <LivePrice symbol={item.stocksymbol} />
                     </div>
-                
-           
-        </div>
-    )
-}
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </div>
+  );
+};
+
 export default WatchList;

@@ -1235,96 +1235,199 @@ button:active{
 /* ===============================
    Watchlist Layout
 ================================ */
-/* Watchlist style */
+/* =========================
+   WATCHLIST CONTAINER
+========================= */
 
 .watchlist-container {
-  max-width: 1000px;
-  padding: 30px;
-  margin: 0 auto;
-  font-family: Arial, sans-serif;
+  padding: 24px;
+  max-width: 1200px;
+  margin: auto;
+  font-family: "Inter", sans-serif;
 }
 
 .watchlist-container h2 {
+  font-size: 22px;
+  font-weight: 600;
   margin-bottom: 20px;
-  font-size: 2rem;
+  letter-spacing: 0.5px;
 }
+
+/* =========================
+   ADD SECTION
+========================= */
 
 .watchlist-add {
-  margin-bottom: 25px;
+  position: relative;
   display: flex;
   gap: 10px;
-  justify-content: center;
-  text-align: center;
+  margin-bottom: 25px;
 }
 
-.watchlist-container input {
-  padding: 10px 15px;
-  font-size: 22px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  width: 250px;
+.watchlist-add input {
+  flex: 1;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid #2e2e2e;
+  background: #111;
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  transition: 0.2s ease;
 }
 
-.watchlist-container button {
-  padding: 6px 12px;
-  background-color: #00c853;
-  color: white;
+.watchlist-add input:focus {
+  border-color: #2962ff;
+  box-shadow: 0 0 0 2px rgba(41, 98, 255, 0.3);
+}
+
+.watchlist-add button {
+  padding: 12px 18px;
+  border-radius: 8px;
   border: none;
-  border-radius: 6px;
+  background: #2962ff;
+  color: #fff;
+  font-weight: 500;
   cursor: pointer;
-  font-weight: 14px;
-  transition: background-color 0.3s ease;
+  transition: 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.watchlist-container table button:hover {
-  background-color: #00b248;
+.watchlist-add button:hover {
+  background: #0039cb;
 }
+
+/* =========================
+   SUGGESTIONS DROPDOWN
+========================= */
+
+.suggestions-dropdown {
+  position: absolute;
+  top: 52px;
+  left: 0;
+  right: 0;
+  background: #1a1a1a;
+  border-radius: 10px;
+  border: 1px solid #2a2a2a;
+  overflow: hidden;
+  z-index: 20;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.suggestion-item {
+  padding: 12px 14px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+.suggestion-item:hover,
+.suggestion-item.active {
+  background: #262626;
+}
+
+.suggestion-item strong {
+  color: #fff;
+}
+
+.suggestion-item span {
+  color: #aaa;
+  font-size: 13px;
+}
+
+/* =========================
+   WATCHLIST GRID
+========================= */
 
 .watchlist-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
   gap: 20px;
 }
 
+/* =========================
+   STOCK CARD
+========================= */
+
 .stock-card {
-  background-color: #f4f4f4;
-  padding: 1rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgb(0, 0, 0, 0.08);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  background: #141414;
+  border-radius: 14px;
+  padding: 18px;
+  border: 1px solid #1f1f1f;
+  transition: 0.25s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
+
+.stock-card:hover {
+  border-color: #2962ff;
+  transform: translateY(-2px);
+}
+
+/* =========================
+   STOCK CARD HEADER
+========================= */
 
 .stock-card-header {
   display: flex;
   justify-content: space-between;
-  font-weight: bold;
-  font-size: 1.1rem;
+  align-items: center;
+  margin-bottom: 14px;
 }
 
 .symbol {
-  color: #333;
+  font-weight: 600;
+  font-size: 16px;
+  color: #fff;
 }
 
-.date {
-  color: #777;
-  font-size: 0.9rem;
+.company {
+  font-size: 13px;
+  color: #aaa;
+  margin-top: 2px;
 }
 
-.remove-btn {
-  background-color: #ff4d4f;
-  color: white;
-  padding: 8px 12px;
+.stock-card-header button {
+  background: transparent;
   border: none;
-  border-radius: 6px;
+  color: #999;
   cursor: pointer;
-  align-items: center;
-  transition: background-color 0.3s ease;
+  transition: 0.2s ease;
 }
 
-.remove-btn:hover {
-  background-color: #d32f2f;
+.stock-card-header button:hover {
+  color: #ff5252;
+}
+
+/* =========================
+   SCROLLBAR STYLING
+========================= */
+
+.suggestions-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.suggestions-dropdown::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+.suggestions-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+  .watchlist-list {
+    grid-template-columns: 1fr;
+  }
 }
 
 
