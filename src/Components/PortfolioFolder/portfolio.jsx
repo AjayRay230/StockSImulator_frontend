@@ -20,7 +20,7 @@ import { useUser } from "../../context/userContext";
 import AddPortfolioForm from "./AddPortfolioForm";
 import StockPrice from "../stock/StockPrice";
 import BuySellForm from "../../Transactions/BuySellForm";
-import axios from "axios";
+
 import EmptyPortfolio from "../common/empty/EmptyPortfolio";
 
 const Portfolio = () => {
@@ -104,128 +104,188 @@ const loadPortfolio = async () => {
   };
   
   return (
-    <div className="portfolio-page1">
-      <div className="portfolio-header">
-        <h1>Your Stock Portfolio</h1>
+<div className="portfolio-page1">
+
+  
+  <div className="portfolio-header">
+    <h1>Portfolio</h1>
+    <span className="portfolio-subtitle">
+      Track performance & manage your investments
+    </span>
+  </div>
+
+
+  <div className="portfolio-summary">
+    <div className="summary-card">
+      <FaWallet />
+      <div>
+        <span>Invested</span>
+        <strong>${totalInvestment.toFixed(2)}</strong>
       </div>
+    </div>
 
-      <div className="portfolio-summary">
-        <p>
-          <FaWallet /> Invested: ${totalInvestment.toFixed(2)}
-        </p>
-        <p>
-          <FaChartLine /> Current: ${totalCurrentValue.toFixed(2)}
-        </p>
-        <p className={totalProfitLoss >= 0 ? "profit" : "loss"}>
-          {totalProfitLoss >= 0 ? <FaArrowUp /> : <FaArrowDown />}
-          Profit/Loss: ${totalProfitLoss.toFixed(2)}
-        </p>
+    <div className="summary-card">
+      <FaChartLine />
+      <div>
+        <span>Current Value</span>
+        <strong>${totalCurrentValue.toFixed(2)}</strong>
       </div>
+    </div>
 
-      <div className="dashboard-actions">
-        <button className="primary-btn" onClick={() => setShowAddModal(true)}>
-          + Add Stock
-        </button>
-
-        <button
-          className="secondary-btn"
-          disabled={!portfolio.length || loading}
-          onClick={() => setShowTradeModal(true)}
-        >
-          Buy / Sell
-        </button>
+    <div className={`summary-card ${totalProfitLoss >= 0 ? "profit" : "loss"}`}>
+      {totalProfitLoss >= 0 ? <FaArrowUp /> : <FaArrowDown />}
+      <div>
+        <span>Total P/L</span>
+        <strong>${totalProfitLoss.toFixed(2)}</strong>
       </div>
+    </div>
+  </div>
 
-      {!loading && portfolio.length === 0 && <EmptyPortfolio />}
+ 
+  <div className="dashboard-actions">
+    <button className="primary-btn" onClick={() => setShowAddModal(true)}>
+      + Add Stock
+    </button>
 
-      {loading && (
-        <div className="loading-container">
-          Loading portfolio... <FaSpinner className="icons-spin" />
-        </div>
-      )}
+    <button
+      className="secondary-btn"
+      disabled={!portfolio.length || loading}
+      onClick={() => setShowTradeModal(true)}
+    >
+      Buy / Sell
+    </button>
+  </div>
 
-      {!loading && portfolio.length > 0 && (
-        <div className="portfolio-grid">
-          {portfolio.map((item) => (
-            <div className="portfolio-card" key={item.stocksymbol}>
-              <div className="card-header">
-                <h2 onClick={() => setSelectedSymbol(item.stocksymbol)}>
-                  {item.stocksymbol}
-                </h2>
-                <button
-                  onClick={() => handleDelete(item.stocksymbol)}
-                  className="delete-btn-portfolio"
-                >
-                  <FaTrash />
-                </button>
-              </div>
+  
+  {!loading && portfolio.length === 0 && <EmptyPortfolio />}
 
-              <p><FaBoxes /> Qty: {item.quantity}</p>
-              <p><FaDollarSign /> Avg: ${item.averagebuyprice}</p>
-              <p><FaChartLine /> Invested: ${item.totalInvestment.toFixed(2)}</p>
 
-              {item.currentPrice != null ? (
-                <>
-                  <p><FaMoneyBill /> Current: ${item.currentPrice}</p>
+  {loading && (
+    <div className="loading-container">
+      Loading portfolio... <FaSpinner className="icons-spin" />
+    </div>
+  )}
 
-                  <p style={{ color: item.change >= 0 ? "green" : "red" }}>
-                    {item.change >= 0 ? <FaArrowUp /> : <FaArrowDown />}
-                    ${item.change.toFixed(2)} ({item.changePercent.toFixed(2)}%)
-                  </p>
 
-                  <p>
-                    <MdPriceCheck /> Value: ${item.totalCurrentValue.toFixed(2)}
-                  </p>
+  {!loading && portfolio.length > 0 && (
+    <div className="portfolio-grid">
+      {portfolio.map((item) => (
+        <div className="portfolio-card" key={item.stocksymbol}>
 
-                  <p style={{ color: item.profitLoss >= 0 ? "green" : "red" }}>
-                    {item.profitLoss >= 0 ? <BiTrendingUp /> : <BiTrendingDown />}
-                    ${item.profitLoss.toFixed(2)}
-                  </p>
-                </>
-              ) : (
-                <FaSpinner className="icons-spin" />
-              )}
+     
+          <div className="card-header">
+            <div
+              className="stock-info"
+              onClick={() => setSelectedSymbol(item.stocksymbol)}
+            >
+              <h2 className="company-name">
+                {item.stock?.companyname || item.stocksymbol}
+              </h2>
+              <span className="stock-symbol">
+                {item.stocksymbol}
+              </span>
             </div>
-          ))}
-        </div>
-      )}
 
-      {selectedSymbol && (
-        <div className="stock-chart">
-          <div className="chart-header">
-            <h3>{selectedSymbol} Chart</h3>
-            <button onClick={() => setSelectedSymbol(null)}>
-              <FaTimes />
+            <button
+              onClick={() => handleDelete(item.stocksymbol)}
+              className="delete-btn-portfolio"
+            >
+              <FaTrash />
             </button>
           </div>
-          <StockPrice symbol={selectedSymbol} />
+
+       
+          <div className="price-section">
+            <span className="current-price">
+              ${item.currentPrice.toFixed(2)}
+            </span>
+
+            <span
+              className={`price-change ${
+                item.changePercent >= 0 ? "profit" : "loss"
+              }`}
+            >
+              {item.changePercent >= 0 ? <FaArrowUp /> : <FaArrowDown />}
+              {item.changePercent.toFixed(2)}%
+            </span>
+          </div>
+
+         
+          <div className="metrics-grid">
+            <div>
+              <span>Qty</span>
+              <strong>{item.quantity}</strong>
+            </div>
+            <div>
+              <span>Avg Price</span>
+              <strong>${item.averagebuyprice}</strong>
+            </div>
+            <div>
+              <span>Invested</span>
+              <strong>${item.totalInvestment.toFixed(2)}</strong>
+            </div>
+            <div>
+              <span>Value</span>
+              <strong>${item.totalCurrentValue.toFixed(2)}</strong>
+            </div>
+          </div>
+
+     
+          <div
+            className={`profit-section ${
+              item.profitLoss >= 0 ? "profit" : "loss"
+            }`}
+          >
+            {item.profitLoss >= 0 ? <BiTrendingUp /> : <BiTrendingDown />}
+            ${item.profitLoss.toFixed(2)}
+          </div>
+
         </div>
-      )}
-
-      {showAddModal && (
-        <Modal onClose={() => setShowAddModal(false)}>
-          <AddPortfolioForm
-            onAdd={() => {
-              loadPortfolio();
-              setShowAddModal(false);
-            }}
-          />
-        </Modal>
-      )}
-
-      {showTradeModal && (
-        <Modal onClose={() => setShowTradeModal(false)}>
-          <BuySellForm
-            onSuccess={() => {
-              loadPortfolio();
-              setShowTradeModal(false);
-            }}
-          />
-        </Modal>
-      )}
-
-      <ToastContainer position="top-right" autoClose={3000} />
+      ))}
     </div>
+  )}
+
+
+  {selectedSymbol && (
+    <div className="stock-chart">
+      <div className="chart-header">
+        <h3>{selectedSymbol} Chart</h3>
+        <button
+          className="close-chart-btn"
+          onClick={() => setSelectedSymbol(null)}
+        >
+          <FaTimes />
+        </button>
+      </div>
+      <StockPrice symbol={selectedSymbol} />
+    </div>
+  )}
+
+ 
+  {showAddModal && (
+    <Modal onClose={() => setShowAddModal(false)}>
+      <AddPortfolioForm
+        onAdd={() => {
+          loadPortfolio();
+          setShowAddModal(false);
+        }}
+      />
+    </Modal>
+  )}
+
+  {showTradeModal && (
+    <Modal onClose={() => setShowTradeModal(false)}>
+      <BuySellForm
+        onSuccess={() => {
+          loadPortfolio();
+          setShowTradeModal(false);
+        }}
+      />
+    </Modal>
+  )}
+
+  <ToastContainer position="top-right" autoClose={3000} />
+</div>
   );
 };
 
