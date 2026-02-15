@@ -70,106 +70,124 @@ const LivePrice = ({ symbol }) => {
   //  const profitLoss =(currentPrice-OpenPrice)*quantity;
   //  const profitLossPercentage = ((currentPrice-OpenPrice)/OpenPrice)*100;
   return (
-    <div className={`card ${darkMode ?"dark" :""}`}>
-      <div className="header">
-      <div className="symbol">
+  <div className={`live-card ${darkMode ? "dark" : ""}`}>
+    
+    {/* HEADER */}
+    <div className="live-header">
+      <div className="symbol-block">
+        <span className="ticker">{symbol}</span>
         {isUp ? (
-          <FiTrendingUp className="up" />
+          <FiTrendingUp className="trend up" />
         ) : (
-          <FiTrendingDown className="down" />
+          <FiTrendingDown className="trend down" />
         )}
-        <span>{symbol}</span>
-        
       </div>
-      <button className="mode-toggle" onClick={()=>setDarkMode(!darkMode)}>
-        {darkMode ?<FaSun/>:<FaMoon/>}
+
+      <button className="mode-toggle" onClick={() => setDarkMode(!darkMode)}>
+        {darkMode ? <FaSun /> : <FaMoon />}
       </button>
-      </div>
+    </div>
 
-      <motion.div
-        className={`price ${isUp?"up":"down"}`}
-        key={currentPrice}
-        initial={{ opacity: 0.5,y:-5}}
-        animate={{ opacity: 1,y:0 }}
-        
-        transition={{ duration: 0.3 }}
-      >
-        ${currentPrice.toFixed(2)}{" "}
-        <span className="price-changes">
-          ({data.change > 0 ? "+" : ""}
-          {data.change.toFixed(2)}/{changePercent.toFixed(2)}%)
-        </span>
-      </motion.div>
-      <div className="extra-data">
-        <p>Open: $ {openPrice?.toFixed(2)||"_ _"}</p>
-        <p>Previous Close: $ {previousClose?.toFixed(2)||"_ _"}</p>
-         <p>52W High: $ {fiftyTwoWeekHigh?.toFixed(2)||"_ _"}</p>
-         <p>52W Low: $ {fiftyTwoWeekLow?.toFixed(2)||"_ _"}</p>
-         
-      </div>
-      <div className="highlow">
-        <span >High: $ {highPrice?.toFixed(2)||"_ _"} </span>
-        <span>Low :  $ {lowPrice?.toFixed(2)||"_ _"}</span>
-      </div>
-       <div className="range-selector">
-        {["1D","5D","1M","1Y","MAX"].map(r=>(
-            <button 
-            key = {r}
-            onClick={()=>setDateRange(r)}
-            className={`date-btn ${dateRange ===r?"active":""}`}>
-              {r}
-            </button>
+    {/* PRICE */}
+    <motion.div
+      className={`live-price ${isUp ? "up" : "down"}`}
+      key={currentPrice}
+      initial={{ opacity: 0.6, y: -6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.25 }}
+    >
+      ${currentPrice.toFixed(2)}
+      <span className="live-change">
+        {change > 0 ? "+" : ""}
+        {change.toFixed(2)} ({changePercent.toFixed(2)}%)
+      </span>
+    </motion.div>
+
+    {/* MARKET DATA GRID */}
+    <div className="market-grid">
+      <div><span>Open</span><b>${openPrice?.toFixed(2) || "--"}</b></div>
+      <div><span>Prev Close</span><b>${previousClose?.toFixed(2) || "--"}</b></div>
+      <div><span>52W High</span><b>${fiftyTwoWeekHigh?.toFixed(2) || "--"}</b></div>
+      <div><span>52W Low</span><b>${fiftyTwoWeekLow?.toFixed(2) || "--"}</b></div>
+    </div>
+
+    {/* RANGE + TYPE */}
+    <div className="control-row">
+      <div className="range-selector">
+        {["1D","5D","1M","1Y","MAX"].map(r => (
+          <button
+            key={r}
+            onClick={() => setDateRange(r)}
+            className={dateRange === r ? "active" : ""}
+          >
+            {r}
+          </button>
         ))}
-        <button  className={`chart-btn ${chartType==='line'?"active":""}`} onClick={()=>setChartType("line")}>Line</button>
-        <button className={`chart-btn ${chartType==='candlestick'?"active":""}`}   onClick={()=>setChartType("candlestick")}>CandleStick</button>
-       </div>
-
-      <div className="chart-container">
-       {chartType=="line" &&(
-        <>
-         <Sparklines data = {prices} width = {400} height = {220}>
-          <SparklinesLine style={{stroke:isUp ?"#4caf50" :"#f44336",strokeWidth:2}}/>
-          <SparklinesLine data ={movingAvg} style={{stroke :"#ff9800",strokeWidth:1}}/>
-        </Sparklines>
-        <Sparklines data = {volume||[]} width={100} height={80}>
-          <SparklinesBars style={{fill:darkMode?"#888":"#ccc"}}/>
-        </Sparklines>
-        </>
-       )}
-       {chartType=="candlestick" && (
-        <Chart 
-        options = {{
-          chart:{
-            type:"candlestick",
-            height:200,
-            background:darkMode?"#1e1e1e":"#fff",
-          },
-          xaxis:{
-            type:"datetime",
-          },
-          yaxis:{
-            tooltip:{
-              enable:true,
-            },
-          },
-        }}
-        series={[
-          {
-            name:"Price",
-            data:candleData,
-          },
-        ]}
-        type = "candlestick"
-        height={200}
-        />
-       )}
       </div>
-           {/* footer */}
-      <div className="footer">
-        <span >Last Updated: {secondAgo} seconds ago</span>
+
+      <div className="chart-switch">
+        <button
+          className={chartType === "line" ? "active" : ""}
+          onClick={() => setChartType("line")}
+        >
+          Line
+        </button>
+        <button
+          className={chartType === "candlestick" ? "active" : ""}
+          onClick={() => setChartType("candlestick")}
+        >
+          Candle
+        </button>
       </div>
     </div>
-  );
+
+    {/* CHART */}
+    <div className="chart-area">
+      {chartType === "line" && (
+        <>
+          <Sparklines data={prices} height={180}>
+            <SparklinesLine
+              style={{
+                stroke: isUp ? "#00E396" : "#FF4D4F",
+                strokeWidth: 2.2
+              }}
+            />
+          </Sparklines>
+
+          <Sparklines data={volume || []} height={60}>
+            <SparklinesBars style={{ fill: "#334155" }} />
+          </Sparklines>
+        </>
+      )}
+
+      {chartType === "candlestick" && (
+        <Chart
+          options={{
+            chart: {
+              type: "candlestick",
+              background: "transparent",
+              toolbar: { show: false }
+            },
+            grid: {
+              borderColor: "rgba(255,255,255,0.06)"
+            },
+            xaxis: { type: "datetime" },
+            yaxis: { opposite: true }
+          }}
+          series={[{ name: "Price", data: candleData }]}
+          type="candlestick"
+          height={220}
+        />
+      )}
+    </div>
+
+    {/* FOOTER */}
+    <div className="live-footer">
+      Updated {secondAgo}s ago
+    </div>
+
+  </div>
+);
 };
 
 export default LivePrice; 
