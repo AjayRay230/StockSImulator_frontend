@@ -69,12 +69,16 @@ const apiData = response.data;
 
 setOhlcData(apiData.data || []);
 
+// Always reset first (important when switching symbols)
+setCompanyName("");
+
 // Extract company name safely
-if (apiData.meta?.companyname) {
-  setCompanyName(apiData.meta.companyname);
-} else if (apiData.data?.[0]?.companyname) {
-  setCompanyName(apiData.data[0].companyname);
-}
+const fullName =
+  apiData?.meta?.companyname ||
+  apiData?.meta?.symbol ||
+  symbol;
+
+setCompanyName(fullName);
   console.log("FULL API RESPONSE:", response.data);      
       } catch (error) {
         toast.error("Error while getting the price", error);
