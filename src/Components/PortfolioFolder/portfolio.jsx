@@ -102,12 +102,16 @@ const loadPortfolio = async () => {
     }
   };
 const selectedStock = useMemo(() => {
+  if (!selectedSymbol || !portfolio.length) return null;
+
   return portfolio.find(
     (item) =>
-      item.stock?.symbol?.toUpperCase() === selectedSymbol?.toUpperCase()
-  );
+      String(item.stocksymbol).trim().toUpperCase() ===
+      String(selectedSymbol).trim().toUpperCase()
+  ) || null;
 }, [portfolio, selectedSymbol]);
-console.log(selectedStock)
+console.log("Selected Symbol:", selectedSymbol);
+console.log("Portfolio Symbols:", portfolio.map(p => p.stocksymbol));
   return (
 <div className="portfolio-page1">
 
