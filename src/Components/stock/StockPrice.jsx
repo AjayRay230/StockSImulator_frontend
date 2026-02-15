@@ -170,75 +170,115 @@ setSeries(mainSeries);
 
 const options = useMemo(() => ({
   chart: {
-    type: 'candlestick',
+    type: chartType,
     height: 400,
     background: "transparent",
-    animations: { enabled: true, easing: "easeinout", speed: 300 },
-    toolbar: { show: true },
+    toolbar: {
+      show: true,
+      tools: {
+        download: false
+      }
+    },
+    zoom: {
+      enabled: true
+    }
   },
 
-  grid: { borderColor: darkMode ? "#444" : "#eee" },
   theme: { mode: darkMode ? "dark" : "light" },
 
-  plotOptions: {
-    candlestick: {
-      colors: {
-        upward: '#26a69a',
-        downward: '#ef5350',
-      },
-      wick: { useFiller: true },
-    },
-    bar: { borderRadius: 4 },
+  grid: {
+    borderColor: darkMode ? "rgba(255,255,255,0.06)" : "#e5e7eb",
+    strokeDashArray: 3
   },
 
+  colors: ["#00E396", "#FFD700", "#00C8FF"],
+
   stroke: {
-    width: chartType === 'line' || chartType === 'area' ? 2 : [1, 1, 1],
-    curve: "smooth",
+    width: chartType === "line" || chartType === "area" ? 2.2 : 1,
+    curve: "smooth"
   },
 
   xaxis: {
-    type: 'datetime',
-    labels: { style: { colors: darkMode ? "#ccc" : "#333" } },
+    type: "datetime",
+    axisBorder: { show: false },
+    axisTicks: { show: false },
+    labels: {
+      style: {
+        colors: darkMode ? "#94a3b8" : "#6b7280",
+        fontSize: "12px"
+      }
+    }
   },
 
   yaxis: {
-    tooltip: { enabled: true },
-    labels: { style: { colors: darkMode ? "#ccc" : "#333" } },
+    opposite: true,
+    labels: {
+      style: {
+        colors: darkMode ? "#94a3b8" : "#6b7280",
+        fontSize: "12px"
+      }
+    }
   },
 
   tooltip: {
     shared: true,
-    intersect: false,
     theme: darkMode ? "dark" : "light",
+    x: {
+      format: "dd MMM HH:mm"
+    }
   },
 
   dataLabels: { enabled: false },
 
   title: {
     text: companyName || symbol,
-    align: "center",
+    align: "left",
+    offsetY: 10,
     style: {
-      fontSize: "18px",
-      fontWeight: "600",
-      color: darkMode ? "#fff" : "#000",
+      fontSize: "20px",
+      fontWeight: "700",
+      color: darkMode ? "#ffffff" : "#111827"
     }
-  }
+  },
 
 }), [darkMode, chartType, symbol, companyName]);
-   const volumeOptions =useMemo(()=>({
-    chart:{type:"bar",height:150,background:"transparent"},
-    grid:{borderColor:darkMode?"#444":"#eee"},
-    xaxis:{type:"datetime",labels:{show:false}},
-    yaxis:{labels:{show:false}},
-    plotOptions:{
-      bar:{columnWidth:"70%",borderRadius:3},
 
+const volumeOptions = useMemo(() => ({
+  chart: {
+    type: "bar",
+    height: 120,
+    background: "transparent",
+    toolbar: { show: false }
+  },
+
+  grid: { show: false },
+
+  plotOptions: {
+    bar: {
+      columnWidth: "70%",
+      borderRadius: 2
     }
-    ,
-    fill:{colors:[darkMode?"#8884d8":"#82ca9d"]},
-    tooltip:{theme:darkMode?"dark" :"light"},
+  },
 
-   }),[darkMode]);
+  colors: ["#475569"],
+
+  xaxis: {
+    type: "datetime",
+    labels: { show: false },
+    axisBorder: { show: false },
+    axisTicks: { show: false }
+  },
+
+  yaxis: {
+    labels: { show: false }
+  },
+
+  tooltip: {
+    theme: darkMode ? "dark" : "light"
+  }
+
+}), [darkMode]);
+
 if (loading) {
   return (
     <span>
@@ -257,41 +297,47 @@ if (!series.length || !series[0]?.data?.length) {
   ) : (
   
     <div className={`chart-card ${darkMode ?"dark":""}`}>
-<div className='chart-header'>
-<SimulateStock onSimulate={onSimulate} />
+      <div className="chart-header">
+  <div className="left-controls">
+    <SimulateStock onSimulate={onSimulate} />
+    {onBack && (
+      <button onClick={onBack} className="back-btn">
+        ← Back
+      </button>
+    )}
+  </div>
 
+  <div className="center-controls">
+    <div className="range-selector">
+      {["1D","5D","1M","1Y","MAX"].map(r => (
+        <button
+          key={r}
+          onClick={() => setDateRange(r)}
+          className={dateRange === r ? "active" : ""}
+        >
+          {r}
+        </button>
+      ))}
+    </div>
+  </div>
 
-  {onBack && (
-    <button onClick={onBack} className="back-btn">
-      ← Back
+  <div className="right-controls">
+    <select
+      value={chartType}
+      onChange={(e) => setChartType(e.target.value)}
+      className="chart-type-select"
+    >
+      <option value="candlestick">Candlestick</option>
+      <option value="line">Line</option>
+      <option value="area">Area</option>
+      <option value="bar">Bar</option>
+    </select>
+
+    <button onClick={() => setDarkMode(!darkMode)}>
+      {darkMode ? <FaSun /> : <FaMoon />}
     </button>
-  )}
-
-  <button onClick={() => setDarkMode(!darkMode)}>
-    {darkMode ? <FaSun /> : <FaMoon />}
-  </button>
-
-  <div className="range-selector">
-
-        {["1D","5D","1M","1Y","MAX"].map(r=>(
-            <button 
-            key = {r}
-            onClick={()=>setDateRange(r)}
-            className={dateRange ===r?"active":""}>
-              {r}
-            </button>
-        ))}
-       </div>
-       <select  value= {chartType}
-       onChange = {(e)=>setChartType(e.target.value)}
-       className = "chart-type-select">
-        <option value = "candlestick">CandleStick</option>
-        <option value = "line">Line</option>
-        <option value = "area">Area</option>
-        <option value = "bar">Bar</option>
-        </select>
-
-      </div>
+  </div>
+</div>
       {series.length>0 && series[0].data.length>0?(
         <>
       <Chart options = {options} series = {series} type = {chartType} height = {400}/>
