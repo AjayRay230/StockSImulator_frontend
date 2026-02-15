@@ -1235,199 +1235,85 @@ button:active{
 /* ===============================
    Watchlist Layout
 ================================ */
-/* =========================
-   WATCHLIST CONTAINER
-========================= */
-
-.watchlist-container {
-  padding: 24px;
-  max-width: 1200px;
-  margin: auto;
-  font-family: "Inter", sans-serif;
-}
-
-.watchlist-container h2 {
-  font-size: 22px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  letter-spacing: 0.5px;
-}
-
-/* =========================
-   ADD SECTION
-========================= */
-
-.watchlist-add {
-  position: relative;
+.terminal-layout {
   display: flex;
-  gap: 10px;
-  margin-bottom: 25px;
-}
-
-.watchlist-add input {
-  flex: 1;
-  padding: 12px 14px;
-  border-radius: 8px;
-  border: 1px solid #2e2e2e;
-  background: #111;
+  height: 100vh;
+  background: #0b1426;
   color: #fff;
-  font-size: 14px;
-  outline: none;
-  transition: 0.2s ease;
 }
 
-.watchlist-add input:focus {
-  border-color: #2962ff;
-  box-shadow: 0 0 0 2px rgba(41, 98, 255, 0.3);
-}
-
-.watchlist-add button {
-  padding: 12px 18px;
-  border-radius: 8px;
-  border: none;
-  background: #2962ff;
-  color: #fff;
-  font-weight: 500;
-  cursor: pointer;
-  transition: 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.watchlist-add button:hover {
-  background: #0039cb;
-}
-
-/* =========================
-   SUGGESTIONS DROPDOWN
-========================= */
-
-.suggestions-dropdown {
-  position: absolute;
-  top: 52px;
-  left: 0;
-  right: 0;
-  background: #1a1a1a;
-  border-radius: 10px;
-  border: 1px solid #2a2a2a;
-  overflow: hidden;
-  z-index: 20;
-  max-height: 300px;
+.watchlist-panel {
+  width: 320px;
+  background: #111c33;
+  padding: 16px;
+  border-right: 1px solid #1f2a44;
   overflow-y: auto;
 }
 
-.suggestion-item {
-  padding: 12px 14px;
-  cursor: pointer;
+.chart-panel {
+  flex: 1;
+  padding: 20px;
+  background: #0b1426;
+}
+
+.watch-row {
   display: flex;
   justify-content: space-between;
-  font-size: 14px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  cursor: grab;
   transition: 0.2s ease;
 }
 
-.suggestion-item:hover,
-.suggestion-item.active {
-  background: #262626;
+.watch-row:hover {
+  background: #16243d;
 }
 
-.suggestion-item strong {
-  color: #fff;
-}
-
-.suggestion-item span {
-  color: #aaa;
-  font-size: 13px;
-}
-
-/* =========================
-   WATCHLIST GRID
-========================= */
-
-.watchlist-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
-  gap: 20px;
-}
-
-/* =========================
-   STOCK CARD
-========================= */
-
-.stock-card {
-  background: #141414;
-  border-radius: 14px;
-  padding: 18px;
-  border: 1px solid #1f1f1f;
-  transition: 0.25s ease;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
-}
-
-.stock-card:hover {
-  border-color: #2962ff;
-  transform: translateY(-2px);
-}
-
-/* =========================
-   STOCK CARD HEADER
-========================= */
-
-.stock-card-header {
+.row-left {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
+  flex-direction: column;
 }
 
 .symbol {
   font-weight: 600;
-  font-size: 16px;
-  color: #fff;
+  font-size: 14px;
 }
 
 .company {
-  font-size: 13px;
-  color: #aaa;
-  margin-top: 2px;
+  font-size: 11px;
+  color: #9aa4bf;
 }
 
-.stock-card-header button {
-  background: transparent;
-  border: none;
-  color: #999;
-  cursor: pointer;
-  transition: 0.2s ease;
+.row-right {
+  text-align: right;
 }
 
-.stock-card-header button:hover {
+.price {
+  font-size: 14px;
+}
+
+.positive {
+  color: #00c853;
+}
+
+.negative {
   color: #ff5252;
 }
 
-/* =========================
-   SCROLLBAR STYLING
-========================= */
-
-.suggestions-dropdown::-webkit-scrollbar {
-  width: 6px;
+.group-section {
+  margin-top: 20px;
 }
 
-.suggestions-dropdown::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 4px;
+.group-section h4 {
+  font-size: 12px;
+  color: #8ea1c7;
+  margin-bottom: 8px;
 }
 
-.suggestions-dropdown::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media (max-width: 768px) {
-  .watchlist-list {
-    grid-template-columns: 1fr;
-  }
+.mini-row {
+  font-size: 12px;
+  margin-bottom: 4px;
 }
 
 
