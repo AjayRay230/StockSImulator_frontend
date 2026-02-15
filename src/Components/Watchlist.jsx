@@ -116,12 +116,15 @@ const WatchList = () => {
     setStocks(updated);
   };
 
-  // 🔎 Search filter
-  const filteredStocks = stocks.filter(
-    (s) =>
-      s.stocksymbol.toLowerCase().includes(search.toLowerCase()) ||
-      s.companyname.toLowerCase().includes(search.toLowerCase())
-  );
+
+const filteredStocks = search.trim() === ""
+  ? stocks
+  : stocks.filter((s) => {
+      const symbol = s.stocksymbol?.toLowerCase() || "";
+      const name = s.companyname?.toLowerCase() || "";
+      const query = search.toLowerCase();
+      return symbol.includes(query) || name.includes(query);
+    });
 
   const gainers = filteredStocks.filter((s) => s.percentChange > 0);
   const losers = filteredStocks.filter((s) => s.percentChange <= 0);
