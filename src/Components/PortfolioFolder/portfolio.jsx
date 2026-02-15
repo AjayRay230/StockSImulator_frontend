@@ -101,11 +101,13 @@ const loadPortfolio = async () => {
       toast.error("Delete failed");
     }
   };
-  const selectedStock = useMemo(() => {
+const selectedStock = useMemo(() => {
   return portfolio.find(
-    (item) => item.stocksymbol === selectedSymbol
+    (item) =>
+      item.stock?.symbol?.toUpperCase() === selectedSymbol?.toUpperCase()
   );
 }, [portfolio, selectedSymbol]);
+console.log(selectedStock)
   return (
 <div className="portfolio-page1">
 
