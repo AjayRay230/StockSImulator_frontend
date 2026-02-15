@@ -59,7 +59,6 @@ const WatchList = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [searchMode, setSearchMode] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const debounceRef = useRef(null);
 
   const fetchWatchlist = useCallback(async () => {
@@ -104,7 +103,7 @@ const WatchList = () => {
   }, [fetchWatchlist]);
 
   /* =======================
-     🔎 Debounced Search
+     Debounced Search
   ======================== */
   const handleSearch = (value) => {
     setSearch(value);
@@ -138,7 +137,7 @@ const WatchList = () => {
   };
 
   /* =======================
-     ➕ Add to Watchlist
+     Add to Watchlist
   ======================== */
   const addToWatchlist = async (symbol) => {
     try {
@@ -155,13 +154,10 @@ const WatchList = () => {
       setSearchResults([]);
       fetchWatchlist();
     } catch (err) {
-      console.error("Add failed", err);
+      console.error("Add failed", err.response?.data || err);
     }
   };
 
-  /* =======================
-     🔄 Drag Handling
-  ======================== */
   const handleDragEnd = (event) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -184,7 +180,6 @@ const WatchList = () => {
       <div className="watchlist-panel">
         <h3>WATCHLIST</h3>
 
-        {/* Search Input */}
         <div className="search-wrapper">
           <input
             type="text"
@@ -194,7 +189,6 @@ const WatchList = () => {
             className="search-input"
           />
 
-          {/* Dropdown */}
           <AnimatePresence>
             {searchMode && searchResults.length > 0 && (
               <motion.div
@@ -205,13 +199,13 @@ const WatchList = () => {
               >
                 {searchResults.map((stock) => {
                   const alreadyAdded = stocks.some(
-                    (s) => s.stocksymbol === stock.stocksymbol
+                    (s) => s.stocksymbol === stock.symbol
                   );
 
                   return (
-                    <div key={stock.stocksymbol} className="search-item">
+                    <div key={stock.symbol} className="search-item">
                       <div>
-                        <strong>{stock.stocksymbol}</strong> -{" "}
+                        <strong>{stock.symbol}</strong> -{" "}
                         {stock.companyname}
                       </div>
 
@@ -219,7 +213,7 @@ const WatchList = () => {
                         disabled={alreadyAdded}
                         onClick={() =>
                           !alreadyAdded &&
-                          addToWatchlist(stock.stocksymbol)
+                          addToWatchlist(stock.symbol)
                         }
                         className="add-btn"
                       >
@@ -235,7 +229,6 @@ const WatchList = () => {
 
         {loading && <div className="loading">Updating prices...</div>}
 
-        {/* Watchlist */}
         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext
             items={stocks.map((s) => s.stocksymbol)}
@@ -254,7 +247,6 @@ const WatchList = () => {
           </SortableContext>
         </DndContext>
 
-        {/* Gainers / Losers */}
         <div className="group-section">
           <h4>GAINERS</h4>
           {gainers.map((s) => (
