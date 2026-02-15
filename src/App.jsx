@@ -23,6 +23,7 @@ import ForgotPassword from './Components/common/ForgotPassWord';
 import LandingPage from "./Components/Landing/LandingPage";
 import ProtectedRoute from './Components/common/ProtectedRoute';
 import TradePage from "./Components/Trade/TradePage";
+import { WebSocketProvider } from "./context/WebSocketContext";
 function App() {
   const[selectedSymbol,setSelectedSymbol]  = useState("");
   const[loginIn,setLoginIn] = useState(false);
@@ -40,7 +41,7 @@ function App() {
   }
 
   return (
-    <>
+    <WebSocketProvider>
       
         <Navbar selectedSymbol= {selectedSymbol}
          setSelectedSymbol = {setSelectedSymbol}
@@ -85,7 +86,7 @@ function App() {
          </div>
        <ToastContainer/>
       
-      </>
+      </WebSocketProvider>
   )
 }
 
