@@ -48,7 +48,9 @@ const StockPrice = ({ symbol, onBack, refreshKey, onSimulate }) => {
   const [ohlcData, setOhlcData] = useState([]);
   const [companyName, setCompanyName] = useState("");
  const { latestUpdate } = useContext(WebSocketContext);
-
+const livePrice = latestUpdate?.[symbol]
+  ? parseFloat(latestUpdate[symbol])
+  : null;
 
   // ---------------- FETCH ----------------
   useEffect(() => {
