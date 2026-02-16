@@ -107,6 +107,14 @@ const Navbar =()=>{
               
             {isLoggedIn && (
     <>
+       <li
+    className="sidebar-item"
+    onClick={() => navigate("/dashboard")}
+  >
+    <FaChartLine />
+    <span>Market</span>
+  </li>
+  
       <li><Link to="/portfolio"><FaWallet className="icon1"/>
       <span className= "link-text" >
 
