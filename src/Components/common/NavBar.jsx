@@ -76,9 +76,8 @@ const Navbar =()=>{
 <div className="navbar-right">
 
 
-<div className={`connection-badge ${connected ? "online" : "offline"}`}>
-  <span className="dot" />
-  {connected ? "Live Market" : "Reconnecting..."}
+<div className={`market-badge ${marketOpen ? "open" : "closed"}`}>
+  {marketOpen ? "🟢 Market Open" : "🔴 Market Closed"}
 </div>
   <button className="theme-toggle" onClick={toggleTheme}>
     {theme === 'light' ? <FaSun /> : <FaMoon />}
