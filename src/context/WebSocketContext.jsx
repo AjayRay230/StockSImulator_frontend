@@ -110,12 +110,25 @@ onConnect: () => {
     return () => clearTimeout(timer);
   }, [isLoggedIn]);
 
+
+  const subscribeToTopic = (destination, callback) => {
+  if (!clientRef.current || !connected) return null;
+
+  return clientRef.current.subscribe(destination, (message) => {
+    try {
+      callback(message);
+    } catch (e) {
+      console.error("Subscription parse error:", e);
+    }
+  });
+};
   return (
     <WebSocketContext.Provider
       value={{
         latestUpdate,
         portfolioValue,
         connected,
+        subscribeToTopic,
       }}
     >
       {children}

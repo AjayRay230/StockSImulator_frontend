@@ -3118,6 +3118,26 @@ th {
 .price-change.negative {
   color: var(--loss);
 }
+
+.terminal-order-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.terminal-orderbook {
+  background: #111;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.terminal-body {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+}
+
+
                                      /* StockCard Section     */
   .liveprice-wrapper {
   margin-top: 10px;

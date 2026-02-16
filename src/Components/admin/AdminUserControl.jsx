@@ -7,7 +7,6 @@ function AdminUserControl() {
   const [totalUsers, setTotalUsers] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // Fetch users + count
   useEffect(() => {
     const fetchData = async () => {
       try {
