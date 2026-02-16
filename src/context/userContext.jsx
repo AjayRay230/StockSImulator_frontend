@@ -20,7 +20,7 @@ useEffect(() => {
     try {
       const parsedUser = JSON.parse(storedUser);
 
-      if (parsedUser?.role && parsedUser?.firstName) {
+      if (parsedUser?.role && parsedUser?.firstName && parsedUser?.username) {
         setUser(parsedUser);
         setRole(parsedUser.role);
         setIsLoggedIn(true);
@@ -72,6 +72,8 @@ const login = (responseData) => {
   toast.success("Login successful");
 };
 useEffect(() => {
+  if (!isLoggedIn) return;
+
   const expiry = localStorage.getItem("tokenExpiry");
   if (!expiry) return;
 
@@ -83,8 +85,10 @@ useEffect(() => {
   }
 
   const timer = setTimeout(forceLogout, timeLeft);
+
   return () => clearTimeout(timer);
-}, []);
+
+}, [isLoggedIn]);
 
 
 const forceLogout = () => {

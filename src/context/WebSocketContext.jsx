@@ -7,7 +7,6 @@ export const WebSocketContext = createContext();
 
 export const WebSocketProvider = ({ children }) => {
   const { user, isLoggedIn } = useUser();
-
   const clientRef = useRef(null);
 
   const [latestUpdate, setLatestUpdate] = useState(null);
@@ -30,7 +29,7 @@ export const WebSocketProvider = ({ children }) => {
 
       debug: () => {},
 
-      reconnectDelay: 5000, // ✅ auto reconnect every 5 sec
+      reconnectDelay: 5000,
       heartbeatIncoming: 10000,
       heartbeatOutgoing: 10000,
 
@@ -38,7 +37,7 @@ export const WebSocketProvider = ({ children }) => {
         console.log("✅ STOMP connected");
         setConnected(true);
 
-        // 🔥 MARKET PRICE STREAM
+        // MARKET STREAM
         client.subscribe("/topic/prices", (message) => {
           try {
             const prices = JSON.parse(message.body);
@@ -48,7 +47,7 @@ export const WebSocketProvider = ({ children }) => {
           }
         });
 
-        // 🔥 USER PORTFOLIO STREAM
+        // USER PORTFOLIO STREAM
         client.subscribe(
           `/topic/portfolio/${user.username}`,
           (message) => {
@@ -62,13 +61,13 @@ export const WebSocketProvider = ({ children }) => {
         );
       },
 
-      onStompError: (frame) => {
-        console.error("STOMP error:", frame.headers["message"]);
-      },
-
       onDisconnect: () => {
         console.log("❌ STOMP disconnected");
         setConnected(false);
+      },
+
+      onStompError: (frame) => {
+        console.error("STOMP error:", frame.headers["message"]);
       },
     });
 
@@ -78,9 +77,35 @@ export const WebSocketProvider = ({ children }) => {
     return () => {
       if (clientRef.current) {
         clientRef.current.deactivate();
+        clientRef.current = null;
       }
     };
   }, [isLoggedIn, user?.username]);
+
+  // 🔥 Proper Token Expiry Handling
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
+    const expiry = localStorage.getItem("tokenExpiry");
+    if (!expiry) return;
+
+    const timeLeft = expiry - Date.now();
+
+    if (timeLeft <= 0) {
+      if (clientRef.current) {
+        clientRef.current.deactivate();
+      }
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      if (clientRef.current) {
+        clientRef.current.deactivate();
+      }
+    }, timeLeft);
+
+    return () => clearTimeout(timer);
+  }, [isLoggedIn]);
 
   return (
     <WebSocketContext.Provider

@@ -593,6 +593,41 @@ button:disabled {
   align-items: center;
   gap: 6px;
 }
+
+.connection-badge {
+  margin-right: 15px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.connection-badge.online {
+  background: rgba(0, 255, 0, 0.08);
+  color: #00e676;
+}
+
+.connection-badge.offline {
+  background: rgba(255, 0, 0, 0.08);
+  color: #ff5252;
+}
+
+.connection-badge .dot {
+  height: 8px;
+  width: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.connection-badge.online .dot {
+  background-color: #00e676;
+}
+
+.connection-badge.offline .dot {
+  background-color: #ff5252;
+}
                                       /* portfolio css  */
      /* .portfolio-parent{
       box-shadow: 20px 10px 20px rgb(255, 205,105,0.4);

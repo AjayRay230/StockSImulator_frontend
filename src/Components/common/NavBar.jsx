@@ -3,12 +3,13 @@ import {Link, useNavigate,useLocation}  from "react-router-dom";
 import {FaChartLine, FaClipboard, FaMoon,FaSearch,FaSignOutAlt,FaSun, FaUser, FaUserPlus, FaWallet,FaHome,FaTools, FaBell,FaBars} from "react-icons/fa";
 import { useUser } from "../../context/userContext";
 import { MdAnalytics } from "react-icons/md";
-
+import { useWebSocket } from "../../context/WebSocketContext";
 const Navbar =()=>{
     const[searchTerm ,setSearchTerm] = useState('');
     const navigate = useNavigate();
     const{isLoggedIn,role,user,logout} = useUser();
     const[isSidebarOpen,setIsSidebarOpen] = useState(false);
+    const { connected } = useWebSocket();
     const toggleSidebar = ()=>{
       setIsSidebarOpen(prev=>!prev);
     }
@@ -70,13 +71,20 @@ const Navbar =()=>{
 </button>
 
       </div>
-      <div className="navbar-right">
-        <button className="theme-toggle" onClick={toggleTheme}>
-        {theme === 'light' ? <FaSun /> : <FaMoon />}
-      </button>
-      <FaBell className="icon1"/>
+<div className="navbar-right">
 
-      </div>
+<div className={`connection-badge ${connected ? "online" : "offline"}`}>
+  <span className="dot" />
+  {connected ? "Live Market" : "Reconnecting..."}
+</div>
+
+  <button className="theme-toggle" onClick={toggleTheme}>
+    {theme === 'light' ? <FaSun /> : <FaMoon />}
+  </button>
+
+  <FaBell className="icon1"/>
+
+</div>
       </div>
       
          <div className={`sidebar ${isSidebarOpen? 'active':''}`}>
