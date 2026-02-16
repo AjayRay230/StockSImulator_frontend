@@ -190,7 +190,13 @@ useEffect(() => {
   liveCandleRef.current = candles;
 
   // Imperative update (no React state mutation)
-  if (chartRef.current?.chart) {
+ if (
+  chartRef.current &&
+  chartRef.current.chart &&
+  chartRef.current.chart.w &&
+  chartRef.current.chart.w.globals
+) {
+  try {
     chartRef.current.chart.updateSeries(
       [
         {
@@ -201,7 +207,10 @@ useEffect(() => {
       ],
       false
     );
+  } catch (e) {
+    // silently ignore if chart was destroyed
   }
+}
 
 }, [latestUpdate, symbol, chartType]);
 
