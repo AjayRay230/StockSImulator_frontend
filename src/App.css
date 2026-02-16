@@ -3158,4 +3158,16 @@ th {
   transform: translateY(-4px);
   border-color: var(--accent);
 }
-                                
+ .trade-btn {
+  background: #2563eb;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.trade-btn:hover {
+  background: #1d4ed8;
+}                               

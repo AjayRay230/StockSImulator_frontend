@@ -17,7 +17,16 @@ const StockCard = ({ stock }) => {
       <h3>
         {stock.symbol} - {stock.companyname}
       </h3>
-
+            <button
+      className="trade-btn"
+      onClick={(e) => {
+        e.stopPropagation(); // prevent double trigger
+        navigate(`/trade/${stock.symbol}`);
+      }}
+    >
+      Trade
+    </button>
+    
       <p>Initial Price: {stock.currentprice}</p>
       <p>Changes: {stock.changepercent}</p>
       <p>
