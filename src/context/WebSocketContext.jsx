@@ -1,67 +1,98 @@
-import { createContext, useEffect, useState } from "react";
-import SockJS from "sockjs-client";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { Client } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
+import { useUser } from "./userContext";
 
-export const WebSocketContext = createContext(null);
+export const WebSocketContext = createContext();
 
 export const WebSocketProvider = ({ children }) => {
+  const { user, isLoggedIn } = useUser();
+
+  const clientRef = useRef(null);
 
   const [latestUpdate, setLatestUpdate] = useState(null);
   const [portfolioValue, setPortfolioValue] = useState(null);
-  useEffect(() => {
+  const [connected, setConnected] = useState(false);
 
-    console.log("🚀 WebSocketProvider mounted");
+  useEffect(() => {
+    if (!isLoggedIn || !user?.username) return;
 
     const token = localStorage.getItem("token");
-
-    if (!token) {
-      console.log("❌ No JWT token found. WebSocket not started.");
-      return;
-    }
-
-    const socket = new SockJS(
-      "https://stocksimulator-backend.onrender.com/ws"
-    );
-
-    socket.onopen = () => console.log("🟢 SockJS open");
-    socket.onerror = (e) => console.log("🔴 SockJS error", e);
-    socket.onclose = () => console.log("🟡 SockJS closed");
+    if (!token) return;
 
     const client = new Client({
-      webSocketFactory: () => socket,
-      reconnectDelay: 5000,
+      webSocketFactory: () =>
+        new SockJS("https://stocksimulator-backend.onrender.com/ws"),
 
       connectHeaders: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
+
+      debug: () => {},
+
+      reconnectDelay: 5000, // ✅ auto reconnect every 5 sec
+      heartbeatIncoming: 10000,
+      heartbeatOutgoing: 10000,
 
       onConnect: () => {
         console.log("✅ STOMP connected");
+        setConnected(true);
 
+        // 🔥 MARKET PRICE STREAM
+        client.subscribe("/topic/prices", (message) => {
+          try {
+            const prices = JSON.parse(message.body);
+            setLatestUpdate(prices);
+          } catch (e) {
+            console.error("Price parse error:", e);
+          }
+        });
+
+        // 🔥 USER PORTFOLIO STREAM
         client.subscribe(
-  `/topic/portfolio/${username}`,
-  (message) => {
-    setPortfolioValue(parseFloat(message.body));
-  }
-);
+          `/topic/portfolio/${user.username}`,
+          (message) => {
+            try {
+              const totalValue = JSON.parse(message.body);
+              setPortfolioValue(totalValue);
+            } catch (e) {
+              console.error("Portfolio parse error:", e);
+            }
+          }
+        );
       },
 
       onStompError: (frame) => {
-        console.error("❌ STOMP Error:", frame);
-      }
+        console.error("STOMP error:", frame.headers["message"]);
+      },
+
+      onDisconnect: () => {
+        console.log("❌ STOMP disconnected");
+        setConnected(false);
+      },
     });
 
     client.activate();
+    clientRef.current = client;
 
     return () => {
-      client.deactivate();
+      if (clientRef.current) {
+        clientRef.current.deactivate();
+      }
     };
-
-  }, []);
+  }, [isLoggedIn, user?.username]);
 
   return (
-    <WebSocketContext.Provider value={{ latestUpdate,portfolioValue }}>
+    <WebSocketContext.Provider
+      value={{
+        latestUpdate,
+        portfolioValue,
+        connected,
+      }}
+    >
       {children}
     </WebSocketContext.Provider>
   );
 };
+
+export const useWebSocket = () => useContext(WebSocketContext);

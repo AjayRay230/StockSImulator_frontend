@@ -41,10 +41,9 @@ useEffect(() => {
 
 
 const login = (responseData) => {
- const { token, role, firstName, lastName } = responseData;
+  const { token, role, firstName, lastName  } = responseData;
 
-
-  if (!token || !role ) {
+  if (!token || !role) {
     toast.error("Invalid login response from server.");
     return;
   }
@@ -52,7 +51,15 @@ const login = (responseData) => {
   const decoded = jwtDecode(token);
   const expiryTime = decoded.exp * 1000;
 
-  const userData = { role, firstName, lastName};
+  // 🔥 EXTRACT USERNAME FROM JWT
+  const username = decoded.sub; // subject = username
+
+  const userData = {
+    username,        // ✅ ADD THIS
+    role,
+    firstName,
+    lastName
+  };
 
   localStorage.setItem("token", token);
   localStorage.setItem("tokenExpiry", expiryTime);
@@ -64,7 +71,6 @@ const login = (responseData) => {
 
   toast.success("Login successful");
 };
-
 useEffect(() => {
   const expiry = localStorage.getItem("tokenExpiry");
   if (!expiry) return;
