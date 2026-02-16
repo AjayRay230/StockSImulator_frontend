@@ -33,33 +33,36 @@ export const WebSocketProvider = ({ children }) => {
       heartbeatIncoming: 10000,
       heartbeatOutgoing: 10000,
 
-      onConnect: () => {
-        console.log("✅ STOMP connected");
-        setConnected(true);
+onConnect: () => {
+  console.log("✅ STOMP connected");
+  setConnected(true);
 
-        // MARKET STREAM
-        client.subscribe("/topic/prices", (message) => {
-          try {
-            const prices = JSON.parse(message.body);
-            setLatestUpdate(prices);
-          } catch (e) {
-            console.error("Price parse error:", e);
-          }
-        });
+  // 🔥 Always clear previous values
+  setLatestUpdate(null);
 
-        // USER PORTFOLIO STREAM
-        client.subscribe(
-          `/topic/portfolio/${user.username}`,
-          (message) => {
-            try {
-              const totalValue = JSON.parse(message.body);
-              setPortfolioValue(totalValue);
-            } catch (e) {
-              console.error("Portfolio parse error:", e);
-            }
-          }
-        );
-      },
+  // 🔥 MARKET PRICES
+  client.subscribe("/topic/prices", (message) => {
+    try {
+      const prices = JSON.parse(message.body);
+      setLatestUpdate(prices);
+    } catch (e) {
+      console.error("Price parse error:", e);
+    }
+  });
+
+  // 🔥 USER PORTFOLIO
+  client.subscribe(
+    `/topic/portfolio/${user.username}`,
+    (message) => {
+      try {
+        const totalValue = JSON.parse(message.body);
+        setPortfolioValue(totalValue);
+      } catch (e) {
+        console.error("Portfolio parse error:", e);
+      }
+    }
+  );
+},
 
       onDisconnect: () => {
         console.log("❌ STOMP disconnected");

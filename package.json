@@ -18,7 +18,7 @@
     "@stomp/stompjs": "^7.3.0",
     "apexcharts": "^5.2.0",
     "axios": "^1.10.0",
-    "framer-motion": "^12.23.12",
+    "framer-motion": "^12.34.0",
     "html2canvas": "^1.4.1",
     "jspdf": "^3.0.1",
     "jwt-decode": "^4.0.0",

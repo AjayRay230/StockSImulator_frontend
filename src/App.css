@@ -628,6 +628,25 @@ button:disabled {
 .connection-badge.offline .dot {
   background-color: #ff5252;
 }
+
+
+.market-badge {
+  margin-right: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.market-badge.open {
+  background: rgba(0, 200, 0, 0.1);
+  color: #00c853;
+}
+
+.market-badge.closed {
+  background: rgba(255, 0, 0, 0.1);
+  color: #ff5252;
+}
                                       /* portfolio css  */
      /* .portfolio-parent{
       box-shadow: 20px 10px 20px rgb(255, 205,105,0.4);

@@ -4,12 +4,14 @@ import {FaChartLine, FaClipboard, FaMoon,FaSearch,FaSignOutAlt,FaSun, FaUser, Fa
 import { useUser } from "../../context/userContext";
 import { MdAnalytics } from "react-icons/md";
 import { useWebSocket } from "../../context/WebSocketContext";
+import { isMarketOpen } from "../../utils/marketStatus";
 const Navbar =()=>{
     const[searchTerm ,setSearchTerm] = useState('');
     const navigate = useNavigate();
     const{isLoggedIn,role,user,logout} = useUser();
     const[isSidebarOpen,setIsSidebarOpen] = useState(false);
     const { connected } = useWebSocket();
+    const marketOpen = isMarketOpen();
     const toggleSidebar = ()=>{
       setIsSidebarOpen(prev=>!prev);
     }
@@ -73,16 +75,21 @@ const Navbar =()=>{
       </div>
 <div className="navbar-right">
 
+
 <div className={`connection-badge ${connected ? "online" : "offline"}`}>
   <span className="dot" />
   {connected ? "Live Market" : "Reconnecting..."}
 </div>
-
   <button className="theme-toggle" onClick={toggleTheme}>
     {theme === 'light' ? <FaSun /> : <FaMoon />}
   </button>
 
   <FaBell className="icon1"/>
+    <div className={`connection-badge ${connected ? "online" : "offline"}`}>
+  <span className="dot" />
+  {connected ? "Live Market" : "Reconnecting..."}
+</div>
+
 
 </div>
       </div>

@@ -22,6 +22,7 @@ import BuySellForm from "../../Transactions/BuySellForm";
 import { WebSocketContext } from "../../context/WebSocketContext";
 import { useContext } from "react";
 import EmptyPortfolio from "../common/empty/EmptyPortfolio";
+import { motion } from "framer-motion";
 
 const Portfolio = () => {
   const { user } = useUser();
@@ -162,7 +163,14 @@ useEffect(() => {
       <FaChartLine />
       <div>
         <span>Current Value</span>
-        <strong>${totalCurrentValue.toFixed(2)}</strong>
+        <motion.strong
+  key={totalCurrentValue}
+  initial={{ opacity: 0.5 }}
+  animate={{ opacity: 1 }}
+  transition={{ duration: 0.4 }}
+>
+  ${totalCurrentValue.toFixed(2)}
+</motion.strong>
       </div>
     </div>
 
