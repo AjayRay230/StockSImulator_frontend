@@ -594,40 +594,6 @@ button:disabled {
   gap: 6px;
 }
 
-.connection-badge {
-  margin-right: 15px;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 4px 10px;
-  border-radius: 20px;
-  transition: all 0.3s ease;
-}
-
-.connection-badge.online {
-  background: rgba(0, 255, 0, 0.08);
-  color: #00e676;
-}
-
-.connection-badge.offline {
-  background: rgba(255, 0, 0, 0.08);
-  color: #ff5252;
-}
-
-.connection-badge .dot {
-  height: 8px;
-  width: 8px;
-  border-radius: 50%;
-  display: inline-block;
-  margin-right: 6px;
-}
-
-.connection-badge.online .dot {
-  background-color: #00e676;
-}
-
-.connection-badge.offline .dot {
-  background-color: #ff5252;
-}
 
 
 .market-badge {
@@ -646,6 +612,41 @@ button:disabled {
 .market-badge.closed {
   background: rgba(255, 0, 0, 0.1);
   color: #ff5252;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.market-status,
+.connection-status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.market-status.open {
+  background: rgba(0, 200, 0, 0.15);
+  color: #00e676;
+}
+
+.market-status.closed {
+  background: rgba(255, 0, 0, 0.15);
+  color: #ff5252;
+}
+
+.connection-status.live {
+  background: rgba(0, 150, 255, 0.15);
+  color: #40c4ff;
+}
+
+.connection-status.offline {
+  background: rgba(255, 100, 100, 0.15);
+  color: #ff8a80;
 }
                                       /* portfolio css  */
      /* .portfolio-parent{

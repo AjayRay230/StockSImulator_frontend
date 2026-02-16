@@ -75,20 +75,19 @@ const Navbar =()=>{
       </div>
 <div className="navbar-right">
 
+  <span className={`market-status ${marketOpen ? "open" : "closed"}`}>
+    {marketOpen ? "🟢 Market Open" : "🔴 Market Closed"}
+  </span>
 
-<div className={`market-badge ${marketOpen ? "open" : "closed"}`}>
-  {marketOpen ? "🟢 Market Open" : "🔴 Market Closed"}
-</div>
+  <span className={`connection-status ${connected ? "live" : "offline"}`}>
+    {connected ? "🟢 Live" : "🔴 Disconnected"}
+  </span>
+
+  <FaBell className="icon1" />
+
   <button className="theme-toggle" onClick={toggleTheme}>
-    {theme === 'light' ? <FaSun /> : <FaMoon />}
+    {theme === "light" ? <FaSun /> : <FaMoon />}
   </button>
-
-  <FaBell className="icon1"/>
-    <div className={`connection-badge ${connected ? "online" : "offline"}`}>
-  <span className="dot" />
-  {connected ? "Live Market" : "Reconnecting..."}
-</div>
-
 
 </div>
       </div>
