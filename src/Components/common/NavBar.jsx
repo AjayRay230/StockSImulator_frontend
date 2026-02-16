@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {Link, useNavigate,useLocation}  from "react-router-dom";
-import {FaChartLine, FaClipboard, FaMoon,FaSearch,FaSignOutAlt,FaSun, FaUser, FaUserPlus, FaWallet,FaHome,FaTools, FaBell,FaBars} from "react-icons/fa";
+import {FaChartLine, FaClipboard, FaMoon,FaSearch,FaSignOutAlt,FaSun, FaUser, FaUserPlus, FaWallet,FaHome,FaTools, FaBell,FaBars,FaExchangeAlt} from "react-icons/fa";
 import { useUser } from "../../context/userContext";
 import { MdAnalytics } from "react-icons/md";
 import { useWebSocket } from "../../context/WebSocketContext";
@@ -107,14 +107,14 @@ const Navbar =()=>{
               
             {isLoggedIn && (
     <>
-       <li
-    className="sidebar-item"
-    onClick={() => navigate("/dashboard")}
-  >
-    <FaChartLine />
-    <span>Market</span>
-  </li>
-  
+ <li
+  className="sidebar-item"
+  onClick={() => navigate("/dashboard")}
+>
+  <FaExchangeAlt className="icon1" />
+  <span className="link-text">Market</span>
+</li>
+
       <li><Link to="/portfolio"><FaWallet className="icon1"/>
       <span className= "link-text" >
 

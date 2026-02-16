@@ -1,106 +1,71 @@
-import axios from "axios";
-import StockCard from "./StockCard";
-import SimulateStock from "./SimulateStock";
-import { useEffect,useState } from "react";
-import StockSelector from "./StockSelector";
+import { useState } from "react";
 import StockPrice from "./StockPrice";
-import { useNavigate } from "react-router-dom";
-const StockDashboard = ()=>{
- const[stocks,setStocks] = useState([]);
- const[selectedSymbol,setSelectedSymbol] = useState("AAPL");
- const [loading, setLoading] = useState(true);
-const navigate = useNavigate();
-const [refreshKey, setRefreshKey] = useState(0);
+import SimulateStock from "./SimulateStock";
+import OrderBook from "./OrderBook";
+import TradeHeader from "../Trade/TradeHeader";
+import StockSelector from "./StockSelector";
 
-const fetchStocks = async () => {
-  try {
-    setLoading(true);
-    const token = localStorage.getItem("token");
+const StockDashboard = () => {
+  const [selectedSymbol, setSelectedSymbol] = useState("AAPL");
+  const [refreshKey, setRefreshKey] = useState(0);
 
-    const response = await axios.post(
-      "https://stocksimulator-backend.onrender.com/api/stock/by-price",
-      { currentprice: 0 },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+  return (
+    <div className="trade-terminal">
 
-    setStocks(response.data);
-  } catch (err) {
-  if (err.response?.status === 401) {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/login", { replace: true });
-  }
-  console.log("Error fetching Stocks: ", err);
-}
+      {/* Header */}
+      <div className="terminal-header">
+        <TradeHeader symbol={selectedSymbol} />
 
-finally {
-    setLoading(false);
-  }
-};
+        <StockSelector
+          selectedSymbol={selectedSymbol}
+          onChange={setSelectedSymbol}
+        />
+      </div>
 
-useEffect(()=>{
-    fetchStocks();
-},[]);
-return(
-    <div className="dashboard-container">
-      <div className="dashboard">
+      {/* Body */}
+      <div className="terminal-body">
 
-  <header>
-    <h2>Stock Overview</h2>
+        {/* Chart Section */}
+        <div className="terminal-chart">
+          <StockPrice
+            symbol={selectedSymbol}
+            refreshKey={refreshKey}
+            onSimulate={() =>
+              setRefreshKey(prev => prev + 1)
+            }
+          />
+        </div>
 
-    <StockSelector
-      selectedSymbol={selectedSymbol}
-      onChange={setSelectedSymbol}
-    />
+        {/* Order + OrderBook */}
+        <div className="terminal-order-section">
 
-   {/* <SimulateStock
-  onSimulate={() => {
-    fetchStocks();
-    setRefreshKey(prev => prev + 1);
-  }}
-/> */}
+          <div className="terminal-order">
+            <SimulateStock
+              symbol={selectedSymbol}
+              onSimulate={() =>
+                setRefreshKey(prev => prev + 1)
+              }
+            />
+          </div>
 
-  </header>
+          <div className="terminal-orderbook">
+            <OrderBook symbol={selectedSymbol} />
+          </div>
 
-{selectedSymbol ? (
-<StockPrice
-  symbol={selectedSymbol}
-  refreshKey={refreshKey}
-  onBack={() => setSelectedSymbol("")}
-  onSimulate={() => {
-    fetchStocks();
-    setRefreshKey(prev => prev + 1);
-  }}
-/>
+        </div>
 
-) : (
+      </div>
 
-    <>
-      {loading && <p>Loading stocks...</p>}
-
-      {!loading && stocks.length === 0 && (
-        <p>No stocks available</p>
-      )}
-
-      {!loading && (
-        <main className="stock-grid">
-          {stocks.map((stock) => (
-            <StockCard key={stock.symbol} stock={stock} />
-          ))}
-        </main>
-      )}
-    </>
-  )}
-
-</div>
-
-
+      {/* Footer */}
+      <div className="terminal-footer">
+        <div>Position: --</div>
+        <div>Unrealized P&L: --</div>
+        <div>Exposure: --</div>
+        <div>Trades Today: --</div>
+      </div>
 
     </div>
-)
-}
+  );
+};
+
 export default StockDashboard;
