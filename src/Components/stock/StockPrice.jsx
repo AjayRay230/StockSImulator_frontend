@@ -1,57 +1,60 @@
-import { useState, useEffect,useMemo } from 'react';
-import axios from 'axios';
-import Chart from 'react-apexcharts';
-import { toast } from 'react-toastify';
-import { FaMoon, FaSpinner,FaSun } from 'react-icons/fa';
+import { useState, useEffect, useMemo } from "react";
+import axios from "axios";
+import Chart from "react-apexcharts";
+import { toast } from "react-toastify";
+import { FaMoon, FaSpinner, FaSun } from "react-icons/fa";
 import SimulateStock from "./SimulateStock";
+import { WebSocketContext } from "../context/WebSocketProvider";
+import { useContext, useRef } from "react";
 
-const calculateSMA = (data,period)=>{
-  return data.map((_,idx,arr)=>{
-    if(idx<period-1) return {x:arr[idx].x,y:null};
-    const slice = arr.slice(idx-period+1,idx+1);
-    const avg = slice.reduce((sum,val)=>
-      sum+val.y,0
-    )/slice.length;
-    return {x:arr[idx].x,y:avg};
+const calculateSMA = (data, period) => {
+  return data.map((_, idx, arr) => {
+    if (idx < period - 1) return { x: arr[idx].x, y: null };
+    const slice = arr.slice(idx - period + 1, idx + 1);
+    const avg = slice.reduce((sum, val) => sum + val.y, 0) / slice.length;
+    return { x: arr[idx].x, y: avg };
   });
 };
-const calculateEMA = (data,period)=>{
-  let ema  = [];
-  let multiplier = 2/(period+1);
+
+const calculateEMA = (data, period) => {
+  let ema = [];
+  let multiplier = 2 / (period + 1);
   let sum = 0;
-  data.forEach((point,idx)=>{
-    if(idx<period)
-    {
-      sum+=point.y;
-      ema.push({x:point.x,y:null});
-      if(idx==period-1)
-      {
-        const sma = sum/period;
-        ema[idx] = {x:point.x,y:sma};
+
+  data.forEach((point, idx) => {
+    if (idx < period) {
+      sum += point.y;
+      ema.push({ x: point.x, y: null });
+      if (idx === period - 1) {
+        const sma = sum / period;
+        ema[idx] = { x: point.x, y: sma };
       }
-      
-    }
-    else{
-      const prevEma = ema[idx-1];
-      const newEma = (point.y-prevEma.y)*multiplier+prevEma.y;
-      ema.push({x:point.x,y:newEma});
+    } else {
+      const prevEma = ema[idx - 1];
+      const newEma =
+        (point.y - prevEma.y) * multiplier + prevEma.y;
+      ema.push({ x: point.x, y: newEma });
     }
   });
+
   return ema;
 };
 
-const StockPrice = ({ symbol,  onBack, refreshKey, onSimulate }) => {
+const StockPrice = ({ symbol, onBack, refreshKey, onSimulate }) => {
   const [loading, setLoading] = useState(false);
-  const [series, setSeries] = useState([]);
-  const[darkMode,setDarkMode] = useState(true);
-  const[chartType,setChartType] = useState("line");
-  const[dateRange,setDateRange] = useState("1D");
-  const[volumeSeries,setVolumeSeries] = useState([]);
-  const[ohlcData,setOhlcData] = useState([]);
+  const [darkMode, setDarkMode] = useState(true);
+  const [chartType, setChartType] = useState("line");
+  const [dateRange, setDateRange] = useState("1D");
+  const [ohlcData, setOhlcData] = useState([]);
   const [companyName, setCompanyName] = useState("");
- 
+ const { latestUpdate } = useContext(WebSocketContext);
+const chartRef = useRef(null);
+const liveCandleRef = useRef([]);
+
+  // ---------------- FETCH ----------------
   useEffect(() => {
-    
+    if (!symbol) return;
+
     const fetchPrice = async () => {
       try {
         setLoading(true);
@@ -60,301 +63,329 @@ const StockPrice = ({ symbol,  onBack, refreshKey, onSimulate }) => {
         const response = await axios.get(
           `https://stocksimulator-backend.onrender.com/api/stock-price/closing-price?stocksymbol=${symbol}&range=${dateRange}`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` }
           }
         );
-const apiData = response.data;
 
-setOhlcData(apiData.data || []);
+        const apiData = response.data;
 
-// Always reset first (important when switching symbols)
-setCompanyName("");
+        const normalized =
+          (apiData.data || []).map((item) => ({
+            ...item,
+            timestamp: new Date(item.timestamp),
+            openPrice: parseFloat(item.openPrice),
+            highPrice: parseFloat(item.highPrice),
+            lowPrice: parseFloat(item.lowPrice),
+            closePrice: parseFloat(item.closePrice),
+            volume: parseFloat(item.volume)
+          })) || [];
 
-// Extract company name safely
-const fullName =
-  apiData?.meta?.companyname ||
-  apiData?.meta?.symbol ||
-  symbol;
+        setOhlcData(normalized);
 
-setCompanyName(fullName);
-     
+        const fullName =
+          apiData?.meta?.companyname ||
+          apiData?.meta?.symbol ||
+          symbol;
+
+        setCompanyName(fullName);
       } catch (error) {
-        toast.error("Error while getting the price", error);
-        
+        toast.error("Error while getting the price");
       } finally {
         setLoading(false);
       }
     };
 
-    if (symbol){ 
-      fetchPrice();
-      // const interval  = setInterval(fetchPrice,30000);
-      // return ()=>clearInterval(interval);
+    fetchPrice();
+  }, [symbol, dateRange, refreshKey]);
 
-    }
-    
-  }, [symbol,dateRange,refreshKey]);
+  // ---------------- DERIVED DATA ----------------
 
-const closePriceData = useMemo(() => 
-  ohlcData
-    .map(item => ({
-      x: new Date(item.timestamp),
-      y: parseFloat(item.closePrice),
-    }))
-    .filter(d => !isNaN(d.y)), 
-[ohlcData]);
+  const closePriceData = useMemo(() => {
+    return ohlcData
+      .map((item) => ({
+        x: item.timestamp,
+        y: item.closePrice
+      }))
+      .filter((d) => !isNaN(d.y));
+  }, [ohlcData]);
 
-const ma20 = useMemo(() => calculateSMA(closePriceData, 20), [closePriceData]);
-const ema20 = useMemo(() => calculateEMA(closePriceData, 20), [closePriceData]);
+  const ma20 = useMemo(
+    () => calculateSMA(closePriceData, 20),
+    [closePriceData]
+  );
+
+  const ema20 = useMemo(
+    () => calculateEMA(closePriceData, 20),
+    [closePriceData]
+  );
+
+  const candleStickData = useMemo(() => {
+    return ohlcData
+      .map((item) => ({
+        x: item.timestamp,
+        y: [
+          item.openPrice,
+          item.highPrice,
+          item.lowPrice,
+          item.closePrice
+        ]
+      }))
+      .filter(
+        (d) =>
+          d.y.length === 4 &&
+          d.y.every((v) => typeof v === "number" && !isNaN(v))
+      );
+  }, [ohlcData]);
 
 
   useEffect(() => {
-  const candleStickData = ohlcData.map((item) => ({
-          x: new Date(item.timestamp),
-          y: [
-            parseFloat(item.openPrice),
-            parseFloat(item.highPrice),
-            parseFloat(item.lowPrice),
-            parseFloat(item.closePrice),
-          ],
-        }))
-        .filter(d=>d.y.length===4 && 
-          d.y.every(v=>typeof v==='number' && !isNaN(v))
-        );
+  if (candleStickData.length) {
+    liveCandleRef.current = [...candleStickData];
+  }
+}, [candleStickData]);
 
-        const volumes = ohlcData.map((item)=>(
-          {
-            x:new Date(item.timestamp),
-            y:parseFloat(item.volume),
-          }
-        ));
-       
-        //set chart series based on selected type 
-       let mainSeries = [];
+useEffect(() => {
+  // Safety guards
+  if (!latestUpdate || !symbol) return;
+  if (!(symbol in latestUpdate)) return;
+  if (chartType !== "candlestick") return;
 
-if (chartType === 'candlestick') {
-  mainSeries.push({
-    name: "Price",
-    type: "candlestick",
-    data: candleStickData.filter(d =>
-      d.y && d.y.length === 4 && d.y.every(v => !isNaN(v))
-    )
-  });
-} else if (chartType === 'bar') {
-  mainSeries.push({
-    name: "Price",
-    type: "bar",
-    data: closePriceData.filter(d => !isNaN(d.y))
-  });
-} else {
-  mainSeries.push({
-    name: "Price",
-    type: chartType,
-    data: closePriceData.filter(d => !isNaN(d.y))
-  });
-}
+  const livePrice = parseFloat(latestUpdate[symbol]);
+  if (isNaN(livePrice)) return;
 
-mainSeries.push(
-  { name: "MA 20", type: "line", data: ma20.filter(d => !isNaN(d.y)) },
-  { name: "EMA 20", type: "line", data: ema20.filter(d => !isNaN(d.y)) }
-);
+  const candles = liveCandleRef.current;
+  if (!candles.length) return;
 
-setSeries(mainSeries);
+  const lastCandle = candles[candles.length - 1];
 
-         setVolumeSeries([{name:"volume",data:volumes}]);
+  const bucketSize = 60 * 1000; // 1 minute bucket
+  const now = Date.now();
+  const currentBucket = Math.floor(now / bucketSize) * bucketSize;
 
-}, [ohlcData, chartType, ma20, ema20, closePriceData]);
+  const lastTime = new Date(lastCandle.x).getTime();
 
+  // SAME BUCKET → UPDATE
+  if (lastTime === currentBucket) {
+    const updated = {
+      ...lastCandle,
+      y: [
+        lastCandle.y[0],                          // open stays same
+        Math.max(lastCandle.y[1], livePrice),     // update high
+        Math.min(lastCandle.y[2], livePrice),     // update low
+        livePrice                                 // close becomes live
+      ]
+    };
 
-const options = useMemo(() => ({
-  chart: {
-    type: chartType,
-    height: 400,
-    background: "transparent",
-    toolbar: {
-      show: true,
-      tools: {
-        download: false
-      }
-    },
-    zoom: {
-      enabled: true
-    }
-  },
-
-  theme: { mode: darkMode ? "dark" : "light" },
-
-  grid: {
-    borderColor: darkMode ? "rgba(255,255,255,0.06)" : "#e5e7eb",
-    strokeDashArray: 3
-  },
-
-  colors: ["#00E396", "#FFD700", "#00C8FF"],
-
-  stroke: {
-    width: chartType === "line" || chartType === "area" ? 2.2 : 1,
-    curve: "smooth"
-  },
-
-  xaxis: {
-    type: "datetime",
-    axisBorder: { show: false },
-    axisTicks: { show: false },
-    labels: {
-      style: {
-        colors: darkMode ? "#94a3b8" : "#6b7280",
-        fontSize: "12px"
-      }
-    }
-  },
-
-  yaxis: {
-    opposite: true,
-    labels: {
-      style: {
-        colors: darkMode ? "#94a3b8" : "#6b7280",
-        fontSize: "12px"
-      }
-    }
-  },
-
-  tooltip: {
-    shared: true,
-    theme: darkMode ? "dark" : "light",
-    x: {
-      format: "dd MMM HH:mm"
-    }
-  },
-
-  dataLabels: { enabled: false },
-
-  title: {
-    text: companyName || symbol,
-    align: "left",
-    offsetY: 10,
-    style: {
-      fontSize: "20px",
-      fontWeight: "700",
-      color: darkMode ? "#ffffff" : "#111827"
-    }
-  },
-
-}), [darkMode, chartType, symbol, companyName]);
-
-const volumeOptions = useMemo(() => ({
-  chart: {
-    type: "bar",
-    height: 120,
-    background: "transparent",
-    toolbar: { show: false }
-  },
-
-  grid: { show: false },
-
-  plotOptions: {
-    bar: {
-      columnWidth: "70%",
-      borderRadius: 2
-    }
-  },
-
-  colors: ["#475569"],
-
-  xaxis: {
-    type: "datetime",
-    labels: { show: false },
-    axisBorder: { show: false },
-    axisTicks: { show: false }
-  },
-
-  yaxis: {
-    labels: { show: false }
-  },
-
-  tooltip: {
-    theme: darkMode ? "dark" : "light"
+    candles[candles.length - 1] = updated;
   }
 
-}), [darkMode]);
+  // NEW BUCKET → APPEND NEW CANDLE
+  else if (currentBucket > lastTime) {
+    candles.push({
+      x: new Date(currentBucket),
+      y: [livePrice, livePrice, livePrice, livePrice]
+    });
+  }
 
-if (loading) {
-  return (
-    <span>
-      Loading... <FaSpinner className="icons-spin" />
-    </span>
-  );
-}
+  liveCandleRef.current = candles;
 
-if (!series.length || !series[0]?.data?.length) {
-  return <div>No data available</div>;
-}
-
-
-  return loading ? (
-    <span >Loading...{" "}<FaSpinner className='icons-spin'/></span>
-  ) : (
-  
-    <div className={`chart-card ${darkMode ?"dark":""}`}>
-      <div className="chart-header">
-  <div className="left-controls">
-    <SimulateStock onSimulate={onSimulate} />
-    {onBack && (
-      <button onClick={onBack} className="back-btn">
-        ← Back
-      </button>
-    )}
-  </div>
-
-  <div className="center-controls">
-    <div className="range-selector">
-      {["1D","5D","1M","1Y","MAX"].map(r => (
-        <button
-          key={r}
-          onClick={() => setDateRange(r)}
-          className={dateRange === r ? "active" : ""}
-        >
-          {r}
-        </button>
-      ))}
-    </div>
-  </div>
-
-  <div className="right-controls">
-    <select
-      value={chartType}
-      onChange={(e) => setChartType(e.target.value)}
-      className="chart-type-select"
-    >
-      <option value="candlestick">Candlestick</option>
-      <option value="line">Line</option>
-      <option value="area">Area</option>
-      <option value="bar">Bar</option>
-    </select>
-
-    <button onClick={() => setDarkMode(!darkMode)}>
-      {darkMode ? <FaSun /> : <FaMoon />}
-    </button>
-  </div>
-</div>
-      {series.length>0 && series[0].data.length>0?(
-        <>
-      <Chart options = {options} series = {series} type = {chartType} height = {400}/>
-      
-
-      <Chart options = {volumeOptions} series = {volumeSeries} type = "bar" height = {100}/>
-      </>
-          ):(
-            <div>NO data available for the selected range</div>
-          )
-
+  // Imperative update (no React state mutation)
+  if (chartRef.current?.chart) {
+    chartRef.current.chart.updateSeries(
+      [
+        {
+          name: "Price",
+          type: "candlestick",
+          data: candles
         }
+      ],
+      false
+    );
+  }
+
+}, [latestUpdate, symbol, chartType]);
+
+
+useEffect(() => {
+  liveCandleRef.current = [];
+}, [symbol, dateRange]);
+
+  const volumeSeries = useMemo(() => {
+    return [
+      {
+        name: "Volume",
+        data: ohlcData.map((item) => ({
+          x: item.timestamp,
+          y: item.volume
+        }))
+      }
+    ];
+  }, [ohlcData]);
+
+  const series = useMemo(() => {
+    if (!ohlcData.length) return [];
+
+    let mainSeries = [];
+
+    if (chartType === "candlestick") {
+      mainSeries.push({
+        name: "Price",
+        type: "candlestick",
+        data: candleStickData
+      });
+    } else {
+      mainSeries.push({
+        name: "Price",
+        type: chartType,
+        data: closePriceData
+      });
+    }
+
+    mainSeries.push(
+      { name: "MA 20", type: "line", data: ma20 },
+      { name: "EMA 20", type: "line", data: ema20 }
+    );
+
+    return mainSeries;
+  }, [
+    chartType,
+    candleStickData,
+    closePriceData,
+    ma20,
+    ema20,
+    ohlcData.length
+  ]);
+
+  // ---------------- CHART OPTIONS ----------------
+
+  const options = useMemo(() => ({
+    chart: {
+      type: "line", // keep constant to avoid remount
+      height: 400,
+      background: "transparent",
+      toolbar: { show: true, tools: { download: false } },
+      zoom: { enabled: true }
+    },
+    theme: { mode: darkMode ? "dark" : "light" },
+    grid: {
+      borderColor: darkMode
+        ? "rgba(255,255,255,0.06)"
+        : "#e5e7eb",
+      strokeDashArray: 3
+    },
+    colors: ["#00E396", "#FFD700", "#00C8FF"],
+    stroke: {
+      width: 2,
+      curve: "smooth"
+    },
+    xaxis: { type: "datetime" },
+    yaxis: { opposite: true },
+    tooltip: {
+      shared: true,
+      theme: darkMode ? "dark" : "light",
+      x: { format: "dd MMM HH:mm" }
+    },
+    dataLabels: { enabled: false },
+    title: {
+      text: companyName || symbol,
+      align: "left",
+      style: {
+        fontSize: "20px",
+        fontWeight: "700"
+      }
+    }
+  }), [darkMode, companyName, symbol]);
+
+  const volumeOptions = useMemo(() => ({
+    chart: {
+      type: "bar",
+      height: 120,
+      background: "transparent",
+      toolbar: { show: false }
+    },
+    grid: { show: false },
+    plotOptions: {
+      bar: { columnWidth: "70%", borderRadius: 2 }
+    },
+    xaxis: { type: "datetime", labels: { show: false } },
+    yaxis: { labels: { show: false } },
+    tooltip: { theme: darkMode ? "dark" : "light" }
+  }), [darkMode]);
+
+  // ---------------- RENDER ----------------
+
+  if (loading) {
+    return (
+      <span>
+        Loading... <FaSpinner className="icons-spin" />
+      </span>
+    );
+  }
+
+  if (!series.length || !series[0]?.data?.length) {
+    return <div>No data available</div>;
+  }
+
+  return (
+    <div className={`chart-card ${darkMode ? "dark" : ""}`}>
+      <div className="chart-header">
+        <div className="left-controls">
+          <SimulateStock onSimulate={onSimulate} />
+          {onBack && (
+            <button onClick={onBack} className="back-btn">
+              ← Back
+            </button>
+          )}
+        </div>
+
+        <div className="center-controls">
+          <div className="range-selector">
+            {["1D", "5D", "1M", "1Y", "MAX"].map((r) => (
+              <button
+                key={r}
+                onClick={() => setDateRange(r)}
+                className={dateRange === r ? "active" : ""}
+              >
+                {r}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="right-controls">
+          <select
+            value={chartType}
+            onChange={(e) => setChartType(e.target.value)}
+            className="chart-type-select"
+          >
+            <option value="candlestick">Candlestick</option>
+            <option value="line">Line</option>
+            <option value="area">Area</option>
+            <option value="bar">Bar</option>
+          </select>
+
+          <button onClick={() => setDarkMode(!darkMode)}>
+            {darkMode ? <FaSun /> : <FaMoon />}
+          </button>
+        </div>
+      </div>
+
+      <Chart
+        options={options}
+        series={series}
+        type="line"
+        height={400}
+        ref={chartRef}
+      />
+
+      <Chart
+        options={volumeOptions}
+        series={volumeSeries}
+        type="bar"
+        height={120}
+      />
     </div>
-      );
-      
-      
-  
+  );
 };
 
 export default StockPrice;
