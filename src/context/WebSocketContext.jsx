@@ -7,7 +7,7 @@ export const WebSocketContext = createContext(null);
 export const WebSocketProvider = ({ children }) => {
 
   const [latestUpdate, setLatestUpdate] = useState(null);
-
+  const [portfolioValue, setPortfolioValue] = useState(null);
   useEffect(() => {
 
     console.log("🚀 WebSocketProvider mounted");
@@ -38,11 +38,12 @@ export const WebSocketProvider = ({ children }) => {
       onConnect: () => {
         console.log("✅ STOMP connected");
 
-        client.subscribe("/topic/prices", (message) => {
-          const data = JSON.parse(message.body);
-          console.log("📈 Message received:", data);
-          setLatestUpdate(data);
-        });
+        client.subscribe(
+  `/topic/portfolio/${username}`,
+  (message) => {
+    setPortfolioValue(parseFloat(message.body));
+  }
+);
       },
 
       onStompError: (frame) => {
@@ -59,7 +60,7 @@ export const WebSocketProvider = ({ children }) => {
   }, []);
 
   return (
-    <WebSocketContext.Provider value={{ latestUpdate }}>
+    <WebSocketContext.Provider value={{ latestUpdate,portfolioValue }}>
       {children}
     </WebSocketContext.Provider>
   );

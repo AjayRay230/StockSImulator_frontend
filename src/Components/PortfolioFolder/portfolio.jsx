@@ -19,13 +19,14 @@ import { useUser } from "../../context/userContext";
 import AddPortfolioForm from "./AddPortfolioForm";
 import StockPrice from "../stock/StockPrice";
 import BuySellForm from "../../Transactions/BuySellForm";
-
+import { WebSocketContext } from "../../context/WebSocketContext";
+import { useContext } from "react";
 import EmptyPortfolio from "../common/empty/EmptyPortfolio";
 
 const Portfolio = () => {
   const { user } = useUser();
   const isAuthenticated = !!user;
-
+  const { latestUpdate } = useContext(WebSocketContext);
   const [portfolio, setPortfolio] = useState([]);
   const [totalInvestment, setTotalInvestment] = useState(0);
   const [totalCurrentValue, setTotalCurrentValue] = useState(0);
@@ -101,6 +102,40 @@ const loadPortfolio = async () => {
       toast.error("Delete failed");
     }
   };
+useEffect(() => {
+  if (!latestUpdate || portfolio.length === 0) return;
+
+  let totalCurrentValueSum = 0;
+  let totalProfitLossSum = 0;
+
+  const updatedPortfolio = portfolio.map((item) => {
+    const livePrice = latestUpdate[item.stocksymbol];
+
+    const quantity = Number(item.quantity) || 0;
+    const avgPrice = Number(item.averagebuyprice) || 0;
+
+    const priceToUse = livePrice ?? item.currentPrice;
+
+    const totalInvestment = avgPrice * quantity;
+    const totalCurrentValue = priceToUse * quantity;
+    const profitLoss = totalCurrentValue - totalInvestment;
+
+    totalCurrentValueSum += totalCurrentValue;
+    totalProfitLossSum += profitLoss;
+
+    return {
+      ...item,
+      currentPrice: priceToUse,
+      totalCurrentValue,
+      profitLoss
+    };
+  });
+
+  setPortfolio(updatedPortfolio);
+  setTotalCurrentValue(totalCurrentValueSum);
+  setTotalProfitLoss(totalProfitLossSum);
+
+}, [latestUpdate]);
 
   return (
 <div className="portfolio-page1">
