@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { FaMoon, FaSpinner, FaSun } from "react-icons/fa";
 import SimulateStock from "./SimulateStock";
 import { WebSocketContext } from "../../context/WebSocketContext";
-import { useContext, useRef } from "react";
+import { useContext } from "react";
 
 const calculateSMA = (data, period) => {
   return data.map((_, idx, arr) => {
@@ -176,88 +176,88 @@ const candleStickData = useMemo(() => {
 }, [ohlcData, livePrice, chartType]);
 
 
-  useEffect(() => {
-  if (candleStickData.length) {
-    liveCandleRef.current = [...candleStickData];
-  }
-}, [candleStickData]);
+//   useEffect(() => {
+//   if (candleStickData.length) {
+//     liveCandleRef.current = [...candleStickData];
+//   }
+// }, [candleStickData]);
 
-useEffect(() => {
-  // Safety guards
-  if (!latestUpdate || !symbol) return;
-  if (!(symbol in latestUpdate)) return;
-  if (chartType !== "candlestick") return;
+// useEffect(() => {
+//   // Safety guards
+//   if (!latestUpdate || !symbol) return;
+//   if (!(symbol in latestUpdate)) return;
+//   if (chartType !== "candlestick") return;
 
-  const livePrice = parseFloat(latestUpdate[symbol]);
-  if (isNaN(livePrice)) return;
+//   const livePrice = parseFloat(latestUpdate[symbol]);
+//   if (isNaN(livePrice)) return;
 
-  const candles = liveCandleRef.current;
-  if (!candles.length) return;
+//   const candles = liveCandleRef.current;
+//   if (!candles.length) return;
 
-  const lastCandle = candles[candles.length - 1];
+//   const lastCandle = candles[candles.length - 1];
 
-  const bucketSize = 60 * 1000; // 1 minute bucket
-  const now = Date.now();
-  const currentBucket = Math.floor(now / bucketSize) * bucketSize;
+//   const bucketSize = 60 * 1000; // 1 minute bucket
+//   const now = Date.now();
+//   const currentBucket = Math.floor(now / bucketSize) * bucketSize;
 
-  const lastTime = new Date(lastCandle.x).getTime();
+//   const lastTime = new Date(lastCandle.x).getTime();
 
-  // SAME BUCKET → UPDATE
-  if (lastTime === currentBucket) {
-    const updated = {
-      ...lastCandle,
-      y: [
-        lastCandle.y[0],                          // open stays same
-        Math.max(lastCandle.y[1], livePrice),     // update high
-        Math.min(lastCandle.y[2], livePrice),     // update low
-        livePrice                                 // close becomes live
-      ]
-    };
+//   // SAME BUCKET → UPDATE
+//   if (lastTime === currentBucket) {
+//     const updated = {
+//       ...lastCandle,
+//       y: [
+//         lastCandle.y[0],                          // open stays same
+//         Math.max(lastCandle.y[1], livePrice),     // update high
+//         Math.min(lastCandle.y[2], livePrice),     // update low
+//         livePrice                                 // close becomes live
+//       ]
+//     };
 
-    candles[candles.length - 1] = updated;
-  }
+//     candles[candles.length - 1] = updated;
+//   }
 
-  // NEW BUCKET → APPEND NEW CANDLE
-  else if (currentBucket > lastTime) {
-    candles.push({
-      x: new Date(currentBucket),
-      y: [livePrice, livePrice, livePrice, livePrice]
-    });
-  }
+//   // NEW BUCKET → APPEND NEW CANDLE
+//   else if (currentBucket > lastTime) {
+//     candles.push({
+//       x: new Date(currentBucket),
+//       y: [livePrice, livePrice, livePrice, livePrice]
+//     });
+//   }
 
-  liveCandleRef.current = candles;
+//   liveCandleRef.current = candles;
 
-  // Imperative update (no React state mutation)
- if (
-  chartRef.current &&
-  chartRef.current.chart &&
-  chartRef.current.chart.w &&
-  chartRef.current.chart.w.globals
-) {
-  try {
-  ApexCharts.exec(
-    `stock-chart-${symbol}`,
-    "updateSeries",
-    [
-      {
-        name: "Price",
-        type: "candlestick",
-        data: candles
-      }
-    ],
-    false
-  );
-} catch (e) {
-  // ignore if chart destroyed
-}
-}
+//   // Imperative update (no React state mutation)
+//  if (
+//   chartRef.current &&
+//   chartRef.current.chart &&
+//   chartRef.current.chart.w &&
+//   chartRef.current.chart.w.globals
+// ) {
+//   try {
+//   ApexCharts.exec(
+//     `stock-chart-${symbol}`,
+//     "updateSeries",
+//     [
+//       {
+//         name: "Price",
+//         type: "candlestick",
+//         data: candles
+//       }
+//     ],
+//     false
+//   );
+// } catch (e) {
+//   // ignore if chart destroyed
+// }
+// }
 
-}, [latestUpdate, symbol, chartType]);
+// }, [latestUpdate, symbol, chartType]);
 
 
-useEffect(() => {
-  liveCandleRef.current = [];
-}, [symbol, dateRange]);
+// useEffect(() => {
+//   liveCandleRef.current = [];
+// }, [symbol, dateRange]);
 
   const volumeSeries = useMemo(() => {
     return [
@@ -309,8 +309,7 @@ useEffect(() => {
 
   const options = useMemo(() => ({
   chart: {
-    id: `stock-chart-${symbol}`,  // IMPORTANT
-    type: "line",
+    type: chartType,
     height: 400,
     background: "transparent",
     toolbar: { show: true, tools: { download: false } },
@@ -423,9 +422,9 @@ useEffect(() => {
       <Chart
         options={options}
         series={series}
-        type="line"
+        type={chartType}
         height={400}
-        ref={chartRef}
+        
       />
 
       <Chart
