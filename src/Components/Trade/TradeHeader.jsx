@@ -9,7 +9,7 @@ const TradeHeader = ({ symbol }) => {
   const fetchPrice = async () => {
     try {
       const response = await axios.get(
-        `https://stocksimulator-backend.onrender.com/api/stock/price/${symbol}`
+        `https://stocksimulator-backend.onrender.com/api/stock/by-price/${symbol}`
       );
 
       const data = response.data;
