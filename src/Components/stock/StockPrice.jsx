@@ -6,7 +6,7 @@ import { FaMoon, FaSpinner, FaSun } from "react-icons/fa";
 import SimulateStock from "./SimulateStock";
 import { WebSocketContext } from "../../context/WebSocketContext";
 import { useContext, useRef } from "react";
-import ApexCharts from "apexcharts";
+
 const calculateSMA = (data, period) => {
   return data.map((_, idx, arr) => {
     if (idx < period - 1) return { x: arr[idx].x, y: null };
@@ -48,8 +48,7 @@ const StockPrice = ({ symbol, onBack, refreshKey, onSimulate }) => {
   const [ohlcData, setOhlcData] = useState([]);
   const [companyName, setCompanyName] = useState("");
  const { latestUpdate } = useContext(WebSocketContext);
-const chartRef = useRef(null);
-const liveCandleRef = useRef([]);
+
 
   // ---------------- FETCH ----------------
   useEffect(() => {
@@ -119,23 +118,60 @@ const liveCandleRef = useRef([]);
     [closePriceData]
   );
 
-  const candleStickData = useMemo(() => {
-    return ohlcData
-      .map((item) => ({
-        x: item.timestamp,
-        y: [
-          item.openPrice,
-          item.highPrice,
-          item.lowPrice,
-          item.closePrice
-        ]
-      }))
-      .filter(
-        (d) =>
-          d.y.length === 4 &&
-          d.y.every((v) => typeof v === "number" && !isNaN(v))
-      );
-  }, [ohlcData]);
+const candleStickData = useMemo(() => {
+  if (!ohlcData.length) return [];
+
+  const base = ohlcData.map((item) => ({
+    x: item.timestamp,
+    y: [
+      item.openPrice,
+      item.highPrice,
+      item.lowPrice,
+      item.closePrice
+    ]
+  }));
+
+  // If no live price or not in candlestick mode → return base
+  if (!livePrice || chartType !== "candlestick") {
+    return base;
+  }
+
+  const bucketSize = 60 * 1000;
+  const now = Date.now();
+  const currentBucket = Math.floor(now / bucketSize) * bucketSize;
+
+  const last = base[base.length - 1];
+  const lastTime = new Date(last.x).getTime();
+
+  // SAME BUCKET → clone and update last
+  if (lastTime === currentBucket) {
+    const updated = {
+      ...last,
+      y: [
+        last.y[0],
+        Math.max(last.y[1], livePrice),
+        Math.min(last.y[2], livePrice),
+        livePrice
+      ]
+    };
+
+    return [...base.slice(0, -1), updated];
+  }
+
+  // NEW BUCKET → append
+  if (currentBucket > lastTime) {
+    return [
+      ...base,
+      {
+        x: new Date(currentBucket),
+        y: [livePrice, livePrice, livePrice, livePrice]
+      }
+    ];
+  }
+
+  return base;
+
+}, [ohlcData, livePrice, chartType]);
 
 
   useEffect(() => {
