@@ -6,7 +6,7 @@ import { FaMoon, FaSpinner, FaSun } from "react-icons/fa";
 import SimulateStock from "./SimulateStock";
 import { WebSocketContext } from "../../context/WebSocketContext";
 import { useContext, useRef } from "react";
-
+import ApexCharts from "apexcharts";
 const calculateSMA = (data, period) => {
   return data.map((_, idx, arr) => {
     if (idx < period - 1) return { x: arr[idx].x, y: null };
@@ -197,19 +197,21 @@ useEffect(() => {
   chartRef.current.chart.w.globals
 ) {
   try {
-    chartRef.current.chart.updateSeries(
-      [
-        {
-          name: "Price",
-          type: "candlestick",
-          data: candles
-        }
-      ],
-      false
-    );
-  } catch (e) {
-    // silently ignore if chart was destroyed
-  }
+  ApexCharts.exec(
+    `stock-chart-${symbol}`,
+    "updateSeries",
+    [
+      {
+        name: "Price",
+        type: "candlestick",
+        data: candles
+      }
+    ],
+    false
+  );
+} catch (e) {
+  // ignore if chart destroyed
+}
 }
 
 }, [latestUpdate, symbol, chartType]);
@@ -268,13 +270,14 @@ useEffect(() => {
   // ---------------- CHART OPTIONS ----------------
 
   const options = useMemo(() => ({
-    chart: {
-      type: "line", // keep constant to avoid remount
-      height: 400,
-      background: "transparent",
-      toolbar: { show: true, tools: { download: false } },
-      zoom: { enabled: true }
-    },
+  chart: {
+    id: `stock-chart-${symbol}`,  // IMPORTANT
+    type: "line",
+    height: 400,
+    background: "transparent",
+    toolbar: { show: true, tools: { download: false } },
+    zoom: { enabled: true }
+  },
     theme: { mode: darkMode ? "dark" : "light" },
     grid: {
       borderColor: darkMode
