@@ -4,7 +4,7 @@ import Chart from "react-apexcharts";
 import { toast } from "react-toastify";
 import { FaMoon, FaSpinner, FaSun } from "react-icons/fa";
 import SimulateStock from "./SimulateStock";
-import { WebSocketContext } from "../context/WebSocketProvider";
+import { WebSocketProvider } from "../../context/WebSocketContext";
 import { useContext, useRef } from "react";
 
 const calculateSMA = (data, period) => {
