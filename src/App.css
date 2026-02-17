@@ -677,6 +677,13 @@ button:disabled {
   height: 1px;
   background: rgba(255,255,255,0.08);
 }
+.user-welcome {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  white-space: nowrap;
+}
 
 
                                       /* portfolio css  */
