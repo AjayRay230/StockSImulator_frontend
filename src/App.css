@@ -359,7 +359,7 @@ button:disabled {
 /* COLLAPSED SIDEBAR: Icons only */
 .sidebar:not(.active) .sidebar-menu a,
 .sidebar:not(.active) .sidebar-menu button {
-  flex-direction: column;      
+  /* flex-direction: column;       */
   justify-content: center;
   align-items: center;
   gap: 20px;
