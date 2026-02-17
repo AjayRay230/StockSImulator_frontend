@@ -1,8 +1,9 @@
 import { useState } from "react";
 import StockPrice from "./StockPrice";
-
 import TradeHeader from "../Trade/TradeHeader";
 import StockSelector from "./StockSelector";
+import SimulateStock from "./SimulateStock";
+import OrderBook from "./OrderBook";
 
 const StockDashboard = () => {
   const [selectedSymbol, setSelectedSymbol] = useState("AAPL");
@@ -11,20 +12,39 @@ const StockDashboard = () => {
   return (
     <div className="trade-terminal">
 
-      {/* Header */}
+      {/* ===== HEADER ===== */}
       <div className="terminal-header">
         <TradeHeader symbol={selectedSymbol} />
-
         <StockSelector
           selectedSymbol={selectedSymbol}
           onChange={setSelectedSymbol}
         />
       </div>
 
-      {/* Body */}
+      {/* ===== MARKET QUICK STATS ===== */}
+      <div className="terminal-stats">
+        <div className="stat-card">
+          <span>High</span>
+          <strong>--</strong>
+        </div>
+        <div className="stat-card">
+          <span>Low</span>
+          <strong>--</strong>
+        </div>
+        <div className="stat-card">
+          <span>Volume</span>
+          <strong>--</strong>
+        </div>
+        <div className="stat-card">
+          <span>Market Cap</span>
+          <strong>--</strong>
+        </div>
+      </div>
+
+      {/* ===== BODY ===== */}
       <div className="terminal-body">
 
-        {/* Chart Section */}
+        {/* LEFT SIDE → Chart */}
         <div className="terminal-chart">
           <StockPrice
             symbol={selectedSymbol}
@@ -35,10 +55,10 @@ const StockDashboard = () => {
           />
         </div>
 
-        {/* Order + OrderBook
-        <div className="terminal-order-section">
+        {/* RIGHT SIDE → Trade Panel */}
+        <div className="terminal-side-panel">
 
-          <div className="terminal-order">
+          <div className="trade-box">
             <SimulateStock
               symbol={selectedSymbol}
               onSimulate={() =>
@@ -47,21 +67,21 @@ const StockDashboard = () => {
             />
           </div>
 
-          <div className="terminal-orderbook">
+          <div className="orderbook-box">
             <OrderBook symbol={selectedSymbol} />
           </div>
 
-        </div> */}
+        </div>
 
       </div>
 
-      {/* Footer */}
-      {/* <div className="terminal-footer">
+      {/* ===== FOOTER ===== */}
+      <div className="terminal-footer">
         <div>Position: --</div>
         <div>Unrealized P&L: --</div>
         <div>Exposure: --</div>
         <div>Trades Today: --</div>
-      </div> */}
+      </div>
 
     </div>
   );

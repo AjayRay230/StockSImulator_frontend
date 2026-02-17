@@ -3245,4 +3245,76 @@ th {
 
 .trade-btn:hover {
   background: #1d4ed8;
-}                               
+}                            
+                                         /* Stock Dashbaord */
+.trade-terminal {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 64px);
+  background: var(--surface);
+}
+
+/* Header */
+.terminal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Quick Stats Row */
+.terminal-stats {
+  display: flex;
+  gap: 16px;
+  padding: 12px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.stat-card {
+  background: var(--surface-2);
+  padding: 8px 16px;
+  border-radius: 10px;
+  min-width: 100px;
+  font-size: 0.85rem;
+}
+
+.stat-card strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 1rem;
+}
+
+/* Body Layout */
+.terminal-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Chart takes most space */
+.terminal-chart {
+  flex: 3;
+  padding: 20px;
+}
+
+/* Right panel */
+.terminal-side-panel {
+  flex: 1.3;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  border-left: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+/* Footer */
+.terminal-footer {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px;
+  font-size: 0.9rem;
+  border-top: 1px solid var(--border);
+  background: var(--surface-2);
+}                                         
