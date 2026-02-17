@@ -244,23 +244,32 @@ button:disabled {
 }
 
 /* Modern Scrollbar Styling */
+/* Hide scrollbar visually */
 .sidebar.active::-webkit-scrollbar {
+  width: 0px;
+  transition: width 0.3s ease;
+}
+
+/* Reveal scrollbar when hovering sidebar */
+.sidebar.active:hover::-webkit-scrollbar {
   width: 6px;
 }
 
-.sidebar.active::-webkit-scrollbar-track {
+.sidebar.active:hover::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.sidebar.active::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+.sidebar.active:hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
   border-radius: 10px;
   transition: background 0.3s ease;
 }
 
-.sidebar.active::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.35);
+.sidebar.active:hover::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.45);
 }
+
+
 .sidebar.active {
   scrollbar-width: thin;
   scrollbar-color: rgba(255,255,255,0.2) transparent;
