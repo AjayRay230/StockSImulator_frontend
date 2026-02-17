@@ -670,6 +670,14 @@ button:disabled {
   height: 1px;
   background: rgba(255,255,255,0.08);
 }
+
+.sidebar:not(.active) .sidebar-menu a,
+.sidebar:not(.active) .sidebar-menu button {
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0px;
+  width: 100%;
+}
                                       /* portfolio css  */
      /* .portfolio-parent{
       box-shadow: 20px 10px 20px rgb(255, 205,105,0.4);
