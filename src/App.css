@@ -3364,7 +3364,15 @@ th {
 .asks {
   color: var(--loss);
 }
+.terminal-chart {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
 
+  padding: 18px;
+
+  box-shadow: var(--shadow-strong);
+}
 .terminal-footer {
   margin-top: 20px;
 
