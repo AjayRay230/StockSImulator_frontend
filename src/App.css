@@ -680,7 +680,7 @@ button:disabled {
 .user-welcome {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   padding: 10px 12px;
 }
 

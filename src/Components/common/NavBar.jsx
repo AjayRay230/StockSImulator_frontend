@@ -100,7 +100,7 @@ const Navbar =()=>{
             {isLoggedIn && user &&(
               <div className="user-welcome">
                 <FaUser className="icon1"/>
-               <strong className="user-name">Hello Mr. {" "} {user.firstName}{" "}{user.lastName}</strong>
+               <strong className="user-name">Hello  {" "} {user.firstName}{" "}{user.lastName}</strong>
                 </div>
             )}
            
