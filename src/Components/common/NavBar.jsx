@@ -107,12 +107,11 @@ const Navbar =()=>{
               
             {isLoggedIn && (
     <>
- <li
-  className="sidebar-item"
-  onClick={() => navigate("/dashboard")}
->
-  <FaExchangeAlt className="icon1" />
-  <span className="link-text">Market</span>
+<li>
+  <Link to="/dashboard">
+    <FaExchangeAlt className="icon1" />
+    <span className="link-text">Market</span>
+  </Link>
 </li>
 
       <li><Link to="/portfolio"><FaWallet className="icon1"/>
