@@ -296,12 +296,21 @@ button:disabled {
 }
 
 /* Icon styling */
-.sidebar .icon1 {
+/* .sidebar .icon1 {
   font-size: 18px;
    color: var(--text);
   min-width: 24px; 
   text-align: center;
   transition: color 0.3s ease, transform 0.3s ease;
+} */
+ .sidebar .icon1 {
+  font-size: 18px;
+  min-width: 24px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .sidebar-menu a:hover .icon1,
@@ -396,11 +405,9 @@ button:disabled {
     }
   }
 }
-.sidebar-menu{
+.sidebar-menu {
   margin-top: 20px;
-  left:0;
-  margin:-10px;
-  padding-left: 0px;
+  padding-left: 0;
 }
 .toggle-btn {
   margin-left: 0px;
