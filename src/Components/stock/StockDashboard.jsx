@@ -1,7 +1,6 @@
 import { useState } from "react";
 import StockPrice from "./StockPrice";
-import SimulateStock from "./SimulateStock";
-import OrderBook from "./OrderBook";
+
 import TradeHeader from "../Trade/TradeHeader";
 import StockSelector from "./StockSelector";
 
@@ -36,7 +35,7 @@ const StockDashboard = () => {
           />
         </div>
 
-        {/* Order + OrderBook */}
+        {/* Order + OrderBook
         <div className="terminal-order-section">
 
           <div className="terminal-order">
@@ -52,17 +51,17 @@ const StockDashboard = () => {
             <OrderBook symbol={selectedSymbol} />
           </div>
 
-        </div>
+        </div> */}
 
       </div>
 
       {/* Footer */}
-      <div className="terminal-footer">
+      {/* <div className="terminal-footer">
         <div>Position: --</div>
         <div>Unrealized P&L: --</div>
         <div>Exposure: --</div>
         <div>Trades Today: --</div>
-      </div>
+      </div> */}
 
     </div>
   );
