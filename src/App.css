@@ -682,7 +682,12 @@ button:disabled {
   align-items: center;
   gap: 12px;
   padding: 10px 12px;
+}
+
+.user-name {
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 
