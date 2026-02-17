@@ -262,7 +262,7 @@ button:disabled {
   position: relative;
   width:100%;
   margin-left: 0px;
-  margin-right: 100px;
+  /* margin-right: 100px; */
 }
 
 /* Hover effects */
@@ -659,11 +659,11 @@ button:disabled {
   transition: 0.2s ease;
   border-radius: 8px;
 }
-
+/* 
 .sidebar-item:hover {
   background: rgba(255,255,255,0.05);
   transform: translateX(4px);
-}
+} */
 
 .sidebar-divider {
   margin: 16px 0;
@@ -671,13 +671,7 @@ button:disabled {
   background: rgba(255,255,255,0.08);
 }
 
-.sidebar:not(.active) .sidebar-menu a,
-.sidebar:not(.active) .sidebar-menu button {
-  justify-content: center;
-  align-items: center;
-  padding: 10px 0px;
-  width: 100%;
-}
+
                                       /* portfolio css  */
      /* .portfolio-parent{
       box-shadow: 20px 10px 20px rgb(255, 205,105,0.4);
