@@ -224,7 +224,7 @@ button:disabled {
   box-shadow: var(--shadow);
 
   overflow-x: auto;
-  overflow-y: hidden;
+  overflow-y: auto;
   z-index: 900;
 
   transition:
