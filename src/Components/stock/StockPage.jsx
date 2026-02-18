@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import apiClient from "../api/apiClient"; // fix path
 
 const StockPage = () => {
   const [stocks, setStocks] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("/api/stock-price/batch-live")
-      .then(res => setStocks(res.data))
-      .catch(err => console.error(err));
+    apiClient
+      .get("/api/stock-price/batch-live")
+      .then((res) => setStocks(res.data))
+      .catch((err) => console.error("Batch live fetch failed:", err));
   }, []);
 
   const handleClick = (symbol) => {
@@ -30,7 +31,7 @@ const StockPage = () => {
           </tr>
         </thead>
         <tbody>
-          {stocks.map(stock => (
+          {stocks.map((stock) => (
             <tr key={stock.symbol} onClick={() => handleClick(stock.symbol)}>
               <td>{stock.symbol}</td>
               <td>{stock.price}</td>
