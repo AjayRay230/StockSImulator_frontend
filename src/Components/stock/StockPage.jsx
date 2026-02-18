@@ -11,33 +11,43 @@ const StockPage = () => {
   const { latestUpdate } = useContext(WebSocketContext);
 
  
-  useEffect(() => {
-    const fetchSymbols = async () => {
-      try {
-        const res = await apiClient.get("/api/stock/symbol");
+useEffect(() => {
+  const fetchSymbolsAndInitialPrices = async () => {
+    try {
+      const res = await apiClient.get("/api/stock/symbol");
 
-        if (!Array.isArray(res.data)) return;
+      if (!Array.isArray(res.data)) return;
 
-        const initialMap = {};
-        res.data.forEach((stock) => {
-          initialMap[stock.symbol] = {
-            stocksymbol: stock.symbol,
-            companyname: stock.companyName,
-            price: 0,
-            change: 0,
-            percentChange: 0
-          };
-        });
+      const symbols = res.data.map(s => s.symbol);
 
-        setStocks(initialMap);
+      // 🔥 Fetch initial live prices
+      const liveRes = await apiClient.get(
+        "/api/stock-price/batch-live",
+        { params: { symbols } }
+      );
 
-      } catch (err) {
-        console.error("Symbol fetch failed:", err);
-      }
-    };
+      const initialMap = {};
 
-    fetchSymbols();
-  }, []);
+      liveRes.data.forEach((stock) => {
+        initialMap[stock.stocksymbol] = {
+          stocksymbol: stock.stocksymbol,
+          companyname: stock.companyname,
+          price: stock.price,
+          change: stock.change,
+          percentChange: stock.percentChange
+        };
+      });
+
+      setStocks(initialMap);
+
+    } catch (err) {
+      console.error("Initial load failed:", err);
+    }
+  };
+
+  fetchSymbolsAndInitialPrices();
+}, []);
+
 
   // 2️⃣ Listen to WebSocket updates
 useEffect(() => {
