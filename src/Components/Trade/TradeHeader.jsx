@@ -1,34 +1,25 @@
-import { useEffect, useState } from "react";
-import apiClient from "../../api/apiClient";
+import { useEffect, useState, useContext } from "react";
+import { WebSocketContext } from "../../context/WebSocketContext";
 
 const TradeHeader = ({ symbol }) => {
+  const { latestUpdate } = useContext(WebSocketContext);
+
   const [price, setPrice] = useState(null);
   const [change, setChange] = useState(0);
   const [percent, setPercent] = useState(0);
 
-  const fetchPrice = async () => {
-    try {
-const response = await apiClient.get(
-  `/api/stock-price/closing-price`,
-  { params: { stocksymbol: symbol } }
-);
-
-const meta = response.data.meta;
-
-setPrice(meta.currentPrice);
-setChange(meta.change);
-setPercent(meta.changePercent);
-
-    } catch (err) {
-      console.log("Header price fetch error:", err);
-    }
-  };
-
   useEffect(() => {
-    fetchPrice();
-    const interval = setInterval(fetchPrice, 5000);
-    return () => clearInterval(interval);
-  }, [symbol]);
+    if (!latestUpdate) return;
+
+    if (Array.isArray(latestUpdate)) {
+      const update = latestUpdate.find(u => u.symbol === symbol);
+      if (!update) return;
+
+      setPrice(update.price);
+      setChange(update.change);
+      setPercent(update.percentChange);
+    }
+  }, [latestUpdate, symbol]);
 
   const isPositive = change >= 0;
 

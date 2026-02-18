@@ -8,8 +8,7 @@ import { WebSocketContext } from "../../context/WebSocketContext";
 const StockPage = () => {
   const [stocks, setStocks] = useState({});
   const navigate = useNavigate();
-  const { latestUpdate } = WebSocketContext();
-
+  const { latestUpdate } = useContext(WebSocketContext);
 
  
   useEffect(() => {
@@ -41,50 +40,40 @@ const StockPage = () => {
   }, []);
 
   // 2️⃣ Listen to WebSocket updates
-// useEffect(() => {
-//   if (!latestUpdate) return;
-
-//   // If backend sends array
-//   if (Array.isArray(latestUpdate)) {
-//     setStocks((prev) => {
-//       const updated = { ...prev };
-
-//       latestUpdate.forEach((update) => {
-//         updated[update.symbol] = {
-//           ...updated[update.symbol],
-//           price: update.price,
-//           change: update.change,
-//           percentChange: update.percentChange
-//         };
-//       });
-
-//       return updated;
-//     });
-
-//   } else {
-//     // If backend sends single object
-//     setStocks((prev) => ({
-//       ...prev,
-//       [latestUpdate.symbol]: {
-//         ...prev[latestUpdate.symbol],
-//         price: latestUpdate.price,
-//         change: latestUpdate.change,
-//         percentChange: latestUpdate.percentChange
-//       }
-//     }));
-//   }
-
-// }, [latestUpdate]);
-
 useEffect(() => {
   if (!latestUpdate) return;
 
-  if (latestUpdate.symbol === symbol) {
-    setPrice(latestUpdate.price);
-    setChange(latestUpdate.change);
-    setPercent(latestUpdate.percentChange);
+  // If backend sends array
+  if (Array.isArray(latestUpdate)) {
+    setStocks((prev) => {
+      const updated = { ...prev };
+
+      latestUpdate.forEach((update) => {
+        updated[update.symbol] = {
+          ...updated[update.symbol],
+          price: update.price,
+          change: update.change,
+          percentChange: update.percentChange
+        };
+      });
+
+      return updated;
+    });
+
+  } else {
+    // If backend sends single object
+    setStocks((prev) => ({
+      ...prev,
+      [latestUpdate.symbol]: {
+        ...prev[latestUpdate.symbol],
+        price: latestUpdate.price,
+        change: latestUpdate.change,
+        percentChange: latestUpdate.percentChange
+      }
+    }));
   }
-}, [latestUpdate, symbol]);
+
+}, [latestUpdate]);
 
 
   const handleClick = (symbol) => {
