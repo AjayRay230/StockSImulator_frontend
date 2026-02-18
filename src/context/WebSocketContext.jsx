@@ -12,7 +12,7 @@ export const WebSocketProvider = ({ children }) => {
   const [latestUpdate, setLatestUpdate] = useState(null);
   const [portfolioValue, setPortfolioValue] = useState(null);
   const [connected, setConnected] = useState(false);
-
+  const [latestBatch, setLatestBatch] = useState([]);
   useEffect(() => {
     if (!isLoggedIn || !user?.username) return;
 
@@ -41,14 +41,16 @@ onConnect: () => {
   setLatestUpdate(null);
 
   // 🔥 MARKET PRICES
-  client.subscribe("/topic/prices", (message) => {
-    try {
-      const prices = JSON.parse(message.body);
-      setLatestUpdate(prices);
-    } catch (e) {
-      console.error("Price parse error:", e);
-    }
-  });
+client.subscribe("/topic/prices", (message) => {
+  const prices = JSON.parse(message.body);
+
+  if (Array.isArray(prices)) {
+    setLatestBatch(prices);
+    prices.forEach(price => setLatestUpdate(price));
+  } else {
+    setLatestUpdate(prices);
+  }
+});
 
   // 🔥 USER PORTFOLIO
   client.subscribe(
