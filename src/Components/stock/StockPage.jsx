@@ -10,7 +10,6 @@ const StockPage = () => {
   const navigate = useNavigate();
   const { latestUpdate } = useContext(WebSocketContext);
 
- 
 useEffect(() => {
   const fetchSymbolsAndInitialPrices = async () => {
     try {
@@ -20,15 +19,16 @@ useEffect(() => {
 
       const symbols = res.data.map(s => s.symbol);
 
-      // 🔥 Fetch initial live prices
-const liveRes = await apiClient.get(
-  "/api/stock-price/batch-live",
-  {
-    params: { symbols },
-    paramsSerializer: (params) =>
-      params.symbols.map(s => `symbols=${encodeURIComponent(s)}`).join("&")
-  }
-);
+      const liveRes = await apiClient.get(
+        "/api/stock-price/batch-live",
+        {
+          params: { symbols },
+          paramsSerializer: (params) =>
+            params.symbols
+              .map(s => `symbols=${encodeURIComponent(s)}`)
+              .join("&")
+        }
+      );
 
       const initialMap = {};
 
