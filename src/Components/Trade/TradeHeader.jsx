@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import apiClient from "../../api/apiClient";
 
 const TradeHeader = ({ symbol }) => {
   const [price, setPrice] = useState(null);
@@ -8,8 +8,8 @@ const TradeHeader = ({ symbol }) => {
 
   const fetchPrice = async () => {
     try {
-      const response = await axios.get(
-        `https://stocksimulator-backend.onrender.com/api/stock/price/${symbol}`
+      const response = await apiClient.get(
+        `/api/stock/price/${symbol}`
       );
 
       const data = response.data;
@@ -24,9 +24,7 @@ const TradeHeader = ({ symbol }) => {
 
   useEffect(() => {
     fetchPrice();
-
-    const interval = setInterval(fetchPrice, 5000); // refresh every 5 sec
-
+    const interval = setInterval(fetchPrice, 5000);
     return () => clearInterval(interval);
   }, [symbol]);
 
