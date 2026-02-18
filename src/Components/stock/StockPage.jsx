@@ -14,7 +14,7 @@ const StockPage = () => {
   useEffect(() => {
     const fetchSymbols = async () => {
       try {
-        const res = await apiClient.get("/api/stock-price/symbol");
+        const res = await apiClient.get("/api/stock/symbol");
 
         if (!Array.isArray(res.data)) return;
 
