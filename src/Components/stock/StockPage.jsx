@@ -8,7 +8,7 @@ import { WebSocketContext } from "../../context/WebSocketContext";
 const StockPage = () => {
   const [stocks, setStocks] = useState({});
   const navigate = useNavigate();
-  const { latestUpdate } = useWebSocket();
+  const { latestUpdate } = WebSocketContext();
 
 
  
