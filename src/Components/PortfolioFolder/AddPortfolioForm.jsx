@@ -20,7 +20,7 @@ const AddPortfolioForm = ({ onAdd }) => {
     averagebuyprice: ""
   });
 
-  // 🔹 Safe input handling (no NaN issue)
+  // Safe input handling (no NaN issue)
   const handleChange = (e) => {
     const { name, value } = e.target;
 

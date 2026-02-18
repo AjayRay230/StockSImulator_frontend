@@ -1145,6 +1145,47 @@ button:disabled {
   }
 }
 
+
+.primary-btn {
+  background: #2ecc71;
+  color: white;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.primary-btn:hover {
+  background: #27ae60;
+}
+
+.sell-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.sell-btn:hover {
+  background: #c0392b;
+}
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stock-info {
+  cursor: pointer;
+}
+
+
                                   /* Transaction History table css */
 .transactionHistory-container {
   padding: 30px;
@@ -2146,7 +2187,136 @@ margin-right:6px;
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 } 
-                                          
+  
+
+
+.buysell-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding: 1.5rem;
+}
+
+.trade-title {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.buysell-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-weight: 500;
+}
+
+.buysell-form input,
+.buysell-form select {
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.locked-input {
+  background-color: #f4f4f4;
+  cursor: not-allowed;
+}
+
+.trade-btn {
+  padding: 0.7rem;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.trade-btn.buy-mode {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.trade-btn.buy-mode:hover {
+  background-color: #27ae60;
+}
+
+.trade-btn.sell-mode {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.trade-btn.sell-mode:hover {
+  background-color: #c0392b;
+}
+
+.error {
+  color: #e74c3c;
+  font-size: 0.8rem;
+}
+
+.trade-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+  padding: 1.8rem;
+}
+
+.trade-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.price-preview {
+  background: var(--surface-2);
+  padding: 0.9rem;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.price-preview strong {
+  margin-left: 6px;
+  font-weight: 600;
+}
+
+.locked-input {
+  background-color: #f4f4f4;
+  cursor: not-allowed;
+}
+
+.trade-btn {
+  padding: 0.8rem;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.trade-btn.buy-mode {
+  background-color: #2ecc71;
+  color: white;
+}
+
+.trade-btn.buy-mode:hover {
+  background-color: #27ae60;
+}
+
+.trade-btn.sell-mode {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.trade-btn.sell-mode:hover {
+  background-color: #c0392b;
+}
+
 
                 /* Live Price Components + sparkline Chart for watchlist */
 .sparkline-container{
