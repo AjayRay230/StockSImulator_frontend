@@ -1,22 +1,45 @@
-import { useState } from "react";
-import StockDashboard from "./StockDashboard";
-import StockSelector from "./StockSelector";
-import StockPrice from "./StockPrice";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const StockPage = () => {
-  const [selectedSymbol, setSelectedSymbol] = useState("AAPL"); 
+  const [stocks, setStocks] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    axios.get("/api/stock-price/batch-live")
+      .then(res => setStocks(res.data))
+      .catch(err => console.error(err));
+  }, []);
+
+  const handleClick = (symbol) => {
+    navigate(`/market?symbol=${symbol}`);
+  };
 
   return (
     <div className="stock-page">
-      <h1>Stock Overview</h1>
+      <h1>Market Overview</h1>
 
-      <div className="stock-controls">
-        <StockSelector
-          selectedSymbol={selectedSymbol}
-          onChange={setSelectedSymbol} 
-        />
-        {selectedSymbol && <StockPrice symbol={selectedSymbol} />}
-      </div>
+      <table className="market-table">
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Price</th>
+            <th>Change</th>
+            <th>Volume</th>
+          </tr>
+        </thead>
+        <tbody>
+          {stocks.map(stock => (
+            <tr key={stock.symbol} onClick={() => handleClick(stock.symbol)}>
+              <td>{stock.symbol}</td>
+              <td>{stock.price}</td>
+              <td>{stock.changePercent}%</td>
+              <td>{stock.volume}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

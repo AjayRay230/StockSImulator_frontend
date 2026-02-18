@@ -4,10 +4,19 @@ import TradeHeader from "../Trade/TradeHeader";
 import StockSelector from "./StockSelector";
 import SimulateStock from "./SimulateStock";
 import OrderBook from "./OrderBook";
-
+import { useLocation } from "react-router-dom";
 const StockDashboard = () => {
   const [selectedSymbol, setSelectedSymbol] = useState("AAPL");
   const [refreshKey, setRefreshKey] = useState(0);
+  const location = useLocation();
+
+  useEffect(() => {
+  const params = new URLSearchParams(location.search);
+  const symbolFromUrl = params.get("symbol");
+  if (symbolFromUrl) {
+    setSelectedSymbol(symbolFromUrl);
+  }
+}, [location]);
 
   return (
     <div className="trade-terminal">
