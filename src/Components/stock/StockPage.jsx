@@ -1,47 +1,57 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import apiClient from "../api/apiClient";
+import { WebSocketContext } from "../context/WebSocketContext";
 
 const StockPage = () => {
-  const [stocks, setStocks] = useState([]);
+  const [stocks, setStocks] = useState({});
   const navigate = useNavigate();
+  const { latestUpdate } = useContext(WebSocketContext);
 
+  // 1️⃣ Fetch symbols once
   useEffect(() => {
-    const fetchStocks = async () => {
+    const fetchSymbols = async () => {
       try {
-        // 1️⃣ Get all DB stocks
-        const symbolRes = await apiClient.get("/api/stock-price/symbol");
+        const res = await apiClient.get("/api/stock-price/symbol");
 
-        if (!Array.isArray(symbolRes.data)) {
-          console.error("Invalid symbol response:", symbolRes.data);
-          return;
-        }
+        if (!Array.isArray(res.data)) return;
 
-        const symbols = symbolRes.data.map((stock) => stock.symbol);
+        const initialMap = {};
+        res.data.forEach((stock) => {
+          initialMap[stock.symbol] = {
+            stocksymbol: stock.symbol,
+            companyname: stock.companyName,
+            price: 0,
+            change: 0,
+            percentChange: 0
+          };
+        });
 
-        if (symbols.length === 0) return;
-
-        // 2️⃣ Fetch live prices
-        const liveRes = await apiClient.get(
-          "/api/stock-price/batch-live",
-          {
-            params: { symbols }
-          }
-        );
-
-        if (Array.isArray(liveRes.data)) {
-          setStocks(liveRes.data);
-        } else {
-          console.error("Invalid live response:", liveRes.data);
-        }
+        setStocks(initialMap);
 
       } catch (err) {
-        console.error("Market overview fetch failed:", err);
+        console.error("Symbol fetch failed:", err);
       }
     };
 
-    fetchStocks();
+    fetchSymbols();
   }, []);
+
+  // 2️⃣ Listen to WebSocket updates
+  useEffect(() => {
+    if (!latestUpdate) return;
+
+    setStocks((prev) => ({
+      ...prev,
+      [latestUpdate.symbol]: {
+        ...prev[latestUpdate.symbol],
+        price: latestUpdate.price,
+        change: latestUpdate.change,
+        percentChange: latestUpdate.percentChange
+      }
+    }));
+
+  }, [latestUpdate]);
 
   const handleClick = (symbol) => {
     navigate(`/market?symbol=${symbol}`);
@@ -49,7 +59,7 @@ const StockPage = () => {
 
   return (
     <div className="stock-page">
-      <h1>Market Overview</h1>
+      <h1>Market Overview (Live)</h1>
 
       <table className="market-table">
         <thead>
@@ -62,7 +72,7 @@ const StockPage = () => {
           </tr>
         </thead>
         <tbody>
-          {stocks.map((stock) => (
+          {Object.values(stocks).map((stock) => (
             <tr
               key={stock.stocksymbol}
               onClick={() => handleClick(stock.stocksymbol)}
