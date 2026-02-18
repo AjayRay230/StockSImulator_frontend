@@ -10,7 +10,7 @@ const StockPage = () => {
   const navigate = useNavigate();
   const { latestUpdate } = useContext(WebSocketContext);
 
-  // 1️⃣ Fetch symbols once
+ 
   useEffect(() => {
     const fetchSymbols = async () => {
       try {

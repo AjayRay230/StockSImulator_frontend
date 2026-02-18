@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState ,useEffect} from "react";
 import StockPrice from "./StockPrice";
 import TradeHeader from "../Trade/TradeHeader";
 import StockSelector from "./StockSelector";
