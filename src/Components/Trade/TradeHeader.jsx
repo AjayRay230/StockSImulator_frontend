@@ -8,15 +8,17 @@ const TradeHeader = ({ symbol }) => {
 
   const fetchPrice = async () => {
     try {
-      const response = await apiClient.get(
-        `/api/stock/price/${symbol}`
-      );
+const response = await apiClient.get(
+  `/api/stock-price/closing-price`,
+  { params: { stocksymbol: symbol } }
+);
 
-      const data = response.data;
+const meta = response.data.meta;
 
-      setPrice(data.currentPrice);
-      setChange(data.change);
-      setPercent(data.percentChange);
+setPrice(meta.currentPrice);
+setChange(meta.change);
+setPercent(meta.changePercent);
+
     } catch (err) {
       console.log("Header price fetch error:", err);
     }
