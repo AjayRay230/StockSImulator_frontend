@@ -2,7 +2,8 @@ import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import apiClient from "../../api/apiClient";
 
-import { WebSocketContext } from "../context/WebSocketContext";
+import { WebSocketContext } from "../../context/WebSocketContext";
+
 
 const StockPage = () => {
   const [stocks, setStocks] = useState({});
