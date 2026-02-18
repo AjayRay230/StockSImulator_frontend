@@ -38,9 +38,28 @@ const StockPage = () => {
   }, []);
 
   // 2️⃣ Listen to WebSocket updates
-  useEffect(() => {
-    if (!latestUpdate) return;
+useEffect(() => {
+  if (!latestUpdate) return;
 
+  // If backend sends array
+  if (Array.isArray(latestUpdate)) {
+    setStocks((prev) => {
+      const updated = { ...prev };
+
+      latestUpdate.forEach((update) => {
+        updated[update.symbol] = {
+          ...updated[update.symbol],
+          price: update.price,
+          change: update.change,
+          percentChange: update.percentChange
+        };
+      });
+
+      return updated;
+    });
+
+  } else {
+    // If backend sends single object
     setStocks((prev) => ({
       ...prev,
       [latestUpdate.symbol]: {
@@ -50,8 +69,10 @@ const StockPage = () => {
         percentChange: latestUpdate.percentChange
       }
     }));
+  }
 
-  }, [latestUpdate]);
+}, [latestUpdate]);
+
 
   const handleClick = (symbol) => {
     navigate(`/market?symbol=${symbol}`);
