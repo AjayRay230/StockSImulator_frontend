@@ -1,22 +1,80 @@
-import { useState ,useEffect} from "react";
+import { useState, useEffect } from "react";
+import apiClient from "../../api/apiClient";
+import { useWebSocket } from "../../context/WebSocketContext";
 import StockPrice from "./StockPrice";
 import TradeHeader from "../Trade/TradeHeader";
 import StockSelector from "./StockSelector";
 import SimulateStock from "./SimulateStock";
 import OrderBook from "./OrderBook";
 import { useLocation } from "react-router-dom";
+
 const StockDashboard = () => {
   const [selectedSymbol, setSelectedSymbol] = useState("AAPL");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [stats, setStats] = useState(null);
+
+  // Portfolio (real-time)
+  const { portfolioValue } = useWebSocket();
+
   const location = useLocation();
 
+  // Sync symbol from URL
   useEffect(() => {
-  const params = new URLSearchParams(location.search);
-  const symbolFromUrl = params.get("symbol");
-  if (symbolFromUrl) {
-    setSelectedSymbol(symbolFromUrl);
-  }
-}, [location]);
+    const params = new URLSearchParams(location.search);
+    const symbolFromUrl = params.get("symbol");
+    if (symbolFromUrl) {
+      setSelectedSymbol(symbolFromUrl);
+    }
+  }, [location]);
+
+  // Fetch market stats
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await apiClient.get(
+          "/api/stock-price/closing-price",
+          { params: { stocksymbol: selectedSymbol } }
+        );
+
+        setStats(response.data);
+      } catch (err) {
+        console.error("Dashboard stats fetch error:", err);
+        setStats(null);
+      }
+    };
+
+    fetchStats();
+  }, [selectedSymbol, refreshKey]);
+
+  // Extract meta safely
+  const meta = stats?.meta || null;
+  const candles = stats?.data || [];
+
+  const high =
+    candles.length > 0
+      ? Math.max(...candles.map(d => d.highPrice)).toFixed(2)
+      : "--";
+
+  const low =
+    candles.length > 0
+      ? Math.min(...candles.map(d => d.lowPrice)).toFixed(2)
+      : "--";
+
+  const volume =
+    candles.length > 0
+      ? candles[0]?.volume?.toLocaleString()
+      : "--";
+
+  const currentPrice = meta?.currentPrice || 0;
+
+  // Since we don’t have symbol-level position endpoint yet:
+  const position = 0;
+  const avgPrice = 0;
+
+  const unrealizedPnL =
+    position > 0
+      ? ((currentPrice - avgPrice) * position).toFixed(2)
+      : "--";
 
   return (
     <div className="trade-terminal">
@@ -34,16 +92,19 @@ const StockDashboard = () => {
       <div className="terminal-stats">
         <div className="stat-card">
           <span>High</span>
-          <strong>--</strong>
+          <strong>{high}</strong>
         </div>
+
         <div className="stat-card">
           <span>Low</span>
-          <strong>--</strong>
+          <strong>{low}</strong>
         </div>
+
         <div className="stat-card">
           <span>Volume</span>
-          <strong>--</strong>
+          <strong>{volume}</strong>
         </div>
+
         <div className="stat-card">
           <span>Market Cap</span>
           <strong>--</strong>
@@ -53,7 +114,6 @@ const StockDashboard = () => {
       {/* ===== BODY ===== */}
       <div className="terminal-body">
 
-        {/* LEFT SIDE → Chart */}
         <div className="terminal-chart">
           <StockPrice
             symbol={selectedSymbol}
@@ -64,7 +124,6 @@ const StockDashboard = () => {
           />
         </div>
 
-        {/* RIGHT SIDE → Trade Panel */}
         <div className="terminal-side-panel">
 
           <div className="trade-box">
@@ -86,9 +145,29 @@ const StockDashboard = () => {
 
       {/* ===== FOOTER ===== */}
       <div className="terminal-footer">
-        <div>Position: --</div>
-        <div>Unrealized P&L: --</div>
-        <div>Exposure: --</div>
+        <div>Position: {position}</div>
+
+        <div>
+          Unrealized P&L:{" "}
+          <span
+            style={{
+              color:
+                unrealizedPnL !== "--" && unrealizedPnL >= 0
+                  ? "limegreen"
+                  : "red"
+            }}
+          >
+            {unrealizedPnL}
+          </span>
+        </div>
+
+        <div>
+          Exposure (Portfolio):{" "}
+          {portfolioValue !== null
+            ? portfolioValue.toFixed(2)
+            : "--"}
+        </div>
+
         <div>Trades Today: --</div>
       </div>
 
