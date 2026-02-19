@@ -6,6 +6,7 @@ import { FaMoon, FaSpinner, FaSun } from "react-icons/fa";
 import SimulateStock from "./SimulateStock";
 import { WebSocketContext } from "../../context/WebSocketContext";
 import { useContext } from "react";
+import apiClient from "../../api/apiClient";
 
 const calculateSMA = (data, period) => {
   return data.map((_, idx, arr) => {
@@ -48,9 +49,11 @@ const StockPrice = ({ symbol, onBack, refreshKey, onSimulate }) => {
   const [ohlcData, setOhlcData] = useState([]);
   const [companyName, setCompanyName] = useState("");
  const { latestUpdate } = useContext(WebSocketContext);
-const livePrice = latestUpdate?.[symbol]
-  ? parseFloat(latestUpdate[symbol])
-  : null;
+const livePrice =
+  latestUpdate && latestUpdate[symbol] !== undefined
+    ? parseFloat(latestUpdate[symbol])
+    : null;
+
 
   // ---------------- FETCH ----------------
   useEffect(() => {
@@ -59,21 +62,22 @@ const livePrice = latestUpdate?.[symbol]
     const fetchPrice = async () => {
       try {
         setLoading(true);
-        const token = localStorage.getItem("token");
-
-        const response = await axios.get(
-          `https://stocksimulator-backend.onrender.com/api/stock-price/closing-price?stocksymbol=${symbol}&range=${dateRange}`,
-          {
-            headers: { Authorization: `Bearer ${token}` }
-          }
-        );
+   const response = await apiClient.get(
+  "/api/stock-price/closing-price",
+  {
+    params: {
+      stocksymbol: symbol,
+      range: dateRange
+    }
+  }
+);
 
         const apiData = response.data;
 
         const normalized =
           (apiData.data || []).map((item) => ({
             ...item,
-            timestamp: new Date(item.timestamp),
+           timestamp: new Date(item.timestamp.replace(" ", "T")),
             openPrice: parseFloat(item.openPrice),
             highPrice: parseFloat(item.highPrice),
             lowPrice: parseFloat(item.lowPrice),
@@ -220,7 +224,7 @@ const candleStickData = useMemo(() => {
     closePriceData,
     ma20,
     ema20,
-    ohlcData.length
+   
   ]);
 
   // ---------------- CHART OPTIONS ----------------

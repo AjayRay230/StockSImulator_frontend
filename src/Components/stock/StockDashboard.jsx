@@ -11,13 +11,16 @@ import { useLocation } from "react-router-dom";
 const StockDashboard = () => {
   const [selectedSymbol, setSelectedSymbol] = useState("AAPL");
   const [refreshKey, setRefreshKey] = useState(0);
+
+  // NEW — Closing price stats
   const [stats, setStats] = useState(null);
+  const [statsLoading, setStatsLoading] = useState(false);
+
+  // Existing metrics
   const [metrics, setMetrics] = useState(null);
   const [metricsLoading, setMetricsLoading] = useState(false);
 
-  // Portfolio (real-time)
   const { portfolioValue } = useWebSocket();
-
   const location = useLocation();
 
   // Sync symbol from URL
@@ -29,32 +32,61 @@ const StockDashboard = () => {
     }
   }, [location]);
 
-  // Fetch market stats
-useEffect(() => {
-  const fetchDashboardMetrics = async () => {
-    try {
-      setMetricsLoading(true);
 
-      const response = await apiClient.get(
-        "/api/user/me/dashboard-metrics",
-        { params: { symbol: selectedSymbol } }
-      );
+  // Fetch closing-price (CHART + STATS)
 
-      setMetrics(response.data);
-    } catch (err) {
-      console.error("Dashboard metrics fetch error:", err);
-      setMetrics(null);
-    } finally {
-      setMetricsLoading(false);
-    }
-  };
+  useEffect(() => {
+    const fetchClosingPrice = async () => {
+      try {
+        setStatsLoading(true);
 
-  fetchDashboardMetrics();
-}, [selectedSymbol, refreshKey]);
+        const response = await apiClient.get(
+          "/api/stock-price/closing-price",
+          {
+            params: { stocksymbol: selectedSymbol, range: "1D" }
+          }
+        );
+
+        setStats(response.data);
+      } catch (err) {
+        console.error("Closing price fetch error:", err);
+        setStats(null);
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+
+    fetchClosingPrice();
+  }, [selectedSymbol, refreshKey]);
 
 
-  // Extract meta safely
-  const meta = stats?.meta || null;
+  // Fetch dashboard metrics
+
+  useEffect(() => {
+    const fetchDashboardMetrics = async () => {
+      try {
+        setMetricsLoading(true);
+
+        const response = await apiClient.get(
+          "/api/user/me/dashboard-metrics",
+          { params: { symbol: selectedSymbol } }
+        );
+
+        setMetrics(response.data);
+      } catch (err) {
+        console.error("Dashboard metrics fetch error:", err);
+        setMetrics(null);
+      } finally {
+        setMetricsLoading(false);
+      }
+    };
+
+    fetchDashboardMetrics();
+  }, [selectedSymbol, refreshKey]);
+
+  
+  // Derived Market Stats
+  
   const candles = stats?.data || [];
 
   const high =
@@ -72,17 +104,6 @@ useEffect(() => {
       ? candles[0]?.volume?.toLocaleString()
       : "--";
 
-  // const currentPrice = meta?.currentPrice || 0;
-
-  // // Since we don’t have symbol-level position endpoint yet:
-  // const position = 0;
-  // const avgPrice = 0;
-
-  // const unrealizedPnL =
-  //   position > 0
-  //     ? ((currentPrice - avgPrice) * position).toFixed(2)
-  //     : "--";
-
   return (
     <div className="trade-terminal">
 
@@ -95,21 +116,21 @@ useEffect(() => {
         />
       </div>
 
-      {/* ===== MARKET QUICK STATS ===== */}
+      {/*  MARKET QUICK STATS  */}
       <div className="terminal-stats">
         <div className="stat-card">
           <span>High</span>
-          <strong>{high}</strong>
+          <strong>{statsLoading ? "..." : high}</strong>
         </div>
 
         <div className="stat-card">
           <span>Low</span>
-          <strong>{low}</strong>
+          <strong>{statsLoading ? "..." : low}</strong>
         </div>
 
         <div className="stat-card">
           <span>Volume</span>
-          <strong>{volume}</strong>
+          <strong>{statsLoading ? "..." : volume}</strong>
         </div>
 
         <div className="stat-card">
@@ -118,12 +139,14 @@ useEffect(() => {
         </div>
       </div>
 
-      {/* ===== BODY ===== */}
+      {/* BODY */}
       <div className="terminal-body">
 
         <div className="terminal-chart">
           <StockPrice
             symbol={selectedSymbol}
+            stats={stats}            //  pass chart data
+            loading={statsLoading}
             refreshKey={refreshKey}
             onSimulate={() =>
               setRefreshKey(prev => prev + 1)
@@ -150,54 +173,53 @@ useEffect(() => {
 
       </div>
 
-      {/* ===== FOOTER ===== */}
+      {/* FOOTER  */}
       <div className="terminal-footer">
-  <div>
-    Position:{" "}
-    {metricsLoading
-      ? "..."
-      : metrics
-      ? metrics.quantity
-      : "--"}
-  </div>
+        <div>
+          Position:{" "}
+          {metricsLoading
+            ? "..."
+            : metrics
+            ? metrics.quantity
+            : "--"}
+        </div>
 
-  <div>
-    Unrealized P&L:{" "}
-    <span
-      style={{
-        color:
-          metrics && metrics.unrealizedPnL >= 0
-            ? "limegreen"
-            : "red"
-      }}
-    >
-      {metricsLoading
-        ? "..."
-        : metrics
-        ? metrics.unrealizedPnL.toFixed(2)
-        : "--"}
-    </span>
-  </div>
+        <div>
+          Unrealized P&L:{" "}
+          <span
+            style={{
+              color:
+                metrics && metrics.unrealizedPnL >= 0
+                  ? "limegreen"
+                  : "red"
+            }}
+          >
+            {metricsLoading
+              ? "..."
+              : metrics
+              ? metrics.unrealizedPnL.toFixed(2)
+              : "--"}
+          </span>
+        </div>
 
-  <div>
-    Exposure (Portfolio):{" "}
-    {portfolioValue !== null
-      ? portfolioValue.toFixed(2)
-      : metrics
-      ? metrics.portfolioValue.toFixed(2)
-      : "--"}
-  </div>
+        <div>
+          Exposure (Portfolio):{" "}
+          {portfolioValue !== null
+            ? portfolioValue.toFixed(2)
+            : metrics
+            ? metrics.portfolioValue.toFixed(2)
+            : "--"}
+        </div>
 
-  <div>
-    Trades Today:{" "}
-    {metricsLoading
-      ? "..."
-      : metrics
-      ? metrics.tradesToday
-      : "--"}
-  </div>
-</div>
-
+        <div>
+          Trades Today:{" "}
+          {metricsLoading
+            ? "..."
+            : metrics
+            ? metrics.tradesToday
+            : "--"}
+        </div>
+      </div>
 
     </div>
   );
