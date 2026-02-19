@@ -53,80 +53,51 @@ const livePrice = latestUpdate?.[symbol]
   : null;
 
   // ---------------- FETCH ----------------
-useEffect(() => {
-  if (!symbol) {
-    console.error("❌ No symbol provided");
-    toast.error("No stock symbol selected");
-    return;
-  }
+  useEffect(() => {
+    if (!symbol) return;
 
-  const fetchPrice = async () => {
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
+    const fetchPrice = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem("token");
 
-      if (!token) {
-        console.error("❌ No auth token");
-        toast.error("Please log in");
-        return;
+        const response = await axios.get(
+          `https://stocksimulator-backend.onrender.com/api/stock-price/closing-price?stocksymbol=${symbol}&range=${dateRange}`,
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
+
+        const apiData = response.data;
+
+        const normalized =
+          (apiData.data || []).map((item) => ({
+            ...item,
+            timestamp: new Date(item.timestamp),
+            openPrice: parseFloat(item.openPrice),
+            highPrice: parseFloat(item.highPrice),
+            lowPrice: parseFloat(item.lowPrice),
+            closePrice: parseFloat(item.closePrice),
+            volume: parseFloat(item.volume)
+          })) || [];
+
+        setOhlcData(normalized);
+
+        const fullName =
+          apiData?.meta?.companyname ||
+          apiData?.meta?.symbol ||
+          symbol;
+
+        setCompanyName(fullName);
+      } catch (error) {
+        toast.error("Error while getting the price");
+      } finally {
+        setLoading(false);
       }
+    };
 
-      const params = {
-        stocksymbol: symbol,
-        range: dateRange
-      };
-
-      console.log("📡 Fetching stock data:", params);
-
-      const response = await axios.get(
-        `https://stocksimulator-backend.onrender.com/api/stock-price/closing-price`,
-        {
-          params,
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
-
-      console.log("✅ Response:", response.data);
-
-      const apiData = response.data;
-
-      const normalized =
-        (apiData.data || []).map((item) => ({
-          ...item,
-          timestamp: new Date(item.timestamp),
-          openPrice: parseFloat(item.openPrice),
-          highPrice: parseFloat(item.highPrice),
-          lowPrice: parseFloat(item.lowPrice),
-          closePrice: parseFloat(item.closePrice),
-          volume: parseFloat(item.volume)
-        })) || [];
-
-      setOhlcData(normalized);
-
-      const fullName =
-        apiData?.meta?.companyname ||
-        apiData?.meta?.symbol ||
-        symbol;
-
-      setCompanyName(fullName);
-    } catch (error) {
-      console.error("❌ Full error:", error);
-      console.error("❌ Response data:", error.response?.data);
-      console.error("❌ Response status:", error.response?.status);
-      
-      const errorMsg = error.response?.data?.message || 
-                       error.response?.data?.error ||
-                       "Error while getting the price";
-      
-      toast.error(errorMsg);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchPrice();
-}, [symbol, dateRange, refreshKey]);
-
+    fetchPrice();
+  }, [symbol, dateRange, refreshKey]);
 
   // ---------------- DERIVED DATA ----------------
 
