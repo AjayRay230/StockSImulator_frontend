@@ -12,6 +12,8 @@ const StockDashboard = () => {
   const [selectedSymbol, setSelectedSymbol] = useState("AAPL");
   const [refreshKey, setRefreshKey] = useState(0);
   const [stats, setStats] = useState(null);
+  const [metrics, setMetrics] = useState(null);
+  const [metricsLoading, setMetricsLoading] = useState(false);
 
   // Portfolio (real-time)
   const { portfolioValue } = useWebSocket();
@@ -28,23 +30,28 @@ const StockDashboard = () => {
   }, [location]);
 
   // Fetch market stats
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const response = await apiClient.get(
-          "/api/stock-price/closing-price",
-          { params: { stocksymbol: selectedSymbol } }
-        );
+useEffect(() => {
+  const fetchDashboardMetrics = async () => {
+    try {
+      setMetricsLoading(true);
 
-        setStats(response.data);
-      } catch (err) {
-        console.error("Dashboard stats fetch error:", err);
-        setStats(null);
-      }
-    };
+      const response = await apiClient.get(
+        "/api/user/me/dashboard-metrics",
+        { params: { symbol: selectedSymbol } }
+      );
 
-    fetchStats();
-  }, [selectedSymbol, refreshKey]);
+      setMetrics(response.data);
+    } catch (err) {
+      console.error("Dashboard metrics fetch error:", err);
+      setMetrics(null);
+    } finally {
+      setMetricsLoading(false);
+    }
+  };
+
+  fetchDashboardMetrics();
+}, [selectedSymbol, refreshKey]);
+
 
   // Extract meta safely
   const meta = stats?.meta || null;
@@ -65,16 +72,16 @@ const StockDashboard = () => {
       ? candles[0]?.volume?.toLocaleString()
       : "--";
 
-  const currentPrice = meta?.currentPrice || 0;
+  // const currentPrice = meta?.currentPrice || 0;
 
-  // Since we don’t have symbol-level position endpoint yet:
-  const position = 0;
-  const avgPrice = 0;
+  // // Since we don’t have symbol-level position endpoint yet:
+  // const position = 0;
+  // const avgPrice = 0;
 
-  const unrealizedPnL =
-    position > 0
-      ? ((currentPrice - avgPrice) * position).toFixed(2)
-      : "--";
+  // const unrealizedPnL =
+  //   position > 0
+  //     ? ((currentPrice - avgPrice) * position).toFixed(2)
+  //     : "--";
 
   return (
     <div className="trade-terminal">
@@ -145,31 +152,52 @@ const StockDashboard = () => {
 
       {/* ===== FOOTER ===== */}
       <div className="terminal-footer">
-        <div>Position: {position}</div>
+  <div>
+    Position:{" "}
+    {metricsLoading
+      ? "..."
+      : metrics
+      ? metrics.quantity
+      : "--"}
+  </div>
 
-        <div>
-          Unrealized P&L:{" "}
-          <span
-            style={{
-              color:
-                unrealizedPnL !== "--" && unrealizedPnL >= 0
-                  ? "limegreen"
-                  : "red"
-            }}
-          >
-            {unrealizedPnL}
-          </span>
-        </div>
+  <div>
+    Unrealized P&L:{" "}
+    <span
+      style={{
+        color:
+          metrics && metrics.unrealizedPnL >= 0
+            ? "limegreen"
+            : "red"
+      }}
+    >
+      {metricsLoading
+        ? "..."
+        : metrics
+        ? metrics.unrealizedPnL.toFixed(2)
+        : "--"}
+    </span>
+  </div>
 
-        <div>
-          Exposure (Portfolio):{" "}
-          {portfolioValue !== null
-            ? portfolioValue.toFixed(2)
-            : "--"}
-        </div>
+  <div>
+    Exposure (Portfolio):{" "}
+    {portfolioValue !== null
+      ? portfolioValue.toFixed(2)
+      : metrics
+      ? metrics.portfolioValue.toFixed(2)
+      : "--"}
+  </div>
 
-        <div>Trades Today: --</div>
-      </div>
+  <div>
+    Trades Today:{" "}
+    {metricsLoading
+      ? "..."
+      : metrics
+      ? metrics.tradesToday
+      : "--"}
+  </div>
+</div>
+
 
     </div>
   );

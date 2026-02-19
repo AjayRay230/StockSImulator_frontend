@@ -53,7 +53,7 @@ useEffect(() => {
 }, []);
 
 
-  // 2️⃣ Listen to WebSocket updates
+  //  Listen to WebSocket updates
 useEffect(() => {
   if (!latestUpdate) return;
 
