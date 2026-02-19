@@ -37,22 +37,36 @@ onConnect: () => {
   console.log("✅ STOMP connected");
   setConnected(true);
 
-  // 🔥 Always clear previous values
+  //  Always clear previous values
   setLatestUpdate(null);
 
-  // 🔥 MARKET PRICES
+  //  MARKET PRICES
 client.subscribe("/topic/prices", (message) => {
   const prices = JSON.parse(message.body);
 
-  if (Array.isArray(prices)) {
-    setLatestBatch(prices);
-    prices.forEach(price => setLatestUpdate(price));
-  } else {
-    setLatestUpdate(prices);
-  }
+if (Array.isArray(prices)) {
+
+  const priceMap = {};
+
+  prices.forEach(p => {
+    priceMap[p.symbol] = p.price;
+  });
+
+  setLatestUpdate(priceMap);
+
+} else {
+
+  // Single price update
+  setLatestUpdate(prev => ({
+    ...prev,
+    [prices.symbol]: prices.price
+  }));
+
+}
+
 });
 
-  // 🔥 USER PORTFOLIO
+  //  USER PORTFOLIO
   client.subscribe(
     `/topic/portfolio/${user.username}`,
     (message) => {
@@ -67,7 +81,7 @@ client.subscribe("/topic/prices", (message) => {
 },
 
       onDisconnect: () => {
-        console.log("❌ STOMP disconnected");
+        console.log(" STOMP disconnected");
         setConnected(false);
       },
 
@@ -86,8 +100,11 @@ client.subscribe("/topic/prices", (message) => {
       }
     };
   }, [isLoggedIn, user?.username]);
+  useEffect(() => {
+  console.log("Latest Update:", latestUpdate);
+}, [latestUpdate]);
 
-  // 🔥 Proper Token Expiry Handling
+  // Proper Token Expiry Handling
   useEffect(() => {
     if (!isLoggedIn) return;
 
