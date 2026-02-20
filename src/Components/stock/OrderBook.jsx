@@ -6,18 +6,37 @@ export default function OrderBook({ symbol }) {
 
   const [bids, setBids] = useState([]);
   const [asks, setAsks] = useState([]);
-  
+
 useEffect(() => {
   if (!symbol || !connected) return;
 
-  //  Fetch initial snapshot
   const fetchInitial = async () => {
     try {
       const res = await apiClient.get(
-        `/api/orderbook?symbol=${symbol}`
+        `/api/limit-order/book/${symbol}`
       );
-      setBids(res.data.bids || []);
-      setAsks(res.data.asks || []);
+
+      const orders = res.data || [];
+
+      const bids = orders
+        .filter(o => o.type === "BUY")
+        .sort((a, b) => Number(b.price) - Number(a.price))
+        .map(o => ({
+          price: o.price,
+          quantity: o.remainingQuantity
+        }));
+
+      const asks = orders
+        .filter(o => o.type === "SELL")
+        .sort((a, b) => Number(a.price) - Number(b.price))
+        .map(o => ({
+          price: o.price,
+          quantity: o.remainingQuantity
+        }));
+
+      setBids(bids);
+      setAsks(asks);
+
     } catch (err) {
       console.error("OrderBook REST error:", err);
     }
@@ -25,7 +44,6 @@ useEffect(() => {
 
   fetchInitial();
 
-  //  Subscribe to live updates
   const subscription = subscribeToTopic(
     `/topic/orderbook/${symbol}`,
     (message) => {
