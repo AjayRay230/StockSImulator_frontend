@@ -238,13 +238,17 @@ const candleStickData = useMemo(() => {
     zoom: { enabled: true }
   },
     theme: { mode: darkMode ? "dark" : "light" },
-    grid: {
-      borderColor: darkMode
-        ? "rgba(255,255,255,0.06)"
-        : "#e5e7eb",
-      strokeDashArray: 3
-    },
-    colors: ["#00E396", "#FFD700", "#00C8FF"],
+   grid: {
+  borderColor: isDark
+    ? "rgba(255,255,255,0.06)"
+    : "rgba(0,0,0,0.08)",
+  strokeDashArray: 3
+},
+   colors: [
+  "var(--accent)",
+  "var(--profit)",
+  "#facc15"
+],
     stroke: {
       width: 2,
       curve: "smooth"

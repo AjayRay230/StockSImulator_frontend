@@ -2361,19 +2361,30 @@ margin-right:6px;
                      /*===== stockPrice CSS ====*/
 
 
- .chart-card {
-  background: #0b1220;
+/* =========================
+   CHART CARD
+========================= */
+
+.chart-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 18px;
-  padding: 24px;
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.04),
-              0 25px 60px rgba(0,0,0,0.6);
+  padding: 22px;
+  box-shadow: var(--shadow-soft);
+  transition: background 0.25s ease, border 0.25s ease;
 }
+
+/* =========================
+   HEADER
+========================= */
 
 .chart-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  align-items: center;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .left-controls,
@@ -2381,59 +2392,75 @@ margin-right:6px;
 .right-controls {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
-.range-selector {
-  display: flex;
-  gap: 6px;
-  background: rgba(255,255,255,0.04);
-  padding: 4px;
-  border-radius: 10px;
-}
+/* =========================
+   RANGE BUTTONS
+========================= */
 
 .range-selector button {
-  border: none;
-  background: transparent;
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 13px;
-  color: #94a3b8;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
   cursor: pointer;
-  transition: 0.2s;
-}
-
-.range-selector button.active {
-  background: #2563eb;
-  color: white;
+  transition: all 0.2s ease;
 }
 
 .range-selector button:hover {
-  background: rgba(255,255,255,0.08);
-  color: white;
+  background: var(--surface-3);
 }
+
+.range-selector .active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+/* =========================
+   SELECT
+========================= */
 
 .chart-type-select {
-  background: #111827;
-  border: 1px solid rgba(255,255,255,0.08);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
   padding: 6px 10px;
   border-radius: 8px;
-  color: white;
-  font-size: 13px;
+  font-size: 12px;
 }
 
+/* =========================
+   BUTTONS
+========================= */
+
 .chart-header button {
-  background: rgba(255,255,255,0.05);
-  border: none;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
   padding: 6px 10px;
   border-radius: 8px;
-  color: white;
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 0.2s ease;
 }
 
 .chart-header button:hover {
-  background: #2563eb;
+  background: var(--surface-3);
+}
+
+/* =========================
+   LOADING
+========================= */
+
+.icons-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
 }
                   /* Live Price CSS */
 
