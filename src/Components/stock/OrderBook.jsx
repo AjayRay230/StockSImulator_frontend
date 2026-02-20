@@ -1,29 +1,45 @@
 import { useEffect, useState } from "react";
 import { useWebSocket } from "../../context/WebSocketContext";
-
+import apiClient from "../../api/apiClient";
 export default function OrderBook({ symbol }) {
   const { subscribeToTopic, connected } = useWebSocket();
 
   const [bids, setBids] = useState([]);
   const [asks, setAsks] = useState([]);
+  
+useEffect(() => {
+  if (!symbol || !connected) return;
 
-  useEffect(() => {
-    if (!symbol || !connected) return;
+  //  Fetch initial snapshot
+  const fetchInitial = async () => {
+    try {
+      const res = await apiClient.get(
+        `/api/orderbook?symbol=${symbol}`
+      );
+      setBids(res.data.bids || []);
+      setAsks(res.data.asks || []);
+    } catch (err) {
+      console.error("OrderBook REST error:", err);
+    }
+  };
 
-    const subscription = subscribeToTopic(
-      `/topic/orderbook/${symbol}`,
-      (message) => {
-        const data = JSON.parse(message.body);
+  fetchInitial();
 
-        setBids(data.bids || []);
-        setAsks(data.asks || []);
-      }
-    );
+  //  Subscribe to live updates
+  const subscription = subscribeToTopic(
+    `/topic/orderbook/${symbol}`,
+    (message) => {
+      const data = JSON.parse(message.body);
+      setBids(data.bids || []);
+      setAsks(data.asks || []);
+    }
+  );
 
-    return () => {
-      subscription?.unsubscribe();
-    };
-  }, [symbol, connected]);
+  return () => {
+    subscription?.unsubscribe();
+  };
+
+}, [symbol, connected]);
 
   return (
     <div style={{ display: "flex", gap: "20px" }}>
