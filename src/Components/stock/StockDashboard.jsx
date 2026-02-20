@@ -103,7 +103,20 @@ const StockDashboard = () => {
     candles.length > 0
       ? candles[0]?.volume?.toLocaleString()
       : "--";
+    const formatMarketCap = (value) => {
+  if (!value || value === 0) return "--";
 
+  if (value >= 1_000_000_000_000)
+    return (value / 1_000_000_000_000).toFixed(2) + "T";
+
+  if (value >= 1_000_000_000)
+    return (value / 1_000_000_000).toFixed(2) + "B";
+
+  if (value >= 1_000_000)
+    return (value / 1_000_000).toFixed(2) + "M";
+
+  return value.toFixed(2);
+};
   return (
     <div className="trade-terminal">
 
@@ -133,10 +146,16 @@ const StockDashboard = () => {
           <strong>{statsLoading ? "..." : volume}</strong>
         </div>
 
-        <div className="stat-card">
-          <span>Market Cap</span>
-          <strong>--</strong>
-        </div>
+            <div className="stat-card">
+              <span>Market Cap</span>
+              <strong>
+                {metricsLoading
+                  ? "..."
+                  : metrics?.marketCap
+                  ? formatMarketCap(metrics.marketCap)
+                  : "--"}
+              </strong>
+            </div>
       </div>
 
       {/* BODY */}
