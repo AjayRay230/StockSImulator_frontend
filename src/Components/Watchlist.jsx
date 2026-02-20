@@ -166,6 +166,13 @@ const WatchList = () => {
     }, 300);
   };
 
+  useEffect(() => {
+  document.documentElement.setAttribute(
+    "data-theme",
+    darkMode ? "dark" : "light"
+  );
+}, [darkMode]);
+
   /* =======================
      Add to Watchlist
   ======================== */
@@ -320,7 +327,8 @@ const undoRemove = async () => {
         </div>
 
         {loading && <div className="loading">Updating prices...</div>}
-
+              <div className="watchlist-scroll">
+              
                     <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
@@ -343,7 +351,7 @@ const undoRemove = async () => {
             </AnimatePresence>
           </SortableContext>
         </DndContext>
-
+              </div>
         <div className="group-section">
           <h4>GAINERS</h4>
           {gainers.map((s) => (
