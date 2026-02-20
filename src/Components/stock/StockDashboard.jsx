@@ -207,10 +207,10 @@ const StockDashboard = () => {
           Unrealized P&L:{" "}
           <span
             style={{
-              color:
+                          color:
                 metrics && metrics.unrealizedPnL >= 0
-                  ? "limegreen"
-                  : "red"
+                  ? "var(--profit)"
+                  : "var(--loss)"
             }}
           >
             {metricsLoading
