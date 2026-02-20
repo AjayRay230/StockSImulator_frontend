@@ -12,7 +12,6 @@ import { toast, ToastContainer } from "react-toastify";
 import Modal from "../common/modal/Modal";
 import { fetchPortfoli } from "../../api/portfolioAxios";
 import { useUser } from "../../context/userContext";
-import StockPrice from "../stock/StockPrice";
 import BuySellForm from "../../Transactions/BuySellForm";
 import { WebSocketContext } from "../../context/WebSocketContext";
 import EmptyPortfolio from "../common/empty/EmptyPortfolio";

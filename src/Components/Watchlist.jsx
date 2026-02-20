@@ -4,7 +4,7 @@ import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import { FaMoon, FaSun } from "react-icons/fa";
-import apiClient from "../../api/apiClient";
+import apiClient from "../api/apiClient";
 import {
   SortableContext,
   verticalListSortingStrategy,

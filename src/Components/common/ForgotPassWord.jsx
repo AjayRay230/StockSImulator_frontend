@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+
 import { toast } from "react-toastify";
 import apiClient from "../../api/apiClient";
 const ForgotPassword = () => {

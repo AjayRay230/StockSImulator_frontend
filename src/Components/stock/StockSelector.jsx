@@ -1,4 +1,4 @@
-import axios from "axios";
+
 import { useEffect, useState } from "react";
 import apiClient from "../../api/apiClient";
 const StockSelector = ({ selectedSymbol, onChange }) => {

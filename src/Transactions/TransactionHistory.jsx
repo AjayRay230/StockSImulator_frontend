@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUser } from "../context/userContext";
-import apiClient from "../../api/apiClient";
+import apiClient from "../api/apiClient";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import React from "react";

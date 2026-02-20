@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./AdminTradeStats.css";
 import apiClient from "../../api/apiClient";
-import axios from "axios";
+
 import {
   ResponsiveContainer,
   BarChart,

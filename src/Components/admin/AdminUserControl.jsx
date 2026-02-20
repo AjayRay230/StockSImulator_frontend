@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+
 import { FaTrash, FaEye } from "react-icons/fa";
 import apiClient from "../../api/apiClient";
 function AdminUserControl() {
