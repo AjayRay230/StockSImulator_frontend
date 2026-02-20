@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import  {toast} from "react-toastify";
 import {  FaSpinner,FaMoon ,FaSun} from "react-icons/fa";
 import Chart from 'react-apexcharts';
+import apiClient from "../../api/apiClient";
 const LivePrice = ({ symbol }) => {
   const[darkMode,setDarkMode] = useState(null);
   const[chartType,setChartType] = useState("line");
@@ -20,25 +21,23 @@ const LivePrice = ({ symbol }) => {
   const[secondAgo,setSecondAgo] = useState(0);
   
     const fetchPrice = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(
-          `https://stocksimulator-backend.onrender.com/api/stock-price/price?stocksymbol=${symbol}&range=${dateRange}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-      //  console.log("API response", res.data);
-       setSecondAgo(0);
-        setData(res.data[0]);
-        setLastUpdated(new Date().toLocaleDateString());
-      } catch (err) {
-        toast.error("Live Price error:", err);
-        toast.warn("Live Price Error... ");
-      }
-    };
+  try {
+    const res = await apiClient.get("/api/stock-price/price", {
+      params: {
+        stocksymbol: symbol,
+        range: dateRange,
+      },
+    });
+
+    setSecondAgo(0);
+    setData(res.data[0]);
+    setLastUpdated(new Date().toLocaleDateString());
+
+  } catch (err) {
+    toast.error("Live Price error");
+    toast.warn("Live Price Error...");
+  }
+};
 
   useEffect(() => {
     

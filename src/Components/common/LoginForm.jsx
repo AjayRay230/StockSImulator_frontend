@@ -1,8 +1,8 @@
-import axios from "axios";
+
 import { useState } from "react"
 import {Link,useLocation}  from "react-router-dom"
 import { useUser } from "../../context/userContext";
-
+import apiClient from "../../api/apiClient";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -26,21 +26,19 @@ const handleLogin = async (e) => {
   try {
     setIsSubmitting(true);
 
-    const res = await axios.post(
-      "https://stocksimulator-backend.onrender.com/api/user/login",
-      form
-    );
+    const res = await apiClient.post("/api/user/login", form);
 
     if (!res.data?.token) {
       throw new Error("No token returned");
     }
 
-    login(res.data); // ✅ single source of truth
+    login(res.data); // single source of truth
     toast.success("Login successful");
 
     navigate("/dashboard", { replace: true });
 
     if (onLogin) onLogin();
+
   } catch (err) {
     console.error("Failed to Login", err);
     toast.warn("Failed to login");

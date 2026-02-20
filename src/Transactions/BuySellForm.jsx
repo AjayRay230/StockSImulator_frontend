@@ -10,7 +10,7 @@ import {
   FaDollarSign,
 } from "react-icons/fa";
 import { WebSocketContext } from "../context/WebSocketContext";
-
+import apiClient from "../../api/apiClient";
 const BuySellForm = ({ mode = null, stock = null, onSuccess }) => {
   const { latestUpdate } = useContext(WebSocketContext);
 
@@ -64,55 +64,46 @@ const BuySellForm = ({ mode = null, stock = null, onSuccess }) => {
     return errs;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const validationError = validate();
-    if (Object.keys(validationError).length > 0) {
-      setError(validationError);
-      return;
-    }
+  const validationError = validate();
+  if (Object.keys(validationError).length > 0) {
+    setError(validationError);
+    return;
+  }
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const token = localStorage.getItem("token");
+    const endpoint =
+      form.action === "buy"
+        ? "/api/transaction/buy"
+        : "/api/transaction/sell";
 
-      const endpoint =
-        form.action === "buy"
-          ? "/api/transaction/buy"
-          : "/api/transaction/sell";
+    const payload = {
+      stocksymbol: form.stocksymbol,
+      quantity: Number(form.quantity),
+    };
 
-      const payload = {
-        stocksymbol: form.stocksymbol,
-        quantity: Number(form.quantity),
-      };
+    const response = await apiClient.post(endpoint, payload);
 
-      const response = await axios.post(
-        `https://stocksimulator-backend.onrender.com${endpoint}`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    toast.success(response.data);
 
-      toast.success(response.data);
+    setForm({
+      stocksymbol: "",
+      quantity: "",
+      action: "buy",
+    });
 
-      setForm({
-        stocksymbol: "",
-        quantity: "",
-        action: "buy",
-      });
+    if (onSuccess) onSuccess();
 
-      if (onSuccess) onSuccess();
-    } catch (err) {
-      toast.warn(err.response?.data || "Transaction Failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (err) {
+    toast.warn(err.response?.data || "Transaction Failed");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const isSellMode = form.action === "sell";
   const estimatedTotal =

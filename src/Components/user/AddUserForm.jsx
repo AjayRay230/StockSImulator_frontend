@@ -1,6 +1,6 @@
 import { useState } from "react";
 // import AddUser from "../api/userAxios";
-import axios from "axios";
+import apiClient from "../../api/apiClient";
 const AddUserForm = ({onAdd})=>{
     const[form,setForm] = useState({
         firstName:"",
@@ -14,43 +14,28 @@ const AddUserForm = ({onAdd})=>{
       const{name,value} = e.target;
       setForm((prev)=>({...prev,[name]:value}));
     }
-    const handleSubmit = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const token = localStorage.getItem("token");
+  try {
+    await apiClient.post("/api/user/add", form);
 
-    if (!token) {
-        alert("Unauthorized. Please login again.");
-        return;
-    }
+    alert("User registered successfully");
+    onAdd?.();
 
-    try {
-        await axios.post(
-            "https://stocksimulator-backend.onrender.com/api/user/add",
-            form,
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            }
-        );
+    setForm({
+      firstName: "",
+      lastName: "",
+      username: "",
+      password: "",
+      email: "",
+      role: "USER",
+    });
 
-        alert("User registered successfully");
-        onAdd?.();
-
-        setForm({
-            firstName: "",
-            lastName: "",
-            username: "",
-            password: "",
-            email: "",
-            role: "USER",
-        });
-
-    } catch (err) {
-        console.log("Error while submitting the form", err);
-        alert(err.response?.data || "Registration failed");
-    }
+  } catch (err) {
+    console.log("Error while submitting the form", err);
+    alert(err.response?.data || "Registration failed");
+  }
 };
 
 

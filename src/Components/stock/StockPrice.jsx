@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import axios from "axios";
+
 import Chart from "react-apexcharts";
 import { toast } from "react-toastify";
 import { FaMoon, FaSpinner, FaSun } from "react-icons/fa";

@@ -4,6 +4,7 @@ import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import { FaMoon, FaSun } from "react-icons/fa";
+import apiClient from "../../api/apiClient";
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -94,41 +95,33 @@ const WatchList = () => {
   })
 );
   const fetchWatchlist = useCallback(async () => {
-    if (!user) return;
+  if (!user) return;
 
-    try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
+  try {
+    setLoading(true);
 
-      const listRes = await axios.get(
-        `https://stocksimulator-backend.onrender.com/api/watchlist/me`,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+    const listRes = await apiClient.get("/api/watchlist/me");
 
-      const symbols = listRes.data.map((s) => s.stocksymbol);
+    const symbols = listRes.data.map((s) => s.stocksymbol);
 
-      if (symbols.length === 0) {
-        setStocks([]);
-        return;
-      }
-
-      const liveRes = await axios.get(
-        `https://stocksimulator-backend.onrender.com/api/stock-price/batch-live`,
-        {
-          params: { symbols },
-          paramsSerializer: (params) =>
-            params.symbols.map((s) => `symbols=${s}`).join("&"),
-          headers: { Authorization: `Bearer ${token}` }
-        }
-      );
-
-      setStocks(liveRes.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
+    if (symbols.length === 0) {
+      setStocks([]);
+      return;
     }
-  }, [user]);
+
+    const liveRes = await apiClient.get("/api/stock-price/batch-live", {
+      params: { symbols },
+      paramsSerializer: (params) =>
+        params.symbols.map((s) => `symbols=${s}`).join("&"),
+    });
+
+    setStocks(liveRes.data);
+  } catch (err) {
+    console.error("Watchlist fetch failed:", err);
+  } finally {
+    setLoading(false);
+  }
+}, [user]);
 
   useEffect(() => {
     fetchWatchlist();
@@ -138,59 +131,48 @@ const WatchList = () => {
      Debounced Search
  */
   const handleSearch = (value) => {
-    setSearch(value);
+  setSearch(value);
 
-    if (debounceRef.current) clearTimeout(debounceRef.current);
+  if (debounceRef.current) clearTimeout(debounceRef.current);
 
-    if (value.trim().length < 2) {
-      setSearchMode(false);
-      setSearchResults([]);
-      return;
+  if (value.trim().length < 2) {
+    setSearchMode(false);
+    setSearchResults([]);
+    return;
+  }
+
+  debounceRef.current = setTimeout(async () => {
+    try {
+      const res = await apiClient.get("/api/stock/suggestions", {
+        params: { query: value },
+      });
+
+      setSearchResults(res.data);
+      setSearchMode(true);
+    } catch (err) {
+      console.error("Search failed:", err);
     }
-
-    debounceRef.current = setTimeout(async () => {
-      try {
-        const token = localStorage.getItem("token");
-
-        const res = await axios.get(
-          `https://stocksimulator-backend.onrender.com/api/stock/suggestions`,
-          {
-            params: { query: value },
-            headers: { Authorization: `Bearer ${token}` }
-          }
-        );
-
-        setSearchResults(res.data);
-        setSearchMode(true);
-      } catch (err) {
-        console.error("Search failed", err);
-      }
-    }, 300);
-  };
-
+  }, 300);
+};
 
 
   /* =======================
      Add to Watchlist
   ======================== */
-  const addToWatchlist = async (symbol) => {
-    try {
-      const token = localStorage.getItem("token");
+ const addToWatchlist = async (symbol) => {
+  try {
+    await apiClient.post("/api/watchlist/add", {
+      stocksymbol: symbol,
+    });
 
-      await axios.post(
-        `https://stocksimulator-backend.onrender.com/api/watchlist/add`,
-        { stocksymbol: symbol },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      setSearch("");
-      setSearchMode(false);
-      setSearchResults([]);
-      fetchWatchlist();
-    } catch (err) {
-      console.error("Add failed", err.response?.data || err);
-    }
-  };
+    setSearch("");
+    setSearchMode(false);
+    setSearchResults([]);
+    fetchWatchlist();
+  } catch (err) {
+    console.error("Add failed:", err.response?.data || err);
+  }
+};
 
   /* =======================
    Remove from Watchlist
@@ -206,7 +188,6 @@ const confirmRemove = async () => {
   const removedStock = confirmStock;
   setConfirmStock(null);
 
-  // Optimistic UI removal
   setStocks((prev) =>
     prev.filter((s) => s.stocksymbol !== removedStock.stocksymbol)
   );
@@ -215,16 +196,11 @@ const confirmRemove = async () => {
     setSelected(null);
   }
 
-  const token = localStorage.getItem("token");
-
   try {
-    await axios.post(
-      `https://stocksimulator-backend.onrender.com/api/watchlist/remove`,
-      { stocksymbol: removedStock.stocksymbol },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+    await apiClient.post("/api/watchlist/remove", {
+      stocksymbol: removedStock.stocksymbol,
+    });
 
-    // Show toast
     setToastStock(removedStock);
 
     undoTimerRef.current = setTimeout(() => {
@@ -232,7 +208,7 @@ const confirmRemove = async () => {
     }, 5000);
 
   } catch (err) {
-    console.error("Remove failed", err.response?.data || err);
+    console.error("Remove failed:", err.response?.data || err);
     fetchWatchlist();
   }
 };
@@ -242,16 +218,16 @@ const undoRemove = async () => {
 
   clearTimeout(undoTimerRef.current);
 
-  const token = localStorage.getItem("token");
+  try {
+    await apiClient.post("/api/watchlist/add", {
+      stocksymbol: toastStock.stocksymbol,
+    });
 
-  await axios.post(
-    `https://stocksimulator-backend.onrender.com/api/watchlist/add`,
-    { stocksymbol: toastStock.stocksymbol },
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
-
-  fetchWatchlist();
-  setToastStock(null);
+    fetchWatchlist();
+    setToastStock(null);
+  } catch (err) {
+    console.error("Undo failed:", err);
+  }
 };
 
   const handleDragEnd = (event) => {

@@ -3,6 +3,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useUser } from "../../context/userContext";
+import apiClient from "../../api/apiClient";
 const RegistrationForm = ({OnRegister})=>{
     const[form,setForm] = useState({
         username:"",
@@ -20,48 +21,56 @@ const RegistrationForm = ({OnRegister})=>{
         const{name,value} = e.target;
         setForm({...form,[name]:value});
     }
-    const handleSubmit = async(e)=>{
-        e.preventDefault();
-        if(!form.acceptTerms)
-        {
-            alert("Please accepts the terms and conditions ");
-            return;
-        }
-        if(form.password!==form.confirmPassword)
-        {
-            toast.warn("password do not matched  please enter the same password");
-            return;
-        } 
-        const payload = {
-            firstName:form.firstName,
-            lastName:form.lastName,
-            password:form.password,
-            email:form.email,
-            role:"USER",
-            username:form.username
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-        }
-        try{
-            
-          const res =    await axios.post(`https://stocksimulator-backend.onrender.com/api/user/register`,payload
-                
-            );
-            login(res.data);
-            OnRegister?.();
-            setForm({username:"",password:"",firstName:"",lastName:"",role:"USER",email:"",confirmPassword:"",acceptTerms:false});
-            toast.success("registration has been successful");
-        }
-       catch (err) {
-                    if (err.response?.status === 409) {
-                    toast.warn("Username or email already exists. Please use a different one.");
-             } else {
-                     console.error("Registration failed", err);
-                    toast.warn("Registration failed. Please try again.");
+  if (!form.acceptTerms) {
+    alert("Please accept the terms and conditions");
+    return;
   }
-}
 
+  if (form.password !== form.confirmPassword) {
+    toast.warn("Passwords do not match. Please enter the same password.");
+    return;
+  }
 
+  const payload = {
+    firstName: form.firstName,
+    lastName: form.lastName,
+    password: form.password,
+    email: form.email,
+    role: "USER",
+    username: form.username,
+  };
+
+  try {
+    const res = await apiClient.post("/api/user/register", payload);
+
+    login(res.data);
+    OnRegister?.();
+
+    setForm({
+      username: "",
+      password: "",
+      firstName: "",
+      lastName: "",
+      role: "USER",
+      email: "",
+      confirmPassword: "",
+      acceptTerms: false,
+    });
+
+    toast.success("Registration has been successful");
+
+  } catch (err) {
+    if (err.response?.status === 409) {
+      toast.warn("Username or email already exists. Please use a different one.");
+    } else {
+      console.error("Registration failed", err);
+      toast.warn("Registration failed. Please try again.");
     }
+  }
+};
     const handleCheckBoxChange = (e)=>{
     setForm({...form,[e.target.name]:e.target.checked})
 }

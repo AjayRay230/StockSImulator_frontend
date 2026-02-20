@@ -2,7 +2,7 @@ import axios from "axios";
 import { FaChartLine, FaClock, FaSpinner } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
+import apiClient from "../../api/apiClient";
 const SearchStock = () => {
   const { symbol } = useParams();
 
@@ -11,30 +11,24 @@ const SearchStock = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const fetchStock = async () => {
-      try {
-        setLoading(true);
-        setError("");
-        setStock(null);
+const fetchStock = async () => {
+  try {
+    setLoading(true);
+    setError("");
+    setStock(null);
 
-        const token = localStorage.getItem("token");
+    const response = await apiClient.get(
+      `/api/stock/detail/${symbol}`
+    );
 
-        const response = await axios.get(
-  `https://stocksimulator-backend.onrender.com/api/stock/detail/${symbol}`,
-  {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    setStock(response.data);
+
+  } catch (err) {
+    setError("Stock not found");
+  } finally {
+    setLoading(false);
   }
-);
-        setStock(response.data);
-
-      } catch {
-        setError("Stock not found");
-      } finally {
-        setLoading(false);
-      }
-    };
+};
 
     if (symbol) fetchStock();
   }, [symbol]);

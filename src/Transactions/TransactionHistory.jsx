@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUser } from "../context/userContext";
-import axios from "axios";
+import apiClient from "../../api/apiClient";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import React from "react";
@@ -30,18 +30,13 @@ useEffect(() => {
     if (!user) return;
 
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(
-        `https://stocksimulator-backend.onrender.com/api/transaction/history/me`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
+      const response = await apiClient.get(
+        "/api/transaction/history/me"
       );
+
       setTransaction(response.data);
     } catch (err) {
-      console.error("Failed to get the Transaction History", err);
+      console.error("Failed to get the Transaction History:", err);
     }
   };
 

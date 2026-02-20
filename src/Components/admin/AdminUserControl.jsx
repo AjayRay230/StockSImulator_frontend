@@ -1,71 +1,70 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { FaTrash, FaEye } from "react-icons/fa";
-
+import apiClient from "../../api/apiClient";
 function AdminUserControl() {
   const [users, setUsers] = useState([]);
   const [totalUsers, setTotalUsers] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem("token"); // stored after login
-        const config = { headers: { Authorization: `Bearer ${token}` } };
+ useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const countRes = await apiClient.get("/api/admin/users/count");
+      setTotalUsers(countRes.data);
 
-        const countRes = await axios.get("https://stocksimulator-backend.onrender.com/api/admin/users/count", config);
-        setTotalUsers(countRes.data);
+      const usersRes = await apiClient.get("/api/admin/users");
+      setUsers(
+        usersRes.data.map((u) => ({
+          ...u,
+          portfolioValue: null,
+        }))
+      );
 
-        const usersRes = await axios.get("https://stocksimulator-backend.onrender.com/api/admin/users", config);
-        setUsers(usersRes.data.map(u=>({...u,portfolioValue:null})));
-      } catch (err) {
-        console.error("Error fetching users:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    } catch (err) {
+      console.error("Error fetching users:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchData();
-  }, []);
-
+  fetchData();
+}, []);
   // Delete user
   
 const deleteUser = async (userId) => {
   if (!window.confirm("Are you sure?")) return;
 
   try {
-    const token = localStorage.getItem("token");
-    const config = { headers: { Authorization: `Bearer ${token}` } };
+    await apiClient.delete(`/api/admin/users/${userId}`);
 
-    await axios.delete(
-      `https://stocksimulator-backend.onrender.com/api/admin/users/${userId}`,
-      config
+    setUsers((prev) =>
+      prev.filter((u) => u.userId !== userId)
     );
 
-    setUsers(users.filter((u) => u.userId !== userId));
-    setTotalUsers(prev => prev - 1);
+    setTotalUsers((prev) => prev - 1);
+
   } catch (err) {
     console.error("Error deleting user:", err);
   }
 };
 
-
 const updateRole = async (userId, newRole) => {
   try {
-    const token = localStorage.getItem("token");
-    const config = { headers: { Authorization: `Bearer ${token}` } };
-
-    await axios.put(
-      `https://stocksimulator-backend.onrender.com/api/admin/users/${userId}/role?role=${newRole}`,
+    await apiClient.put(
+      `/api/admin/users/${userId}/role`,
       {},
-      config
+      {
+        params: { role: newRole },
+      }
     );
 
-    setUsers(
-      users.map((u) =>
+    setUsers((prev) =>
+      prev.map((u) =>
         u.userId === userId ? { ...u, role: newRole } : u
       )
     );
+
   } catch (err) {
     console.error("Error updating role:", err);
   }
@@ -76,24 +75,22 @@ const updateRole = async (userId, newRole) => {
   // Get portfolio value
 const getPortfolioValue = async (userId) => {
   try {
-    const token = localStorage.getItem("token");
-    const config = { headers: { Authorization: `Bearer ${token}` } };
-
-    const res = await axios.get(
-      `https://stocksimulator-backend.onrender.com/api/admin/users/${userId}/portfolio-value`,
-      config
+    const res = await apiClient.get(
+      `/api/admin/users/${userId}/portfolio-value`
     );
 
-    setUsers(
-      users.map((u) =>
-        u.userId === userId ? { ...u, portfolioValue: res.data } : u
+    setUsers((prev) =>
+      prev.map((u) =>
+        u.userId === userId
+          ? { ...u, portfolioValue: res.data }
+          : u
       )
     );
+
   } catch (err) {
     console.error("Error fetching portfolio value:", err);
   }
 };
-
 
   if (loading) return <p className="loading">Loading...</p>;
 

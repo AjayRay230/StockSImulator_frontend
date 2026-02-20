@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-
+import apiClient from "../../api/apiClient";
 const StockSelector = ({ selectedSymbol, onChange }) => {
   const [input, setInput] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -24,17 +24,9 @@ const fetchStocks = async () => {
   try {
     setLoading(true);
 
-    const token = localStorage.getItem("token");
-
-    const res = await axios.get(
-      "https://stocksimulator-backend.onrender.com/api/stock/suggestions",
-      {
-        params: { query: input },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const res = await apiClient.get("/api/stock/suggestions", {
+      params: { query: input },
+    });
 
     const data = res.data;
 
@@ -43,6 +35,7 @@ const fetchStocks = async () => {
     );
 
     setShowDropdown(true);
+
   } catch (err) {
     console.error("Search error:", err);
     setSuggestions([]);

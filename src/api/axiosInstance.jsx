@@ -1,33 +1,45 @@
 import axios from "axios";
 
-const axiosInstance = axios.create({
-  baseURL: "https://stocksimulator-backend.onrender.com",
+const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  timeout: 15000, // 15s safety timeout
 });
-axiosInstance.interceptors.request.use(
+
+/* ---------- REQUEST INTERCEPTOR ---------- */
+apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
+
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers = {
+        ...config.headers,
+        Authorization: `Bearer ${token}`,
+      };
     }
+
     return config;
   },
   (error) => Promise.reject(error)
 );
 
+/* ---------- RESPONSE INTERCEPTOR ---------- */
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error.response?.status;
 
-// RESPONSE INTERCEPTOR (GLOBAL)
-axiosInstance.interceptors.response.use(
-  res => res,
-  err => {
-    if (err.response?.status === 401) {
+    if (status === 401) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       localStorage.removeItem("tokenExpiry");
 
-      window.location.href = "/login?reason=expired";
+      if (!window.location.pathname.includes("/login")) {
+        window.location.href = "/login?reason=expired";
+      }
     }
-    return Promise.reject(err);
+
+    return Promise.reject(error);
   }
 );
 
-export default axiosInstance;
+export default apiClient;

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./AdminTradeStats.css";
+import apiClient from "../../api/apiClient";
 import axios from "axios";
 import {
   ResponsiveContainer,
@@ -21,7 +22,6 @@ import {
   FaCheckCircle,
 } from "react-icons/fa";
 
-const API_BASE = "https://stocksimulator-backend.onrender.com";
 
 const medalColors = ["#FFD700", "#C0C0C0", "#CD7F32"];
 
@@ -57,37 +57,46 @@ const AdminTradeStats = () => {
     fetchData();
   }, []);
 
-  const fetchData = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setError("Authentication token missing.");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const headers = { Authorization: `Bearer ${token}` };
-
-      const [traders, recent, top, executed] = await Promise.all([
-        axios.get(`${API_BASE}/api/transaction/active-traders?limit=5`, { headers }),
-        axios.get(`${API_BASE}/api/transaction/recent?limit=10`, { headers }),
-        axios.get(`${API_BASE}/api/transaction/top-stocks?limit=5`, { headers }),
-        axios.get(`${API_BASE}/api/transaction/executed?limit=5`, { headers }),
+const fetchData = async () => {
+  try {
+    const [tradersRes, recentRes, topRes, executedRes] =
+      await Promise.all([
+        apiClient.get("/api/transaction/active-traders", {
+          params: { limit: 5 },
+        }),
+        apiClient.get("/api/transaction/recent", {
+          params: { limit: 10 },
+        }),
+        apiClient.get("/api/transaction/top-stocks", {
+          params: { limit: 5 },
+        }),
+        apiClient.get("/api/transaction/executed", {
+          params: { limit: 5 },
+        }),
       ]);
 
-      setActiveTraders(Array.isArray(traders.data) ? traders.data : []);
-      setRecentTrades(Array.isArray(recent.data) ? recent.data : []);
-      setTopStocks(Array.isArray(top.data) ? top.data : []);
-      setExecutedTrades(Array.isArray(executed.data) ? executed.data : []);
+    setActiveTraders(
+      Array.isArray(tradersRes.data) ? tradersRes.data : []
+    );
+    setRecentTrades(
+      Array.isArray(recentRes.data) ? recentRes.data : []
+    );
+    setTopStocks(
+      Array.isArray(topRes.data) ? topRes.data : []
+    );
+    setExecutedTrades(
+      Array.isArray(executedRes.data) ? executedRes.data : []
+    );
 
-      setError(null);
-    } catch (err) {
-      console.error("AdminTradeStats fetch error:", err);
-      setError("Failed to load trading data. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    setError(null);
+
+  } catch (err) {
+    console.error("AdminTradeStats fetch error:", err);
+    setError("Failed to load trading data. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   /* ---------- Safe Normalization ---------- */
   const traders = Array.isArray(activeTraders) ? activeTraders : [];

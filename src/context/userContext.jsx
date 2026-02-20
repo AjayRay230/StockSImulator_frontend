@@ -51,11 +51,11 @@ const login = (responseData) => {
   const decoded = jwtDecode(token);
   const expiryTime = decoded.exp * 1000;
 
-  // 🔥 EXTRACT USERNAME FROM JWT
+  //  EXTRACT USERNAME FROM JWT
   const username = decoded.sub; // subject = username
 
   const userData = {
-    username,        // ✅ ADD THIS
+    username,        // ADD THIS
     role,
     firstName,
     lastName

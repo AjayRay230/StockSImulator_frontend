@@ -1,53 +1,40 @@
-import axios from "axios";
-
-const Base_url = "https://stocksimulator-backend.onrender.com/api/portfolio/user";
-
-const getAuthHeader = () => {
-  const token = localStorage.getItem("token");
-
-  return {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  };
-};
+import apiClient from "../api/apiClient";
 
 /**
  * Fetch logged-in user's portfolio
- * (user resolved from JWT on backend)
  */
-export const fetchPortfoli = async () => {
-  return axios.get(`${Base_url}`, getAuthHeader());
+export const fetchPortfolio = async () => {
+  const res = await apiClient.get("/api/portfolio/user");
+  return res.data;
 };
 
 /**
  * Fetch portfolio stock by symbol
  */
-export const fetchStockBySymbol = (stocksymbol) => {
-  return axios.get(
-    `${Base_url}/${stocksymbol}`,
-    getAuthHeader()
+export const fetchStockBySymbol = async (stocksymbol) => {
+  const res = await apiClient.get(
+    `/api/portfolio/user/${stocksymbol}`
   );
+  return res.data;
 };
 
 /**
  * Add portfolio item
  */
-export const addPortfolioItem = (data) => {
-  return axios.post(
-    `${Base_url}/add`,
-    data,
-    getAuthHeader()
+export const addPortfolioItem = async (data) => {
+  const res = await apiClient.post(
+    "/api/portfolio/user/add",
+    data
   );
+  return res.data;
 };
 
 /**
  * Delete portfolio item
  */
-export const deletePortfolioItem = (stocksymbol) => {
-  return axios.delete(
-    `${Base_url}/${stocksymbol}/delete`,
-    getAuthHeader()
+export const deletePortfolioItem = async (stocksymbol) => {
+  const res = await apiClient.delete(
+    `/api/portfolio/user/${stocksymbol}/delete`
   );
+  return res.data;
 };

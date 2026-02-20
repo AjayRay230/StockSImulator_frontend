@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-
+import apiClient from "../../api/apiClient";
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,23 +17,24 @@ const ForgotPassword = () => {
     return `${visiblePart}****@${domain}`;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      await axios.post(
-        "https://stocksimulator-backend.onrender.com/api/user/forgot-password",
-        null,
-        { params: { email } }
-      );
-      setEmailSent(true);
-      toast.success("Reset link sent successfully");
-    } catch (err) {
-      toast.error("Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+
+  try {
+    await apiClient.post("/api/user/forgot-password", null, {
+      params: { email },
+    });
+
+    setEmailSent(true);
+    toast.success("Reset link sent successfully");
+
+  } catch (err) {
+    toast.error("Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleBack = () => {
     setEmailSent(false);

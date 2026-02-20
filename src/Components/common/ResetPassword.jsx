@@ -1,8 +1,8 @@
 import { useState } from "react";
-import axios from "axios";
+
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import apiClient from "../../api/apiClient";
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
@@ -11,30 +11,33 @@ const ResetPassword = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!token) {
-      toast.error("Invalid or missing token");
-      return;
-    }
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    setLoading(true);
-    try {
-      await axios.post(
-        "https://stocksimulator-backend.onrender.com/api/user/reset-password",
-        null,
-        {
-          params: { token, newPassword: password }
-        }
-      );
-      toast.success("Password reset successful");
-      navigate("/login");
-    } catch (err) {
-      toast.error("Reset link expired or invalid");
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (!token) {
+    toast.error("Invalid or missing token");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    await apiClient.post("/api/user/reset-password", null, {
+      params: {
+        token,
+        newPassword: password,
+      },
+    });
+
+    toast.success("Password reset successful");
+    navigate("/login");
+
+  } catch (err) {
+    toast.error("Reset link expired or invalid");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="auth-container">

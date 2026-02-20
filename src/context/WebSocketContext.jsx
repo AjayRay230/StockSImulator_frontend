@@ -13,96 +13,89 @@ export const WebSocketProvider = ({ children }) => {
   const [portfolioValue, setPortfolioValue] = useState(null);
   const [connected, setConnected] = useState(false);
   const [latestBatch, setLatestBatch] = useState([]);
-  useEffect(() => {
-    if (!isLoggedIn || !user?.username) return;
+useEffect(() => {
+  if (!isLoggedIn || !user?.username) return;
 
-    const token = localStorage.getItem("token");
-    if (!token) return;
+  const token = localStorage.getItem("token");
+  if (!token) return;
 
-    const client = new Client({
-      webSocketFactory: () =>
-        new SockJS("https://stocksimulator-backend.onrender.com/ws"),
+  const client = new Client({
+    webSocketFactory: () =>
+      new SockJS(`${import.meta.env.VITE_WS_BASE_URL}/ws`),
 
-      connectHeaders: {
-        Authorization: `Bearer ${token}`,
-      },
+    connectHeaders: {
+      Authorization: `Bearer ${token}`,
+    },
 
-      debug: () => {},
+    debug: () => {},
 
-      reconnectDelay: 5000,
-      heartbeatIncoming: 10000,
-      heartbeatOutgoing: 10000,
+    reconnectDelay: 5000,
+    heartbeatIncoming: 10000,
+    heartbeatOutgoing: 10000,
 
-onConnect: () => {
-  console.log("✅ STOMP connected");
-  setConnected(true);
+    onConnect: () => {
+      console.log("STOMP connected");
+      setConnected(true);
 
-  //  Always clear previous values
-  setLatestUpdate(null);
+      setLatestUpdate(null);
 
-  //  MARKET PRICES
-client.subscribe("/topic/prices", (message) => {
-  const prices = JSON.parse(message.body);
+      // MARKET PRICES
+      client.subscribe("/topic/prices", (message) => {
+        const prices = JSON.parse(message.body);
 
-if (Array.isArray(prices)) {
+        if (Array.isArray(prices)) {
+          const priceMap = {};
 
-  const priceMap = {};
+          prices.forEach((p) => {
+            priceMap[p.symbol] = p.price;
+          });
 
-  prices.forEach(p => {
-    priceMap[p.symbol] = p.price;
+          setLatestUpdate(priceMap);
+        } else {
+          setLatestUpdate((prev) => ({
+            ...prev,
+            [prices.symbol]: prices.price,
+          }));
+        }
+      });
+
+      // USER PORTFOLIO
+      client.subscribe(
+        `/topic/portfolio/${user.username}`,
+        (message) => {
+          try {
+            const totalValue = JSON.parse(message.body);
+            setPortfolioValue(totalValue);
+          } catch (e) {
+            console.error("Portfolio parse error:", e);
+          }
+        }
+      );
+    },
+
+    onDisconnect: () => {
+      console.log("STOMP disconnected");
+      setConnected(false);
+    },
+
+    onStompError: (frame) => {
+      console.error("STOMP error:", frame.headers["message"]);
+    },
   });
 
-  setLatestUpdate(priceMap);
+  client.activate();
+  clientRef.current = client;
 
-} else {
-
-  // Single price update
-  setLatestUpdate(prev => ({
-    ...prev,
-    [prices.symbol]: prices.price
-  }));
-
-}
-
-});
-
-  //  USER PORTFOLIO
-  client.subscribe(
-    `/topic/portfolio/${user.username}`,
-    (message) => {
-      try {
-        const totalValue = JSON.parse(message.body);
-        setPortfolioValue(totalValue);
-      } catch (e) {
-        console.error("Portfolio parse error:", e);
-      }
+  return () => {
+    if (clientRef.current) {
+      clientRef.current.deactivate();
+      clientRef.current = null;
     }
-  );
-},
-
-      onDisconnect: () => {
-        console.log(" STOMP disconnected");
-        setConnected(false);
-      },
-
-      onStompError: (frame) => {
-        console.error("STOMP error:", frame.headers["message"]);
-      },
-    });
-
-    client.activate();
-    clientRef.current = client;
-
-    return () => {
-      if (clientRef.current) {
-        clientRef.current.deactivate();
-        clientRef.current = null;
-      }
-    };
-  }, [isLoggedIn, user?.username]);
-  useEffect(() => {
-  console.log("Latest Update:", latestUpdate);
-}, [latestUpdate]);
+  };
+}, [isLoggedIn, user?.username]);
+//   useEffect(() => {
+//   console.log("Latest Update:", latestUpdate);
+// }, [latestUpdate]);
 
   // Proper Token Expiry Handling
   useEffect(() => {

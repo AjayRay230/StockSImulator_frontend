@@ -1,27 +1,17 @@
 import axios from "axios";
-
+import apiClient from "../../api/apiClient";
 const SimulateStock = ({ onSimulate }) => {
 
-  const simulate = async () => {
-    try {
-      const token = localStorage.getItem("token");
+const simulate = async () => {
+  try {
+    await apiClient.post("/api/stock/simulate", {});
 
-      await axios.post(
-        "https://stocksimulator-backend.onrender.com/api/stock/simulate",
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    if (onSimulate) onSimulate();
 
-      if (onSimulate) onSimulate();
-
-    } catch (err) {
-      console.error("Simulation failed:", err);
-    }
-  };
+  } catch (err) {
+    console.error("Simulation failed:", err);
+  }
+};
 
   return (
     <button onClick={simulate} className="simulate-btn">
