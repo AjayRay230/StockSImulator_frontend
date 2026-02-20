@@ -3879,3 +3879,124 @@ th {
   justify-content: space-between;
   font-size: 14px;
 }
+
+                                  /* Simulate Stock Css */
+
+/* ===============================
+   TRADE DESK PANEL (td-trade-*)
+   =============================== */
+
+.td-trade-container {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: var(--shadow);
+}
+
+/* Toggle groups */
+
+.td-trade-toggle-group {
+  display: flex;
+  gap: 12px;
+}
+
+.td-trade-toggle {
+  flex: 1;
+  padding: 9px 0;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+
+.td-trade-toggle:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Active generic */
+
+.td-trade-toggle.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+/* BUY / SELL specific */
+
+.td-trade-buy.active {
+  background: var(--profit);
+  border-color: var(--profit);
+  box-shadow: 0 0 12px rgba(0, 200, 83, 0.35);
+}
+
+.td-trade-sell.active {
+  background: var(--loss);
+  border-color: var(--loss);
+  box-shadow: 0 0 12px rgba(255, 23, 68, 0.35);
+}
+
+/* Inputs */
+
+.td-trade-input {
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s ease, box-shadow 0.2s ease;
+}
+
+.td-trade-input::placeholder {
+  color: rgba(255,255,255,0.4);
+}
+
+.td-trade-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(0, 140, 255, 0.25);
+}
+
+/* Submit button */
+
+.td-trade-submit {
+  margin-top: 6px;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+/* BUY submit */
+
+.td-trade-submit.buy {
+  background: linear-gradient(90deg, #00c853, #00e676);
+  color: #fff;
+}
+
+.td-trade-submit.buy:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 200, 83, 0.4);
+}
+
+/* SELL submit */
+
+.td-trade-submit.sell {
+  background: linear-gradient(90deg, #d50000, #ff1744);
+  color: #fff;
+}
+
+.td-trade-submit.sell:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 23, 68, 0.4);
+}

@@ -59,48 +59,66 @@ const SimulateStock = ({ symbol, onSimulate }) => {
   };
 
   return (
-    <div className="trade-panel">
+    <div className="td-trade-container">
 
-      {/* BUY / SELL */}
-      <div>
-        <button onClick={() => setTradeMode("BUY")}>
-          Buy
-        </button>
-        <button onClick={() => setTradeMode("SELL")}>
-          Sell
-        </button>
-      </div>
+  <div className="td-trade-toggle-group">
+    <button
+      className={`td-trade-toggle td-trade-buy ${tradeMode === "BUY" ? "active" : ""}`}
+      onClick={() => setTradeMode("BUY")}
+    >
+      Buy
+    </button>
 
-      {/* MARKET / LIMIT */}
-      <div>
-        <button onClick={() => setOrderType("MARKET")}>
-          Market
-        </button>
-        <button onClick={() => setOrderType("LIMIT")}>
-          Limit
-        </button>
-      </div>
+    <button
+      className={`td-trade-toggle td-trade-sell ${tradeMode === "SELL" ? "active" : ""}`}
+      onClick={() => setTradeMode("SELL")}
+    >
+      Sell
+    </button>
+  </div>
 
-      <input
-        type="number"
-        placeholder="Quantity"
-        value={quantity}
-        onChange={(e) => setQuantity(e.target.value)}
-      />
+  <div className="td-trade-toggle-group">
+    <button
+      className={`td-trade-toggle ${orderType === "MARKET" ? "active" : ""}`}
+      onClick={() => setOrderType("MARKET")}
+    >
+      Market
+    </button>
 
-      {orderType === "LIMIT" && (
-        <input
-          type="number"
-          placeholder="Limit Price"
-          value={limitPrice}
-          onChange={(e) => setLimitPrice(e.target.value)}
-        />
-      )}
+    <button
+      className={`td-trade-toggle ${orderType === "LIMIT" ? "active" : ""}`}
+      onClick={() => setOrderType("LIMIT")}
+    >
+      Limit
+    </button>
+  </div>
 
-      <button onClick={handleSubmit}>
-        Place Order
-      </button>
-    </div>
+  <input
+    className="td-trade-input"
+    type="number"
+    placeholder="Quantity"
+    value={quantity}
+    onChange={(e) => setQuantity(e.target.value)}
+  />
+
+  {orderType === "LIMIT" && (
+    <input
+      className="td-trade-input"
+      type="number"
+      placeholder="Limit Price"
+      value={limitPrice}
+      onChange={(e) => setLimitPrice(e.target.value)}
+    />
+  )}
+
+  <button
+    className={`td-trade-submit ${tradeMode === "BUY" ? "buy" : "sell"}`}
+    onClick={handleSubmit}
+  >
+    Place Order
+  </button>
+
+</div>
   );
 };
 
