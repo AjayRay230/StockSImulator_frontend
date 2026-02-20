@@ -117,11 +117,11 @@ const StockDashboard = () => {
 
   return value.toFixed(2);
 };
-  return (
-    <div className="trade-terminal">
+return (
+  <div className="tradeDesk-root">
+    <div className="tradeDesk-container">
 
-      {/* ===== HEADER ===== */}
-      <div className="terminal-header">
+      <div className="tradeDesk-header">
         <TradeHeader symbol={selectedSymbol} />
         <StockSelector
           selectedSymbol={selectedSymbol}
@@ -129,24 +129,28 @@ const StockDashboard = () => {
         />
       </div>
 
-      {/*  MARKET QUICK STATS  */}
-      <div className="terminal-stats">
-        <div className="stat-card">
-          <span>High</span>
-          <strong>{statsLoading ? "..." : high}</strong>
-        </div>
+      <div className="tradeDesk-grid">
 
-        <div className="stat-card">
-          <span>Low</span>
-          <strong>{statsLoading ? "..." : low}</strong>
-        </div>
+        {/* LEFT SIDE */}
+        <div className="tradeDesk-left">
 
-        <div className="stat-card">
-          <span>Volume</span>
-          <strong>{statsLoading ? "..." : volume}</strong>
-        </div>
+          <div className="tradeDesk-stats">
+            <div className="tradeDesk-card">
+              <span>High</span>
+              <strong>{statsLoading ? "..." : high}</strong>
+            </div>
 
-            <div className="stat-card">
+            <div className="tradeDesk-card">
+              <span>Low</span>
+              <strong>{statsLoading ? "..." : low}</strong>
+            </div>
+
+            <div className="tradeDesk-card">
+              <span>Volume</span>
+              <strong>{statsLoading ? "..." : volume}</strong>
+            </div>
+
+            <div className="tradeDesk-card">
               <span>Market Cap</span>
               <strong>
                 {metricsLoading
@@ -156,35 +160,31 @@ const StockDashboard = () => {
                   : "--"}
               </strong>
             </div>
-      </div>
+          </div>
 
-      {/* BODY */}
-      <div className="terminal-body">
-
-        <div className="terminal-chart">
-          <StockPrice
-            symbol={selectedSymbol}
-            stats={stats}            //  pass chart data
-            loading={statsLoading}
-            refreshKey={refreshKey}
-            onSimulate={() =>
-              setRefreshKey(prev => prev + 1)
-            }
-          />
-        </div>
-
-        <div className="terminal-side-panel">
-
-          <div className="trade-box">
-            <SimulateStock
+          <div className="tradeDesk-chart">
+            <StockPrice
               symbol={selectedSymbol}
-              onSimulate={() =>
-                setRefreshKey(prev => prev + 1)
-              }
+              stats={stats}
+              loading={statsLoading}
+              refreshKey={refreshKey}
+              onSimulate={() => setRefreshKey(prev => prev + 1)}
             />
           </div>
 
-          <div className="orderbook-box">
+        </div>
+
+        {/* RIGHT SIDE */}
+        <div className="tradeDesk-right">
+
+          <div className="tradeDesk-tradePanel">
+            <SimulateStock
+              symbol={selectedSymbol}
+              onSimulate={() => setRefreshKey(prev => prev + 1)}
+            />
+          </div>
+
+          <div className="tradeDesk-orderPanel">
             <OrderBook symbol={selectedSymbol} />
           </div>
 
@@ -192,27 +192,22 @@ const StockDashboard = () => {
 
       </div>
 
-      {/* FOOTER  */}
-      <div className="terminal-footer">
+      <div className="tradeDesk-footer">
         <div>
-          Position:{" "}
-          {metricsLoading
-            ? "..."
-            : metrics
-            ? metrics.quantity
-            : "--"}
+          Position: {metricsLoading ? "..." : metrics?.quantity ?? "--"}
         </div>
 
         <div>
-          Unrealized P&L:{" "}
+          Unrealized P&L:
           <span
             style={{
-                          color:
+              color:
                 metrics && metrics.unrealizedPnL >= 0
                   ? "var(--profit)"
                   : "var(--loss)"
             }}
           >
+            {" "}
             {metricsLoading
               ? "..."
               : metrics
@@ -222,26 +217,21 @@ const StockDashboard = () => {
         </div>
 
         <div>
-          Exposure (Portfolio):{" "}
+          Exposure:
+          {" "}
           {portfolioValue !== null
             ? portfolioValue.toFixed(2)
-            : metrics
-            ? metrics.portfolioValue.toFixed(2)
-            : "--"}
+            : metrics?.portfolioValue?.toFixed(2) ?? "--"}
         </div>
 
         <div>
-          Trades Today:{" "}
-          {metricsLoading
-            ? "..."
-            : metrics
-            ? metrics.tradesToday
-            : "--"}
+          Trades Today: {metricsLoading ? "..." : metrics?.tradesToday ?? "--"}
         </div>
       </div>
 
     </div>
-  );
+  </div>
+);
 };
 
 export default StockDashboard;
