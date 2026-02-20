@@ -35,7 +35,7 @@ const Portfolio = () => {
   const loadPortfolio = async () => {
     try {
       setLoading(true);
-      const { data } = await fetchPortfolio();
+      const data = await fetchPortfolio();
 
       let totalInvestmentSum = 0;
       let totalCurrentValueSum = 0;

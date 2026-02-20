@@ -24,13 +24,13 @@ const StockDashboard = () => {
   const location = useLocation();
 
   // Sync symbol from URL
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const symbolFromUrl = params.get("symbol");
-    if (symbolFromUrl) {
-      setSelectedSymbol(symbolFromUrl);
-    }
-  }, [location]);
+useEffect(() => {
+  const params = new URLSearchParams(location.search);
+  const symbolFromUrl = params.get("symbol");
+  if (symbolFromUrl) {
+    setSelectedSymbol(symbolFromUrl);
+  }
+}, [location.search]);
 
 
   // Fetch closing-price (CHART + STATS)

@@ -91,7 +91,7 @@ useEffect(() => {
 
 
   const handleClick = (symbol) => {
-    navigate(`/market?symbol=${symbol}`);
+    navigate(`/dashboard?symbol=${symbol}`);
   };
 
   return (
