@@ -38,7 +38,6 @@ const SimulateStock = ({ symbol, onSimulate }) => {
           null,
           {
             params: {
-              username: null, // backend still expects this param
               stockSymbol: symbol,
               quantity: Number(quantity),
               targetPrice: Number(limitPrice),
