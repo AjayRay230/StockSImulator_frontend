@@ -11,6 +11,7 @@
     border-color 0.25s ease,
     box-shadow 0.25s ease;
 }
+
 :root {
   /* Background Layers */
   --bg: #f4f6fb;
@@ -1423,22 +1424,6 @@ button:active{
 
 
 
-/* ===============================
-   Watchlist Layout
-================================ */
-
-/* =========================
-   TERMINAL ROOT
-========================= */
-.terminal-layout {
-  display: grid;
-  grid-template-columns: 320px 1fr;
-  height: 100vh;
-  background: var(--bg);
-  color: var(--text);
-  overflow: hidden;
-}
-
 /* =========================
    WATCHLIST PANEL
 ========================= */
@@ -1448,55 +1433,119 @@ button:active{
   background: var(--surface);
   border-right: 1px solid var(--border);
   min-width: 0;
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* HEADER */
 .watchlist-panel h3 {
-  padding: 16px 18px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 1px;
+  padding: 20px 20px 16px;
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 /* =========================
    SEARCH
 ========================= */
 .search-wrapper {
-  padding: 0 16px 16px;
+  padding: 16px 20px;
   position: relative;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
 }
 
 .search-input {
   width: 100%;
-  height: 36px;
-  padding: 0 12px;
-  border-radius: 8px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 10px;
   border: 1px solid var(--border);
   background: var(--surface-2);
   color: var(--text);
-  font-size: 12px;
+  font-size: 13px;
+  transition: all 0.2s ease;
 }
 
 .search-input:focus {
   outline: none;
   border-color: var(--accent);
+  background: var(--surface);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.6;
 }
 
 /* DROPDOWN */
 .search-dropdown {
   position: absolute;
-  top: 44px;
-  left: 16px;
-  right: 16px;
+  top: 64px;
+  left: 20px;
+  right: 20px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  max-height: 240px;
+  border-radius: 12px;
+  max-height: 300px;
   overflow-y: auto;
   z-index: 100;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  box-shadow: var(--shadow-strong);
+}
+
+.search-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s ease;
+}
+
+.search-item:hover {
+  background: var(--surface-2);
+}
+
+.search-item:last-child {
+  border-bottom: none;
+}
+
+.search-item strong {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.add-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-btn:hover:not(:disabled) {
+  background: var(--accent);
+  color: white;
+}
+
+.add-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: var(--border);
+  color: var(--text-muted);
 }
 
 /* =========================
@@ -1505,117 +1554,372 @@ button:active{
 .watchlist-scroll {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+.watchlist-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.watchlist-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.watchlist-scroll::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 10px;
+}
+
+.watchlist-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Loading State */
+.loading {
+  padding: 16px 20px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
 }
 
 /* =========================
-   ROWS
+   STOCK ROWS
 ========================= */
 .watch-row {
   display: grid;
-  grid-template-columns: 24px 1fr auto;
+  grid-template-columns: 28px 1fr auto;
   align-items: center;
-  padding: 12px 16px;
+  gap: 12px;
+  padding: 14px 20px;
   border-bottom: 1px solid var(--border);
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.watch-row::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: transparent;
+  transition: all 0.2s ease;
 }
 
 .watch-row:hover {
   background: var(--surface-2);
 }
 
+.watch-row:hover::before {
+  background: var(--accent);
+  opacity: 0.3;
+}
+
 .watch-row.expanded {
   background: var(--surface-2);
-  border-left: 3px solid var(--accent);
+  box-shadow: inset 0 1px 0 var(--border), inset 0 -1px 0 var(--border);
 }
 
+.watch-row.expanded::before {
+  background: var(--accent);
+  opacity: 1;
+}
+
+/* Drag Handle */
 .drag-handle {
   color: var(--text-muted);
+  font-size: 16px;
   cursor: grab;
   user-select: none;
+  opacity: 0.4;
+  transition: opacity 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
 }
 
-/* LEFT TEXT */
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.watch-row:hover .drag-handle {
+  opacity: 0.8;
+}
+
+/* LEFT SIDE */
 .row-left {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
+  min-width: 0;
 }
 
 .symbol {
-  font-weight: 600;
-  font-size: 13px;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
+  letter-spacing: 0.3px;
 }
 
 .company {
   font-size: 11px;
   color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.8;
 }
 
 /* RIGHT SIDE */
 .row-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
+  flex-shrink: 0;
 }
 
 .price {
-  font-family: monospace;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 14px;
+  color: var(--text);
+  min-width: 80px;
+  text-align: right;
+}
+
+.positive, .negative {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  min-width: 65px;
+  text-align: center;
 }
 
 .positive {
   color: var(--profit);
+  background: rgba(34, 197, 94, 0.1);
 }
 
 .negative {
   color: var(--loss);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+[data-theme="dark"] .positive {
+  background: rgba(34, 197, 94, 0.15);
+}
+
+[data-theme="dark"] .negative {
+  background: rgba(239, 68, 68, 0.15);
 }
 
 .remove-btn {
-  background: none;
+  background: transparent;
   border: none;
   cursor: pointer;
   color: var(--text-muted);
+  font-size: 16px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
   opacity: 0;
+  transition: all 0.2s ease;
 }
 
 .watch-row:hover .remove-btn {
   opacity: 1;
 }
 
+.remove-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--loss);
+}
+
 /* =========================
-   GAINERS/LOSERS
+   GAINERS/LOSERS SECTION
 ========================= */
 .group-section {
-  padding: 12px 16px;
+  padding: 16px 20px 20px;
   border-top: 1px solid var(--border);
+  background: var(--surface);
 }
 
 .group-section h4 {
-  font-size: 11px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
   color: var(--text-muted);
-  margin-bottom: 6px;
+  margin: 0 0 10px 0;
+}
+
+.mini-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'SF Mono', 'Monaco', monospace;
+  transition: background 0.15s ease;
+}
+
+.mini-row:hover {
+  background: var(--surface-2);
+}
+
+.mini-row.positive {
+  color: var(--profit);
+  background: rgba(34, 197, 94, 0.08);
+}
+
+.mini-row.negative {
+  color: var(--loss);
+  background: rgba(239, 68, 68, 0.08);
 }
 
 /* =========================
-   CHART PANEL
+   MODAL
 ========================= */
-.chart-panel {
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
   display: flex;
-  flex-direction: column;
-  background: var(--bg);
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
   padding: 24px;
-  overflow: hidden;
+  min-width: 320px;
+  box-shadow: var(--shadow-strong);
 }
 
-.placeholder {
-  margin: auto;
-  font-size: 18px;
-  color: var(--text-muted);
+.modal p {
+  margin: 0 0 20px 0;
+  font-size: 14px;
+  color: var(--text);
 }
 
+.modal strong {
+  color: var(--accent);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.modal-actions button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.modal-actions button:hover {
+  background: var(--surface-3);
+}
+
+.modal-actions button.danger {
+  background: var(--loss);
+  border-color: var(--loss);
+  color: white;
+}
+
+.modal-actions button.danger:hover {
+  background: #b91c1c;
+  border-color: #b91c1c;
+}
+
+/* =========================
+   TOAST
+========================= */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-strong);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  z-index: 1000;
+}
+
+.toast button {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toast button:hover {
+  background: var(--accent);
+  color: white;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+  .watchlist-panel {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .watch-row {
+    grid-template-columns: 24px 1fr auto;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+
+  .price {
+    font-size: 13px;
+    min-width: 70px;
+  }
+
+  .positive, .negative {
+    font-size: 11px;
+    min-width: 55px;
+  }
+}
                                                       /* LoginForm */
 
 /* =========================

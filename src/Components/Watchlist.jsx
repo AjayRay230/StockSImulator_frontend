@@ -3,6 +3,7 @@ import { useUser } from "../context/userContext";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { DndContext, closestCenter } from "@dnd-kit/core";
+import { FaMoon, FaSun } from "react-icons/fa";
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -84,6 +85,7 @@ const WatchList = () => {
   const [confirmStock, setConfirmStock] = useState(null);
   const [toastStock, setToastStock] = useState(null);
   const undoTimerRef = useRef(null);
+ 
   const sensors = useSensors(
   useSensor(PointerSensor, {
     activationConstraint: {
@@ -166,12 +168,7 @@ const WatchList = () => {
     }, 300);
   };
 
-//   useEffect(() => {
-//   document.documentElement.setAttribute(
-//     "data-theme",
-//     darkMode ? "dark" : "light"
-//   );
-// }, [darkMode]);
+
 
   /* =======================
      Add to Watchlist
