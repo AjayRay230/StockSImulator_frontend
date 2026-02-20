@@ -10,7 +10,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import StockPrice from "./stock/StockPrice";
-
+import { PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 const SortableRow = ({ stock, onClick, onRemove, expanded }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: stock.stocksymbol });
@@ -23,36 +23,42 @@ const SortableRow = ({ stock, onClick, onRemove, expanded }) => {
   const isUp = stock.percentChange >= 0;
 
   return (
-<motion.div
-  layout
-  initial={{ opacity: 0, y: 10, backgroundColor: "#111" }}
-  animate={{ opacity: 1, y: 0, backgroundColor: "#111" }}
-  exit={{
-    opacity: 0,
-    x: -60,
-    backgroundColor: "#2b0000"
-  }}
-  transition={{ duration: 0.25 }}
+    <motion.div
+      layout
       ref={setNodeRef}
       style={style}
-      {...attributes}
-      {...listeners}
       className={`watch-row ${expanded ? "expanded" : ""}`}
       onClick={() => onClick(stock.stocksymbol)}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, x: -60 }}
+      transition={{ duration: 0.25 }}
     >
+      {/* DRAG HANDLE ONLY */}
+      <div
+        className="drag-handle"
+        {...attributes}
+        {...listeners}
+        onClick={(e) => e.stopPropagation()}
+      >
+        ⋮⋮
+      </div>
+
       <div className="row-left">
         <div className="symbol">{stock.stocksymbol}</div>
         <div className="company">{stock.companyname}</div>
       </div>
 
       <div className="row-right">
-        <div className="price">${Number(stock.price).toFixed(2)}</div>
+        <div className="price">
+          ${Number(stock.price).toFixed(2)}
+        </div>
+
         <div className={isUp ? "positive" : "negative"}>
           {isUp ? "+" : ""}
           {Number(stock.percentChange).toFixed(2)}%
         </div>
 
-        {/* REMOVE BUTTON */}
         <button
           className="remove-btn"
           onClick={(e) => {
@@ -66,7 +72,6 @@ const SortableRow = ({ stock, onClick, onRemove, expanded }) => {
     </motion.div>
   );
 };
-
 const WatchList = () => {
   const { user } = useUser();
   const [stocks, setStocks] = useState([]);
@@ -79,6 +84,13 @@ const WatchList = () => {
   const [confirmStock, setConfirmStock] = useState(null);
   const [toastStock, setToastStock] = useState(null);
   const undoTimerRef = useRef(null);
+  const sensors = useSensors(
+  useSensor(PointerSensor, {
+    activationConstraint: {
+      distance: 5
+    }
+  })
+);
   const fetchWatchlist = useCallback(async () => {
     if (!user) return;
 
@@ -309,7 +321,11 @@ const undoRemove = async () => {
 
         {loading && <div className="loading">Updating prices...</div>}
 
-        <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                    <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
           <SortableContext
             items={stocks.map((s) => s.stocksymbol)}
             strategy={verticalListSortingStrategy}
