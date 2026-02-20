@@ -10,7 +10,7 @@ import {
 import { BiTrendingUp, BiTrendingDown } from "react-icons/bi";
 import { toast, ToastContainer } from "react-toastify";
 import Modal from "../common/modal/Modal";
-import { fetchPortfoli } from "../../api/portfolioAxios";
+import { fetchPortfolio } from "../../api/portfolioAxios";
 import { useUser } from "../../context/userContext";
 import BuySellForm from "../../Transactions/BuySellForm";
 import { WebSocketContext } from "../../context/WebSocketContext";
@@ -35,7 +35,7 @@ const Portfolio = () => {
   const loadPortfolio = async () => {
     try {
       setLoading(true);
-      const { data } = await fetchPortfoli();
+      const { data } = await fetchPortfolio();
 
       let totalInvestmentSum = 0;
       let totalCurrentValueSum = 0;
