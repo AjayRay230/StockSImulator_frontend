@@ -1426,41 +1426,59 @@ button:active{
 /* ===============================
    Watchlist Layout
 ================================ */
+/* ================================
+   WATCHLIST TERMINAL (THEME SAFE)
+================================ */
+
 .terminal-layout {
   display: flex;
   height: 100vh;
-  background: #0b1426;
-  color: #fff;
+  background: var(--bg);
+  color: var(--text);
 }
 
+/* LEFT PANEL */
 .watchlist-panel {
-  width: 320px;
-  background: #111c33;
-  padding: 16px;
-  border-right: 1px solid #1f2a44;
+  width: 340px;
+  background: var(--surface);
+  padding: 18px;
+  border-right: 1px solid var(--border);
   overflow-y: auto;
+  box-shadow: var(--shadow-soft);
 }
 
+/* RIGHT PANEL */
 .chart-panel {
   flex: 1;
-  padding: 20px;
-  background: #0b1426;
+  padding: 24px;
+  background: var(--bg-secondary);
 }
+
+/* ================= ROW ================= */
 
 .watch-row {
   display: flex;
   justify-content: space-between;
-  padding: 10px 12px;
-  border-radius: 6px;
-  margin-bottom: 6px;
-  cursor: grab;
-  transition: 0.2s ease;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  background: var(--surface-2);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
 }
 
 .watch-row:hover {
-  background: #16243d;
+  background: var(--surface-3);
+  border-color: var(--border);
 }
 
+.watch-row.expanded {
+  border-color: var(--accent);
+}
+
+/* LEFT */
 .row-left {
   display: flex;
   flex-direction: column;
@@ -1473,24 +1491,95 @@ button:active{
 
 .company {
   font-size: 11px;
-  color: #9aa4bf;
+  color: var(--text-muted);
 }
 
+/* RIGHT */
 .row-right {
   text-align: right;
 }
 
 .price {
   font-size: 14px;
+  font-weight: 500;
 }
 
+/* PROFIT / LOSS */
 .positive {
-  color: #00c853;
+  color: var(--profit);
 }
 
 .negative {
-  color: #ff5252;
+  color: var(--loss);
 }
+
+/* ================= SEARCH ================= */
+
+.search-wrapper {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 13px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+/* DROPDOWN */
+.search-dropdown {
+  position: absolute;
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-top: 6px;
+  z-index: 20;
+  max-height: 220px;
+  overflow-y: auto;
+  box-shadow: var(--shadow-strong);
+}
+
+.search-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.search-item:hover {
+  background: var(--surface-2);
+}
+
+/* ADD BUTTON */
+.add-btn {
+  background: var(--accent);
+  border: none;
+  padding: 5px 10px;
+  border-radius: 6px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.add-btn:disabled {
+  background: var(--surface-3);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+/* ================= GAINERS / LOSERS ================= */
 
 .group-section {
   margin-top: 20px;
@@ -1498,83 +1587,22 @@ button:active{
 
 .group-section h4 {
   font-size: 12px;
-  color: #8ea1c7;
+  color: var(--text-muted);
   margin-bottom: 8px;
+  letter-spacing: 0.5px;
 }
 
 .mini-row {
   font-size: 12px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
-.search-input {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 12px;
-  border-radius: 6px;
-  border: 1px solid #2a2a2a;
-  background: #111;
-  color: white;
-}
+/* ================= MODAL ================= */
 
-.loading {
-  font-size: 12px;
-  opacity: 0.6;
-  margin-bottom: 10px;
-}
-
-.empty-state {
-  opacity: 0.5;
-  padding: 10px 0;
-}
-
-.watchlist-panel {
-  overflow-y: auto;
-  height: 100vh;
-}
-.search-wrapper {
-  position: relative;
-}
-
-.search-dropdown {
-  position: absolute;
-  width: 100%;
-  background: #111;
-  border: 1px solid #333;
-  border-radius: 6px;
-  margin-top: 4px;
-  z-index: 10;
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.search-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px;
-  border-bottom: 1px solid #222;
-}
-
-.search-item:hover {
-  background: #1a1a1a;
-}
-
-.add-btn {
-  background: #1db954;
-  border: none;
-  padding: 4px 8px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.add-btn:disabled {
-  background: #555;
-  cursor: not-allowed;
-}
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.45);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1582,34 +1610,53 @@ button:active{
 }
 
 .modal {
-  background: #111;
-  padding: 20px;
-  border-radius: 8px;
-  width: 300px;
+  background: var(--surface);
+  padding: 22px;
+  border-radius: 14px;
+  width: 320px;
   text-align: center;
+  box-shadow: var(--shadow-strong);
+  border: 1px solid var(--border);
 }
 
 .modal-actions {
-  margin-top: 15px;
+  margin-top: 18px;
   display: flex;
   justify-content: space-between;
+  gap: 10px;
 }
 
-.modal .danger {
-  background: #b00020;
+.modal-actions button {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.modal-actions .danger {
+  background: var(--loss);
+  border: none;
   color: white;
 }
 
+/* ================= TOAST ================= */
+
 .toast {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #222;
-  padding: 12px 20px;
-  border-radius: 6px;
+  bottom: 24px;
+  right: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 12px 18px;
+  border-radius: 10px;
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: center;
+  box-shadow: var(--shadow-strong);
+  color: var(--text);
 }
 
                                      /* LoginForm */
