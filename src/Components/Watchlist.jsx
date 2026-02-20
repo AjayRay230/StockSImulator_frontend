@@ -134,7 +134,7 @@ const WatchList = () => {
 
   /* =======================
      Debounced Search
-  ======================== */
+ */
   const handleSearch = (value) => {
     setSearch(value);
 
