@@ -166,12 +166,12 @@ const WatchList = () => {
     }, 300);
   };
 
-  useEffect(() => {
-  document.documentElement.setAttribute(
-    "data-theme",
-    darkMode ? "dark" : "light"
-  );
-}, [darkMode]);
+//   useEffect(() => {
+//   document.documentElement.setAttribute(
+//     "data-theme",
+//     darkMode ? "dark" : "light"
+//   );
+// }, [darkMode]);
 
   /* =======================
      Add to Watchlist
