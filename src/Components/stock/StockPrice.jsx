@@ -229,7 +229,7 @@ const candleStickData = useMemo(() => {
 
   // ---------------- CHART OPTIONS ----------------
 
-  const options = useMemo(() => ({
+const options = useMemo(() => ({
   chart: {
     type: chartType,
     height: 400,
@@ -237,39 +237,39 @@ const candleStickData = useMemo(() => {
     toolbar: { show: true, tools: { download: false } },
     zoom: { enabled: true }
   },
-    theme: { mode: darkMode ? "dark" : "light" },
-   grid: {
-  borderColor: isDark
-    ? "rgba(255,255,255,0.06)"
-    : "rgba(0,0,0,0.08)",
-  strokeDashArray: 3
-},
-   colors: [
-  "var(--accent)",
-  "var(--profit)",
-  "#facc15"
-],
-    stroke: {
-      width: 2,
-      curve: "smooth"
-    },
-    xaxis: { type: "datetime" },
-    yaxis: { opposite: true },
-    tooltip: {
-      shared: true,
-      theme: darkMode ? "dark" : "light",
-      x: { format: "dd MMM HH:mm" }
-    },
-    dataLabels: { enabled: false },
-    title: {
-      text: companyName || symbol,
-      align: "left",
-      style: {
-        fontSize: "20px",
-        fontWeight: "700"
-      }
+  theme: { mode: darkMode ? "dark" : "light" },
+  grid: {
+    borderColor: darkMode
+      ? "rgba(255,255,255,0.06)"
+      : "rgba(0,0,0,0.08)",
+    strokeDashArray: 3
+  },
+  colors: [
+    "var(--accent)",
+    "var(--profit)",
+    "#facc15"
+  ],
+  stroke: {
+    width: 2,
+    curve: "smooth"
+  },
+  xaxis: { type: "datetime" },
+  yaxis: { opposite: true },
+  tooltip: {
+    shared: true,
+    theme: darkMode ? "dark" : "light",
+    x: { format: "dd MMM HH:mm" }
+  },
+  dataLabels: { enabled: false },
+  title: {
+    text: companyName || symbol,
+    align: "left",
+    style: {
+      fontSize: "20px",
+      fontWeight: "700"
     }
-  }), [darkMode, companyName, symbol]);
+  }
+}), [darkMode, companyName, symbol, chartType]);
 
   const volumeOptions = useMemo(() => ({
     chart: {
